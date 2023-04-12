@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 
 const fb = new FormBuilder().nonNullable;
@@ -10,29 +10,12 @@ const fb = new FormBuilder().nonNullable;
   styleUrls: ['./monthly-calc.component.scss'],
 })
 export class MonthlyCalcComponent implements OnInit {
-  public kidsAmount = 10;
-  public applicantAmount = 2;
-
   montlhlyForm = fb.group(
     {
-      applicants: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern('[0-9]*'),
-          Validators.max(this.applicantAmount),
-        ],
-      ],
-      amountOfKids: [
-        '',
-        [
-          Validators.required,
-          Validators.max(this.kidsAmount),
-          Validators.pattern('[0-9]*'),
-        ],
-      ],
+      applicants: ['', Validators.required],
+      amountOfKids: ['', Validators.required],
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-      obligations: ['', [Validators.required, Validators.pattern('[0-9]*')]],
+      obligations: ['', Validators.pattern('[0-9]*')],
     },
     { updateOn: 'change' }
   );
