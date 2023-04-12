@@ -9,10 +9,20 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+<<<<<<< HEAD
 import { ReactiveFormsModule } from '@angular/forms';
+=======
+import { NavigationComponent } from './navigation/navigation.component';
+import { HomeComponent } from './home/home.component';
+>>>>>>> main
 
 @NgModule({
-  declarations: [AppComponent, MonthlyCalcComponent],
+  declarations: [
+    AppComponent,
+    MonthlyCalcComponent,
+    NavigationComponent,
+    HomeComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
