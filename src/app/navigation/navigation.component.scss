@@ -1,0 +1,42 @@
+.nav {
+    display: flex;
+    justify-content: space-between;
+    height: 70px;
+    background: #262626;
+    padding: 0 5%;
+    position: sticky;
+    top: 0;
+}
+
+ul {
+    margin: 0;
+}
+
+ul li {
+    list-style-type: none;
+}
+
+ul li a {
+    list-style-type: none;
+    display: block;
+    padding: 0 20px;
+    line-height: 70px;
+    color: white;
+    text-decoration: none;
+
+}
+
+.linkContainer {
+    display: flex;
+    margin: 0;
+    width: 100%;
+}
+
+.loginLink {
+    display: flex;
+    justify-self: right;
+}
+
+.nav-left {
+    display: flex;
+}
