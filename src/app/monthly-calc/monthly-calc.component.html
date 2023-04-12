@@ -1,41 +1,38 @@
 <div class="container">
   <form [formGroup]="montlhlyForm">
     <div class="monthly-cal">
-      <mat-form-field class="input-wrap" *ngIf="applicants">
+      <mat-form-field appearance="fill" class="input-wrap">
         <mat-label>Number of applicants</mat-label>
-        <input matInput formControlName="applicants" />
+        <mat-select formControlName="applicants">
+          <mat-option [value]="1">1</mat-option>
+          <mat-option [value]="2">2</mat-option>
+        </mat-select>
         <mat-error
-          *ngIf="applicants && applicants.errors && applicants.errors['max']"
+          *ngIf="applicants && applicants.errors && applicants?.touched"
         >
-          You cannot have more than 2 applicants
-        </mat-error>
-        <mat-error
-          *ngIf="
-            applicants && applicants.errors && applicants.errors['pattern']
-          "
-        >
-          Please enter a number
+          Please choose an option
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="input-wrap">
+      <mat-form-field appearance="fill" class="input-wrap">
         <mat-label>Number of kids</mat-label>
-        <input matInput formControlName="amountOfKids" id="amountOfKids" />
+        <mat-select formControlName="amountOfKids">
+          <mat-option [value]="0">0</mat-option>
+          <mat-option [value]="1">1</mat-option>
+          <mat-option [value]="2">2</mat-option>
+          <mat-option [value]="3">3</mat-option>
+          <mat-option [value]="4">4</mat-option>
+          <mat-option [value]="5">5</mat-option>
+          <mat-option [value]="6">6</mat-option>
+          <mat-option [value]="7">7</mat-option>
+          <mat-option [value]="8">8</mat-option>
+          <mat-option [value]="9">9</mat-option>
+          <mat-option [value]="10">10</mat-option>
+        </mat-select>
         <mat-error
-          *ngIf="
-            amountOfKids && amountOfKids.errors && amountOfKids.errors['max']
-          "
+          *ngIf="amountOfKids && amountOfKids.errors && amountOfKids?.touched"
         >
-          You cannot have more than 10 kids
-        </mat-error>
-        <mat-error
-          *ngIf="
-            amountOfKids &&
-            amountOfKids.errors &&
-            amountOfKids.errors['pattern']
-          "
-        >
-          Please enter a number
+          Please choose an option
         </mat-error>
       </mat-form-field>
 
