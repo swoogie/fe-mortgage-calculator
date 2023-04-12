@@ -1,68 +1,76 @@
 <div class="container">
   <form [formGroup]="maxCalcForm">
     <div class="cal-div">
-      <mat-form-field class="input-wrap" *ngIf="realEstatePrice">
-        <mat-label>Real estate price</mat-label>
-        <input matInput formControlName="realEstatePrice" type="number" />
-        <mat-error
-          *ngIf="
-            realEstatePrice &&
-            realEstatePrice.errors &&
-            realEstatePrice.errors['pattern']
-          "
-        >
-          Please enter a number
-        </mat-error>
-      </mat-form-field>
+      <div class="slider-cont">
+        <label id="slider-label" class="slider-label">Real estate price </label>
+        <label class="slider-value-label">
+          <!-- <input
+            matInput
+            [value]="realEstatePrice.value || 0"
+            [(ngModel)]="rEstatePrice"
+            formControlName="realEstatePrice"
+          /> -->
+          {{ realEstatePrice.value || minRealEstatePrice | currency : "EUR" }}
+        </label>
+      </div>
+      <mat-slider
+        class="slider-margin"
+        [max]="maxRealEstatePrice"
+        [min]="minRealEstatePrice"
+      >
+        <input matSliderThumb formControlName="realEstatePrice" />
+      </mat-slider>
+
+      <div class="slider-cont">
+        <label id="slider-label" class="slider-label">Loan amount </label>
+        <label class="slider-value-label">
+          {{ loanAmount.value || minLoanAmount | currency : "EUR" }}
+        </label>
+      </div>
+      <mat-slider
+        class="slider-margin"
+        [max]="maxLoanAmount"
+        [min]="minLoanAmount"
+      >
+        <input matSliderThumb formControlName="loanAmount" />
+      </mat-slider>
+
+      <div class="slider-cont">
+        <label id="slider-label" class="slider-label">Loan term</label>
+        <label class="slider-value-label"
+          >{{ loanTerm.value || minLoanTerm }} months
+        </label>
+      </div>
+      <mat-slider class="slider-margin" [max]="maxLoanTerm" [min]="minLoanTerm">
+        <input matSliderThumb formControlName="loanTerm" />
+      </mat-slider>
 
       <mat-form-field class="input-wrap">
         <mat-label>Down payment</mat-label>
         <input matInput formControlName="downpayment" id="downpayment" />
-        <mat-error
-          *ngIf="
-            downpayment && downpayment.errors && downpayment.errors['pattern']
-          "
-        >
+        <mat-error *ngIf="downpayment && downpayment.errors['pattern']">
           Please enter a number
+        </mat-error>
+        <mat-error *ngIf="downpayment && downpayment.errors">
+          Field cannot be empty
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="input-wrap">
-        <mat-label>Loan Amount</mat-label>
-        <input matInput formControlName="loanAmount" />
-        <mat-error
-          *ngIf="loanAmount && loanAmount?.errors && loanAmount?.touched"
-        >
-          Please enter the number
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="input-wrap">
-        <mat-label>Loan Term</mat-label>
-        <input matInput formControlName="loanTerm" />
-        <mat-error
-          *ngIf="loanTerm && loanTerm.errors && loanTerm.errors['pattern']"
-        >
-          Please enter a number
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field class="input-wrap">
-        <mat-label>Interest Rate</mat-label>
-        <input matInput formControlName="interestRate" />
-        <mat-error *ngIf="interestRate && interestRate.errors">
-          Please enter a number
-        </mat-error>
-      </mat-form-field>
       <mat-form-field class="input-wrap">
         <mat-label>Payment Schedule Type</mat-label>
         <mat-select formControlName="paymentScheduleType">
-          <mat-option [value]="3">3 months</mat-option>
-          <mat-option [value]="6">6 months</mat-option>
-          <mat-option [value]="12">12 months</mat-option>
+          <mat-option *ngFor="let months of paymentSchedules" [value]="months"
+            >{{ months }} months</mat-option
+          >
         </mat-select>
         <mat-error *ngIf="paymentScheduleType && paymentScheduleType.errors">
           Please select an option
         </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="input-wrap">
+        <mat-label>Interest Rate</mat-label>
+        <input matInput disabled />
       </mat-form-field>
     </div>
   </form>
