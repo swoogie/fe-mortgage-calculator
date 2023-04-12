@@ -13,7 +13,7 @@ export class MonthlyCalcComponent implements OnInit {
   public kidsAmount = 10;
   public applicantAmount = 2;
 
-  montlhlyForm = fb.group(
+  monthlyForm = fb.group(
     {
       applicants: [
         '',
@@ -38,7 +38,7 @@ export class MonthlyCalcComponent implements OnInit {
   );
 
   constructor() {
-    this.montlhlyForm.valueChanges.subscribe((value) => {
+    this.monthlyForm.valueChanges.subscribe((value) => {
       console.log('form changed', value);
     });
   }
@@ -55,17 +55,17 @@ export class MonthlyCalcComponent implements OnInit {
   position = this.positionOptions[2];
 
   get applicants() {
-    return this.montlhlyForm.get('applicants');
+    return this.monthlyForm.get('applicants');
   }
 
   get amountOfKids() {
-    return this.montlhlyForm.get('amountOfKids');
+    return this.monthlyForm.get('amountOfKids');
   }
 
   get income() {
-    return this.montlhlyForm.get('income');
+    return this.monthlyForm.get('income');
   }
   get obligations() {
-    return this.montlhlyForm.get('obligations');
+    return this.monthlyForm.get('obligations');
   }
 }

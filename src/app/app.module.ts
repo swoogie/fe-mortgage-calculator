@@ -8,10 +8,14 @@ import { MonthlyCalcComponent } from './monthly-calc/monthly-calc.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavigationComponent } from './navigation/navigation.component';
 import { HomeComponent } from './home/home.component';
+import { MaxCalcComponent } from './max-calc/max-calc.component';
+import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +23,9 @@ import { HomeComponent } from './home/home.component';
     MonthlyCalcComponent,
     NavigationComponent,
     HomeComponent,
+    MaxCalcComponent,
+    PagenotfoundComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,8 +36,9 @@ import { HomeComponent } from './home/home.component';
     MatIconModule,
     MatButtonModule,
     ReactiveFormsModule,
+    MatSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
