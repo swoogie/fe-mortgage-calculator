@@ -10,14 +10,10 @@ const fb = new FormBuilder().nonNullable;
   styleUrls: ['./monthly-calc.component.scss'],
 })
 export class MonthlyCalcComponent implements OnInit {
-<<<<<<< HEAD
-  montlhlyForm = fb.group(
-=======
   public kidsAmount = 10;
   public applicantAmount = 2;
 
   monthlyForm = fb.group(
->>>>>>> 652ce1f (added maxcalc, typos, generated login and 404 page,)
     {
       applicants: ['', Validators.required],
       amountOfKids: ['', Validators.required],
