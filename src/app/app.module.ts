@@ -10,12 +10,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavigationComponent } from './navigation/navigation.component';
 import { HomeComponent } from './home/home.component';
 import { MaxCalcComponent } from './max-calc/max-calc.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { LoginComponent } from './login/login.component';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -37,8 +40,12 @@ import { LoginComponent } from './login/login.component';
     MatButtonModule,
     ReactiveFormsModule,
     MatSelectModule,
+    MatSliderModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSnackBarModule,
   ],
-  providers: [],
+  providers: [MatSnackBarModule],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
