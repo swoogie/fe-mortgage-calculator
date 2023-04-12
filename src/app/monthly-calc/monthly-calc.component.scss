@@ -1,0 +1,16 @@
+.container {
+  text-align: center;
+  margin-top: 100px;
+  .monthly-cal {
+    display: inline-block;
+    min-width: 150px;
+    max-width: 300px;
+    width: 100%;
+    .input-wrap {
+      width: 100%;
+    }
+  }
+  .btn-calculate {
+    margin-right: 10px;
+  }
+}
