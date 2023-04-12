@@ -1,12 +1,16 @@
 {
   "name": "fe-mortgage-calculator",
   "version": "0.0.0",
+  "engines": {
+    "node": ">=18 <19"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -20,6 +24,7 @@
     "@angular/platform-browser": "^15.2.0",
     "@angular/platform-browser-dynamic": "^15.2.0",
     "@angular/router": "^15.2.0",
+    "@types/node": "^18.15.11",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
