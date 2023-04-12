@@ -1,33 +1,74 @@
 <div class="container">
-  <form>
+  <form [formGroup]="montlhlyForm">
     <div class="monthly-cal">
-      <mat-form-field class="input-wrap">
+      <mat-form-field class="input-wrap" *ngIf="applicants">
         <mat-label>Number of applicants</mat-label>
-        <input matInput />
+        <input matInput formControlName="applicants" />
+        <mat-error
+          *ngIf="applicants && applicants.errors && applicants.errors['max']"
+        >
+          You cannot have more than 2 applicants
+        </mat-error>
+        <mat-error
+          *ngIf="
+            applicants && applicants.errors && applicants.errors['pattern']
+          "
+        >
+          Please enter a number
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="input-wrap">
         <mat-label>Number of kids</mat-label>
-        <input matInput />
+        <input matInput formControlName="amountOfKids" id="amountOfKids" />
+        <mat-error
+          *ngIf="
+            amountOfKids && amountOfKids.errors && amountOfKids.errors['max']
+          "
+        >
+          You cannot have more than 10 kids
+        </mat-error>
+        <mat-error
+          *ngIf="
+            amountOfKids &&
+            amountOfKids.errors &&
+            amountOfKids.errors['pattern']
+          "
+        >
+          Please enter a number
+        </mat-error>
       </mat-form-field>
+
       <mat-form-field class="input-wrap">
         <mat-label>Income</mat-label>
-        <input matInput />
+        <input matInput formControlName="income" />
+        <mat-error *ngIf="income && income?.errors && income?.touched">
+          Please enter the number
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="input-wrap">
         <mat-label>Obligations</mat-label>
-        <input matInput />
+        <input matInput formControlName="obligations" />
+        <mat-error
+          *ngIf="
+            obligations && obligations.errors && obligations.errors['pattern']
+          "
+        >
+          Please enter a number
+        </mat-error>
         <mat-icon
           matSuffix
           matTooltip="Info about Obligations"
-          [matTooltipPosition]="position.value!"
+          [matTooltipPosition]="'right'"
           >help_outline</mat-icon
         >
       </mat-form-field>
     </div>
   </form>
 
-  <button class="btn-calculate" mat-raised-button>Calculate</button>
+  <button class="btn-calculate" mat-raised-button type="submit">
+    Calculate
+  </button>
   <button mat-raised-button>Apply</button>
 </div>
