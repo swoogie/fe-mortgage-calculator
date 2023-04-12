@@ -1,0 +1,33 @@
+<div class="container">
+  <form>
+    <div class="monthly-cal">
+      <mat-form-field class="input-wrap">
+        <mat-label>Number of applicants</mat-label>
+        <input matInput />
+      </mat-form-field>
+
+      <mat-form-field class="input-wrap">
+        <mat-label>Number of kids</mat-label>
+        <input matInput />
+      </mat-form-field>
+      <mat-form-field class="input-wrap">
+        <mat-label>Income</mat-label>
+        <input matInput />
+      </mat-form-field>
+
+      <mat-form-field class="input-wrap">
+        <mat-label>Obligations</mat-label>
+        <input matInput />
+        <mat-icon
+          matSuffix
+          matTooltip="Info about Obligations"
+          [matTooltipPosition]="position.value!"
+          >help_outline</mat-icon
+        >
+      </mat-form-field>
+    </div>
+  </form>
+
+  <button class="btn-calculate" mat-raised-button>Calculate</button>
+  <button mat-raised-button>Apply</button>
+</div>
