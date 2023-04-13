@@ -18,8 +18,13 @@ export class MaxCalcComponent {
   maxCalcForm = fb.group(
     {
       realEstatePrice: [
-        this.minRealEstatePrice,
-        [Validators.required, Validators.pattern('[0-9]*')],
+        ,
+        [
+          Validators.required,
+          Validators.pattern('[0-9]*'),
+          Validators.max(this.maxRealEstatePrice),
+          Validators.min(this.minRealEstatePrice),
+        ],
       ],
       downpayment: [, [Validators.required, Validators.pattern('[0-9]*')]],
       loanAmount: [, [Validators.required, Validators.pattern('[0-9]*')]],
@@ -45,11 +50,14 @@ export class MaxCalcComponent {
     });
 
     this.loanAmount.valueChanges.subscribe((value) => {
+      console.log(value);
       if (value == this.maxLoanAmount) {
         this._snackBar.open('Max loan is 85% of real estate price', '', {
           duration: 2000,
         });
       }
+      this.downpayment.setValue((this.realEstatePrice.value - value) as never);
+      console.log(this.downpayment.value);
     });
 
     this.paymentScheduleType.valueChanges.subscribe((value) => {
@@ -86,6 +94,7 @@ export class MaxCalcComponent {
       });
 
     this.interestRate.disable();
+    this.downpayment.disable();
   }
 
   ngOnInit() {}

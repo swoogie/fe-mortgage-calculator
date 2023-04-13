@@ -8,6 +8,17 @@
           formControlName="realEstatePrice"
           id="realEstatePrice"
         />
+        <mat-error
+          *ngIf="realEstatePrice && realEstatePrice.hasError('required')"
+        >
+          Please choose an option
+        </mat-error>
+        <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('max')">
+          Max is 3,000,000
+        </mat-error>
+        <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('min')">
+          Min is 10,000
+        </mat-error>
       </mat-form-field>
 
       <div class="slider-cont">
