@@ -31,7 +31,14 @@ export class MonthlyCalcComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.monthlyForm.get('income').valueChanges.subscribe((res: any) => {
+      this.monthlyPayment();
+    });
+    this.monthlyForm.get('obligations').valueChanges.subscribe((res: any) => {
+      this.monthlyPayment();
+    });
+  }
 
   positionOptions: TooltipPosition[] = [
     'after',
