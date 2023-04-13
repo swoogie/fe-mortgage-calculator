@@ -10,6 +10,7 @@ const fb = new FormBuilder().nonNullable;
   styleUrls: ['./monthly-calc.component.scss'],
 })
 export class MonthlyCalcComponent implements OnInit {
+  optionValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   monthlyPaymentResult: number;
   isDisabled: boolean = true;
 
@@ -31,6 +32,7 @@ export class MonthlyCalcComponent implements OnInit {
   }
 
   ngOnInit() {}
+
   positionOptions: TooltipPosition[] = [
     'after',
     'before',
