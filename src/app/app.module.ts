@@ -7,12 +7,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MonthlyCalcComponent } from './monthly-calc/monthly-calc.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavigationComponent } from './navigation/navigation.component';
 import { HomeComponent } from './home/home.component';
+import { MaxCalcComponent } from './max-calc/max-calc.component';
+import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
+import { LoginComponent } from './login/login.component';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -20,6 +26,9 @@ import { HomeComponent } from './home/home.component';
     MonthlyCalcComponent,
     NavigationComponent,
     HomeComponent,
+    MaxCalcComponent,
+    PagenotfoundComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,8 +40,13 @@ import { HomeComponent } from './home/home.component';
     MatIconModule,
     MatButtonModule,
     ReactiveFormsModule,
+    MatSelectModule,
+    MatSliderModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSnackBarModule,
   ],
-  providers: [],
+  providers: [MatSnackBarModule],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
