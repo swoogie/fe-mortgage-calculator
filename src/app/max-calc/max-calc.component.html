@@ -1,0 +1,74 @@
+<div class="container">
+  <form [formGroup]="maxCalcForm">
+    <div class="cal-div">
+      <mat-form-field class="input-wrap" *ngIf="realEstatePrice">
+        <mat-label>Real estate price</mat-label>
+        <input matInput formControlName="realEstatePrice" type="number" />
+        <mat-error
+          *ngIf="
+            realEstatePrice &&
+            realEstatePrice.errors &&
+            realEstatePrice.errors['pattern']
+          "
+        >
+          Please enter a number
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="input-wrap">
+        <mat-label>Down payment</mat-label>
+        <input matInput formControlName="downpayment" id="downpayment" />
+        <mat-error
+          *ngIf="
+            downpayment && downpayment.errors && downpayment.errors['pattern']
+          "
+        >
+          Please enter a number
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="input-wrap">
+        <mat-label>Loan Amount</mat-label>
+        <input matInput formControlName="loanAmount" />
+        <mat-error
+          *ngIf="loanAmount && loanAmount?.errors && loanAmount?.touched"
+        >
+          Please enter the number
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="input-wrap">
+        <mat-label>Loan Term</mat-label>
+        <input matInput formControlName="loanTerm" />
+        <mat-error
+          *ngIf="loanTerm && loanTerm.errors && loanTerm.errors['pattern']"
+        >
+          Please enter a number
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="input-wrap">
+        <mat-label>Interest Rate</mat-label>
+        <input matInput formControlName="interestRate" />
+        <mat-error *ngIf="interestRate && interestRate.errors">
+          Please enter a number
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="input-wrap">
+        <mat-label>Payment Schedule Type</mat-label>
+        <mat-select formControlName="paymentScheduleType">
+          <mat-option [value]="3">3 months</mat-option>
+          <mat-option [value]="6">6 months</mat-option>
+          <mat-option [value]="12">12 months</mat-option>
+        </mat-select>
+        <mat-error *ngIf="paymentScheduleType && paymentScheduleType.errors">
+          Please select an option
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+
+  <button class="btn-calculate" mat-raised-button type="submit">
+    Calculate
+  </button>
+  <button mat-raised-button>Apply</button>
+</div>
