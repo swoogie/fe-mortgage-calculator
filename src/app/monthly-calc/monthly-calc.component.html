@@ -56,10 +56,17 @@
           >help_outline</mat-icon
         >
       </mat-form-field>
+
+      <mat-form-field class="input-wrap">
+        <mat-label>Interest Rate</mat-label>
+        <input matInput formControlName="monthlyPayment" />
+        <div *ngIf="monthlyPaymentResult">
+          Your monthly payment is {{ monthlyPaymentResult | number : "1.2-2" }}
+        </div>
+      </mat-form-field>
     </div>
   </form>
-
-  <button class="btn-calculate" mat-raised-button type="submit">
+  <button class="btn-calculate" mat-raised-button (click)="monthlyPayment()">
     Calculate
   </button>
   <button mat-raised-button>Apply</button>
