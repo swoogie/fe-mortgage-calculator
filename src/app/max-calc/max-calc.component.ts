@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { debounceTime } from 'rxjs';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -11,9 +12,15 @@ const fb = new FormBuilder().nonNullable;
   styleUrls: ['./max-calc.component.scss'],
 })
 export class MaxCalcComponent {
+  maxRealEstatePrice: number = 3000000;
+  minRealEstatePrice: number = 10000;
+
   maxCalcForm = fb.group(
     {
-      realEstatePrice: [, [Validators.required, Validators.pattern('[0-9]*')]],
+      realEstatePrice: [
+        this.minRealEstatePrice,
+        [Validators.required, Validators.pattern('[0-9]*')],
+      ],
       downpayment: [, [Validators.required, Validators.pattern('[0-9]*')]],
       loanAmount: [, [Validators.required, Validators.pattern('[0-9]*')]],
       loanTerm: [, [Validators.required, Validators.pattern('[0-9]*')]],
@@ -25,32 +32,60 @@ export class MaxCalcComponent {
 
   maxLoanTerm: number = 30;
   minLoanTerm: number = 1;
-  maxRealEstatePrice: number = 3000000;
-  minRealEstatePrice: number = 10000;
+
   maxLoanAmount: number = this.realEstatePrice.value * 0.85;
-  minLoanAmount: number = this.minRealEstatePrice * 0.85;
+  minLoanAmount: number = 0;
   paymentSchedules: number[] = [3, 6, 12];
 
   constructor(private _snackBar: MatSnackBar) {
-    this.maxCalcForm.valueChanges.subscribe((value) => {
-      console.log('form changed', value);
+    this.maxCalcForm.valueChanges.pipe(debounceTime(50)).subscribe((value) => {
+      // console.log(value.realEstatePrice);
+      // console.log('form changed', value);
       this.maxLoanAmount = Math.round(value.realEstatePrice * 0.85);
-      if (value.loanAmount == this.maxLoanAmount) {
+    });
+
+    this.loanAmount.valueChanges.subscribe((value) => {
+      if (value == this.maxLoanAmount) {
         this._snackBar.open('Max loan is 85% of real estate price', '', {
           duration: 2000,
         });
       }
-      // if (this.maxCalcForm.valid) {
-      //   switch (this.paymentScheduleType.value) {
-      //     case 3:
-      //       this.maxCalcForm.get('interestRate').setValue(2.5 + 3.108);
-      //     case 6:
-      //       this.maxCalcForm.get('interestRate').setValue(2.5 + 3.356);
-      //     case 12:
-      //       this.maxCalcForm.get('interestRate').setValue(2.5 + 3.582);
-      //   }
-      // }
     });
+
+    this.paymentScheduleType.valueChanges.subscribe((value) => {
+      console.log('bonjourno', value);
+      switch (value) {
+        case 3:
+          this.maxCalcForm
+            .get('interestRate')
+            .setValue((2.5 + 3.108).toFixed(3));
+          break;
+        case 6:
+          this.maxCalcForm
+            .get('interestRate')
+            .setValue((2.5 + 3.356).toFixed(3));
+          break;
+        case 12:
+          this.maxCalcForm
+            .get('interestRate')
+            .setValue((2.5 + 3.582).toFixed(3));
+          break;
+        default:
+      }
+
+      console.log('after value', this.maxCalcForm.value);
+    });
+
+    this.realEstatePrice.valueChanges
+      .pipe(debounceTime(50))
+      .subscribe((value) => {
+        this.maxLoanAmount = value * 0.85;
+        if (this.loanAmount.value > this.maxLoanAmount) {
+          this.loanAmount.setValue(this.maxLoanAmount as never, {});
+        }
+      });
+
+    this.interestRate.disable();
   }
 
   ngOnInit() {}
@@ -63,10 +98,7 @@ export class MaxCalcComponent {
     'right',
   ];
   position = this.positionOptions[2];
-
-  updateSlider() {
-    console.log('blurred');
-  }
+  realEst: number;
 
   get realEstatePrice() {
     return this.maxCalcForm.get('realEstatePrice');
@@ -86,10 +118,6 @@ export class MaxCalcComponent {
   get interestRate() {
     return this.maxCalcForm.get('interestRate');
   }
-
-  // set interestRate(value: number) {
-  //   this.maxCalcForm.get('interestRate').setValue(number);
-  // }
 
   get paymentScheduleType() {
     return this.maxCalcForm.get('paymentScheduleType');
