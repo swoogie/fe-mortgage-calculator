@@ -11,6 +11,12 @@ const fb = new FormBuilder().nonNullable;
 })
 export class MonthlyCalcComponent implements OnInit {
   optionValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  labels = [
+    'Mortgage Loans',
+    'Consumer Loans',
+    'Leasing Amount',
+    'Credit Card Limit',
+  ];
   monthlyPaymentResult: number;
   isDisabled: boolean = true;
 
@@ -25,7 +31,6 @@ export class MonthlyCalcComponent implements OnInit {
       consumerLoans: [''],
       leasingAmount: [''],
       creditCardLimit: [''],
-
     },
     { updateOn: 'change' }
   );
@@ -36,8 +41,7 @@ export class MonthlyCalcComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
   onSubmit() {
     if (this.monthlyForm.valid) {
       // submit form data
@@ -70,10 +74,6 @@ export class MonthlyCalcComponent implements OnInit {
   get obligation() {
     return this.monthlyForm.get('obligation');
   }
-
-  get interestRate() {
-    return this.monthlyForm.get('interestRate');
-  }
   get mortgageLoans() {
     return this.monthlyForm.get('mortgageLoans');
   }
@@ -87,13 +87,28 @@ export class MonthlyCalcComponent implements OnInit {
     return this.monthlyForm.get('creditCardLimit');
   }
 
-
   monthlyPayment() {
-    const income: number = Number(this.monthlyForm.get('income').value);
-    const obligations: number = Number(
-      this.monthlyForm.get('obligations').value
+    const income = Number(this.monthlyForm.get('income').value);
+    const creditCardLimit = Number(
+      this.monthlyForm.get('creditCardLimit').value || 0
     );
-    this.monthlyPaymentResult = (income - obligations) * 0.4;
+    const leasingAmount = Number(
+      this.monthlyForm.get('leasingAmount').value || 0
+    );
+    const consumerLoans = Number(
+      this.monthlyForm.get('consumerLoans').value || 0
+    );
+    const mortgageLoans = Number(
+      this.monthlyForm.get('mortgageLoans').value || 0
+    );
+    const monthlyPaymentResult =
+      income * 0.4 -
+      creditCardLimit -
+      consumerLoans -
+      mortgageLoans -
+      leasingAmount;
+    this.monthlyPaymentResult =
+      monthlyPaymentResult > 0 ? monthlyPaymentResult : 0;
     console.log(this.monthlyPaymentResult);
   }
 }
