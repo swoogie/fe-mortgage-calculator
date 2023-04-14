@@ -74,7 +74,7 @@ export class MonthlyCalcComponent implements OnInit {
     const obligations: number = Number(
       this.monthlyForm.get('obligations').value
     );
-    this.monthlyPaymentResult = (income - obligations) * 0.4;
+    this.monthlyPaymentResult = income * 0.4 - obligations;
     console.log(this.monthlyPaymentResult);
   }
 }
