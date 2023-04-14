@@ -1,0 +1,10 @@
+.not-found{
+    background-image: url('./random.jpg');
+    background-size: cover;
+}
+.not-found-message{
+    content: to-upper-case($string: "not found!");
+    text-align: center;
+    color: aqua;
+
+}
