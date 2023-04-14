@@ -19,6 +19,7 @@ import { LoginComponent } from './login/login.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -45,8 +46,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     FormsModule,
     MatFormFieldModule,
     MatSnackBarModule,
+    MatRadioModule,
   ],
   providers: [MatSnackBarModule],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

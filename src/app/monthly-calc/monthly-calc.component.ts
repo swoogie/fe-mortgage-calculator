@@ -19,8 +19,13 @@ export class MonthlyCalcComponent implements OnInit {
       applicants: ['', Validators.required],
       amountOfKids: ['', Validators.required],
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-      obligations: ['', Validators.pattern('[0-9]*')],
       monthlyPayment: [{ value: '', disabled: this.isDisabled }],
+      obligation: [false as boolean, Validators.required],
+      mortgageLoans: ['', Validators.required],
+      consumerLoans: ['', Validators.required],
+      leasingAmount: ['', Validators.required],
+      creditCardLimit: ['', Validators.required],
+
     },
     { updateOn: 'change' }
   );
@@ -32,12 +37,6 @@ export class MonthlyCalcComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.monthlyForm.get('income').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm.get('obligations').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
   }
 
   positionOptions: TooltipPosition[] = [
@@ -61,13 +60,26 @@ export class MonthlyCalcComponent implements OnInit {
   get income() {
     return this.monthlyForm.get('income');
   }
-  get obligations() {
-    return this.monthlyForm.get('obligations');
+  get obligation() {
+    return this.monthlyForm.get('obligation');
   }
 
   get interestRate() {
     return this.monthlyForm.get('interestRate');
   }
+  get mortgageLoan() {
+    return this.monthlyForm.get('mortgageLoans');
+  }
+  get consumerLoans() {
+    return this.monthlyForm.get('consumerLoans');
+  }
+  get leasingAmount() {
+    return this.monthlyForm.get('leasingAmount');
+  }
+  get creditCardLimit() {
+    return this.monthlyForm.get('creditCardLimit');
+  }
+
 
   monthlyPayment() {
     const income: number = Number(this.monthlyForm.get('income').value);
