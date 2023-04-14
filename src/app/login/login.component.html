@@ -1,20 +1,38 @@
 <body class ="login-container">
-    <div >
-        <form>          
-            <label for="firstname">First Name:</label>
-            <input type="text" id="firstname" name="firstname"><br><br>
-          
-            <label for="lastname">Last Name:</label>
-            <input type="text" id="lastname" name="lastname"><br><br>
-          
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email"><br><br>
-          
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password"><br><br>
-          
-            <input type="submit" value="Submit">
-          </form>
-          
+    <div class ="form-container">
+        <h2>PLEASE ENTER YOUR ADMIN/USER LOGIN DETAILS</h2>
+        
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+                <mat-form-field appearance="fill">
+                    <mat-label for="firstname">First Name:</mat-label>
+                    <input type="text" matInput id="firstname" name="firstname"><br><br>
+                    <mat-hint> Please insert your first name </mat-hint>
+                    <mat-error *ngIf="form.get('firstname').invalid && (form.get('firstname').dirty || form.get('firstname').touched)">Please enter your First Name</mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="fill">
+                    <mat-label for="Lastname">Last Name:</mat-label>
+                    <input type="text" matInput id="lastname" name="lastname"><br><br>
+                    <mat-hint> Please insert your last name </mat-hint>
+                    <mat-error *ngIf="form.get('lastname').invalid && (form.get('lastname').dirty || form.get('lastname').touched)">Please enter your Last Name</mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="fill">
+                    <mat-label for="email">Email:</mat-label>
+                    <input type="email" matInput id="email" name="email"><br><br>
+                    <mat-hint> Please insert your Email address </mat-hint>
+                    <mat-error *ngIf="form.get('email').invalid && (form.get('email').dirty || form.get('email').touched)">Please enter a valid email address</mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="fill">
+                    <mat-label for="password">Password:</mat-label>
+                    <input type="password" matInput id="password" name="password"><br><br>
+                    <mat-hint> Please insert your password </mat-hint>
+                  </mat-form-field>
+              
+              
+            </form>
+            <button mat-raised-button >Login</button>
     </div>
 </body>
