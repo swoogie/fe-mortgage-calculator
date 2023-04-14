@@ -48,12 +48,17 @@
           >help_outline</mat-icon
         >
       </mat-form-field>
-
       <mat-form-field class="input-wrap">
         <mat-label>Monthly Payment</mat-label>
         <input matInput formControlName="monthlyPayment" />
-        <div *ngIf="monthlyPaymentResult">
-          Your monthly payment is {{ monthlyPaymentResult | number : "1.2-2" }}
+        <div *ngIf="monthlyPaymentResult !== null">
+          <ng-container *ngIf="monthlyPaymentResult >= 0">
+            Your monthly payment amount is
+            {{ monthlyPaymentResult | number : "1.2-2" }}
+          </ng-container>
+          <ng-container *ngIf="monthlyPaymentResult < 0">
+            <div>No monthly payment available</div>
+          </ng-container>
         </div>
       </mat-form-field>
     </div>
