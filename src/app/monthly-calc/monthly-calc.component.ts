@@ -11,11 +11,11 @@ const fb = new FormBuilder().nonNullable;
 })
 export class MonthlyCalcComponent implements OnInit {
   optionValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  labels = [
-    'Mortgage Loans',
-    'Consumer Loans',
-    'Leasing Amount',
-    'Credit Card Limit',
+  fields = [
+    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
+    { label: 'Consumer Loans', controlName: 'consumerLoans' },
+    { label: 'Leasing Amount', controlName: 'leasingAmount' },
+    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
   ];
   monthlyPaymentResult: number;
   isDisabled: boolean = true;
@@ -27,10 +27,10 @@ export class MonthlyCalcComponent implements OnInit {
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
       monthlyPayment: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
-      mortgageLoans: [''],
-      consumerLoans: [''],
-      leasingAmount: [''],
-      creditCardLimit: [''],
+      mortgageLoans: ['', Validators.pattern('[0-9]*')],
+      consumerLoans: ['', Validators.pattern('[0-9]*')],
+      leasingAmount: ['', Validators.pattern('[0-9]*')],
+      creditCardLimit: ['', Validators.pattern('[0-9]*')],
     },
     { updateOn: 'change' }
   );
