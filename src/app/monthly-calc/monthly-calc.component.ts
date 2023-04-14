@@ -10,8 +10,9 @@ const fb = new FormBuilder().nonNullable;
   styleUrls: ['./monthly-calc.component.scss'],
 })
 export class MonthlyCalcComponent implements OnInit {
-  public kidsAmount = 10;
-  public applicantAmount = 2;
+  optionValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  monthlyPaymentResult: number;
+  isDisabled: boolean = true;
 
   monthlyForm = fb.group(
     {
@@ -19,6 +20,7 @@ export class MonthlyCalcComponent implements OnInit {
       amountOfKids: ['', Validators.required],
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
       obligations: ['', Validators.pattern('[0-9]*')],
+      monthlyPayment: [{ value: '', disabled: this.isDisabled }],
     },
     { updateOn: 'change' }
   );
@@ -29,7 +31,15 @@ export class MonthlyCalcComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.monthlyForm.get('income').valueChanges.subscribe((res: any) => {
+      this.monthlyPayment();
+    });
+    this.monthlyForm.get('obligations').valueChanges.subscribe((res: any) => {
+      this.monthlyPayment();
+    });
+  }
+
   positionOptions: TooltipPosition[] = [
     'after',
     'before',
@@ -53,5 +63,18 @@ export class MonthlyCalcComponent implements OnInit {
   }
   get obligations() {
     return this.monthlyForm.get('obligations');
+  }
+
+  get interestRate() {
+    return this.monthlyForm.get('interestRate');
+  }
+
+  monthlyPayment() {
+    const income: number = Number(this.monthlyForm.get('income').value);
+    const obligations: number = Number(
+      this.monthlyForm.get('obligations').value
+    );
+    this.monthlyPaymentResult = (income - obligations) * 0.4;
+    console.log(this.monthlyPaymentResult);
   }
 }
