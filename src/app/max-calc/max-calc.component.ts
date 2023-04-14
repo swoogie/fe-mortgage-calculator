@@ -14,11 +14,14 @@ const fb = new FormBuilder().nonNullable;
 export class MaxCalcComponent {
   maxRealEstatePrice: number = 3000000;
   minRealEstatePrice: number = 10000;
+  minLoanAmount: number = 0;
+  minLoanTerm: number = 1;
+  maxLoanTerm: number = 30;
 
   maxCalcForm = fb.group(
     {
       realEstatePrice: [
-        ,
+        this.minRealEstatePrice as number,
         [
           Validators.required,
           Validators.pattern('[0-9]*'),
@@ -26,38 +29,72 @@ export class MaxCalcComponent {
           Validators.min(this.minRealEstatePrice),
         ],
       ],
-      downpayment: [, [Validators.required, Validators.pattern('[0-9]*')]],
-      loanAmount: [, [Validators.required, Validators.pattern('[0-9]*')]],
-      loanTerm: [, [Validators.required, Validators.pattern('[0-9]*')]],
+      downpayment: [
+        null as number,
+        [Validators.required, Validators.pattern('[0-9]*')],
+      ],
+      loanAmount: [
+        0 as number,
+        [
+          Validators.required,
+          Validators.pattern('[0-9]*'),
+          Validators.min(this.minLoanAmount),
+        ],
+      ],
+      loanTerm: [
+        this.minLoanTerm,
+        [
+          Validators.required,
+          Validators.pattern('[0-9]*'),
+          Validators.min(this.minLoanTerm),
+          Validators.max(this.maxLoanTerm),
+        ],
+      ],
       interestRate: [,],
       paymentScheduleType: [, [Validators.required]],
     },
     { updateOn: 'change' }
   );
 
-  maxLoanTerm: number = 30;
-  minLoanTerm: number = 1;
-
-  maxLoanAmount: number = this.realEstatePrice.value * 0.85;
-  minLoanAmount: number = 0;
   paymentSchedules: number[] = [3, 6, 12];
-
+  maxLoanAmount: number = this.realEstatePrice.value * 0.85;
   constructor(private _snackBar: MatSnackBar) {
+    this.loanAmount.addValidators(Validators.max(this.maxLoanAmount));
     this.maxCalcForm.valueChanges.pipe(debounceTime(50)).subscribe((value) => {
-      // console.log(value.realEstatePrice);
-      // console.log('form changed', value);
       this.maxLoanAmount = Math.round(value.realEstatePrice * 0.85);
+      this.loanAmount.setValidators(Validators.max(this.maxLoanAmount));
     });
 
-    this.loanAmount.valueChanges.subscribe((value) => {
-      console.log(value);
-      if (value == this.maxLoanAmount) {
+    this.loanAmount.valueChanges.pipe(debounceTime(1)).subscribe((value) => {
+      if (this.realEstatePrice.value && value >= this.maxLoanAmount) {
         this._snackBar.open('Max loan is 85% of real estate price', '', {
           duration: 2000,
         });
       }
-      this.downpayment.setValue((this.realEstatePrice.value - value) as never);
-      console.log(this.downpayment.value);
+      if (this.realEstatePrice.value && value > this.maxLoanAmount) {
+        this.loanAmount.setValue(this.maxLoanAmount);
+      }
+      if (
+        this.loanAmount.value &&
+        this.loanAmount.valid &&
+        value <= this.maxLoanAmount
+      ) {
+        this.downpayment.setValue(this.realEstatePrice.value - value);
+      }
+      if (!this.loanAmount.value) {
+        this.downpayment.setValue(null);
+      }
+    });
+
+    this.loanTerm.valueChanges.subscribe((value: number) => {
+      if (value >= this.maxLoanTerm) {
+        this._snackBar.open(`Max loan term is ${this.maxLoanTerm} years`, '', {
+          duration: 2000,
+        });
+      }
+      if (value > this.maxLoanTerm) {
+        this.loanTerm.setValue(this.maxLoanTerm);
+      }
     });
 
     this.paymentScheduleType.valueChanges.subscribe((value) => {
