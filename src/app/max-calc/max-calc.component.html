@@ -23,33 +23,46 @@
 
       <div class="slider-cont">
         <label id="slider-label" class="slider-label">Loan amount </label>
-        <label class="slider-value-label">
-          {{ loanAmount.value || minLoanAmount | currency : "EUR" }}
-        </label>
+        <input
+          matInput
+          formControlName="loanAmount"
+          [value]="loanAmount.value"
+        />
+        <label>€</label>
       </div>
       <mat-slider
         class="slider-margin"
         [max]="maxLoanAmount"
         [min]="minLoanAmount"
-        [step]="1000"
+        [step]="500"
       >
-        <input matSliderThumb formControlName="loanAmount" />
+        <input
+          matSliderThumb
+          formControlName="loanAmount"
+          [value]="loanAmount.value"
+        />
       </mat-slider>
 
       <div class="slider-cont">
         <label id="slider-label" class="slider-label">Loan term</label>
-        <label class="slider-value-label"
-          >{{ loanTerm.value || minLoanTerm }} months
+        <input matInput formControlName="loanTerm" [value]="loanTerm.value" />
+        <label class="slider-value-label" *ngIf="loanTerm.value == 0"
+          >Years
+        </label>
+        <label class="slider-value-label" *ngIf="loanTerm.value > 1"
+          >Years
+        </label>
+        <label class="slider-value-label" *ngIf="loanTerm.value == 1"
+          >Year
         </label>
       </div>
       <mat-slider class="slider-margin" [max]="maxLoanTerm" [min]="minLoanTerm">
-        <input matSliderThumb formControlName="loanTerm" />
+        <input
+          matSliderThumb
+          formControlName="loanTerm"
+          [value]="loanTerm.value"
+        />
       </mat-slider>
-
-      <mat-form-field class="input-wrap">
-        <mat-label>Down payment</mat-label>
-        <input matInput formControlName="downpayment" id="downpayment" />
-      </mat-form-field>
 
       <mat-form-field class="input-wrap">
         <mat-label>Euribor</mat-label>
@@ -59,7 +72,10 @@
           >
         </mat-select>
       </mat-form-field>
-
+      <mat-form-field class="input-wrap">
+        <mat-label>Down payment</mat-label>
+        <input matInput formControlName="downpayment" id="downpayment" />
+      </mat-form-field>
       <mat-form-field class="input-wrap">
         <mat-label>Interest Rate</mat-label>
         <input matInput formControlName="interestRate" />
