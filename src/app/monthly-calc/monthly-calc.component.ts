@@ -41,7 +41,25 @@ export class MonthlyCalcComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.monthlyForm.get('income').valueChanges.subscribe((res: any) => {
+      this.monthlyPayment();
+    });
+    this.monthlyForm.get('mortgageLoans').valueChanges.subscribe((res: any) => {
+      this.monthlyPayment();
+    });
+    this.monthlyForm.get('consumerLoans').valueChanges.subscribe((res: any) => {
+      this.monthlyPayment();
+    });
+    this.monthlyForm.get('leasingAmount').valueChanges.subscribe((res: any) => {
+      this.monthlyPayment();
+    });
+    this.monthlyForm
+      .get('creditCardLimit')
+      .valueChanges.subscribe((res: any) => {
+        this.monthlyPayment();
+      });
+  }
   onSubmit() {
     if (this.monthlyForm.valid) {
       // submit form data
