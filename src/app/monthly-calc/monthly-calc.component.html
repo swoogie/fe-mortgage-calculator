@@ -32,21 +32,12 @@
         </mat-error>
         <mat-error *ngIf="income && income.hasError('pattern')">Please enter a number</mat-error>
       </mat-form-field>
+      <div class="obligationContainer">
+        <mat-label class="block">Do you have any obligations?</mat-label>
+        <mat-icon matSuffix matTooltip="Represent any outstanding debts or regular payments that a party must make."
+          [matTooltipPosition]="'right'">help_outline</mat-icon>
+      </div>
 
-      <!-- <mat-form-field class="input-wrap">
-        <mat-label>Obligations</mat-label>
-        <input matInput formControlName="obligations" />
-        <mat-error *ngIf="obligations && obligations.hasError('pattern')">
-          Please enter a number
-        </mat-error>
-        <mat-icon
-          matSuffix
-          matTooltip="Represent any outstanding debts or regular payments that a party must make."
-          [matTooltipPosition]="'right'"
-          >help_outline</mat-icon
-        >
-      </mat-form-field> -->
-      <mat-label class="block">Do you have any obligations?</mat-label>
       <mat-radio-group aria-label="Select an option" formControlName="obligation">
         <mat-radio-button [value]="false" checked>No</mat-radio-button>
         <mat-radio-button [value]="true ">Yes</mat-radio-button>
