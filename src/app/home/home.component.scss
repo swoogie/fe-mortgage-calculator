@@ -1,0 +1,30 @@
+.home-container{
+    background-image: url('./mortgage-background-image.jpg');
+    background-size: cover;
+    
+    .slider-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+      }
+      
+      .slider-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color:blueviolet;
+        font-size: 24px;
+        background-color: coral;
+        padding: 10px;
+      }
+
+      
+      
+      
+      
+      
+      
+      
+      
+}
