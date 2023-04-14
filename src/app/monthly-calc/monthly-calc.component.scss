@@ -17,8 +17,11 @@
     margin-right: 10px;
   }
 
-  .block {
-    display: block;
+  .obligationContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
   }
 
 }

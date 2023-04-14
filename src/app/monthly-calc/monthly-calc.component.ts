@@ -21,10 +21,10 @@ export class MonthlyCalcComponent implements OnInit {
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
       monthlyPayment: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
-      mortgageLoans: ['', Validators.required],
-      consumerLoans: ['', Validators.required],
-      leasingAmount: ['', Validators.required],
-      creditCardLimit: ['', Validators.required],
+      mortgageLoans: [''],
+      consumerLoans: [''],
+      leasingAmount: [''],
+      creditCardLimit: [''],
 
     },
     { updateOn: 'change' }
@@ -37,6 +37,13 @@ export class MonthlyCalcComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+  onSubmit() {
+    if (this.monthlyForm.valid) {
+      // submit form data
+    } else {
+      this.monthlyForm.markAllAsTouched(); // mark all fields as touched to trigger validation messages
+    }
   }
 
   positionOptions: TooltipPosition[] = [
@@ -67,7 +74,7 @@ export class MonthlyCalcComponent implements OnInit {
   get interestRate() {
     return this.monthlyForm.get('interestRate');
   }
-  get mortgageLoan() {
+  get mortgageLoans() {
     return this.monthlyForm.get('mortgageLoans');
   }
   get consumerLoans() {
