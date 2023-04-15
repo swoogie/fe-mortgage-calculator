@@ -59,6 +59,14 @@ export class MonthlyCalcComponent implements OnInit {
       .valueChanges.subscribe((res: any) => {
         this.monthlyPayment();
       });
+    this.monthlyForm.get('obligation').valueChanges.subscribe((value) => {
+      if (!value) {
+        this.monthlyForm.get('mortgageLoans').reset();
+        this.monthlyForm.get('consumerLoans').reset();
+        this.monthlyForm.get('leasingAmount').reset();
+        this.monthlyForm.get('creditCardLimit').reset();
+      }
+    });
   }
   onSubmit() {
     if (this.monthlyForm.valid) {
