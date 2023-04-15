@@ -11,13 +11,12 @@
           Please choose an option
         </mat-error>
       </mat-form-field>
-
       <mat-form-field appearance="fill" class="input-wrap">
         <mat-label>Number of children</mat-label>
         <mat-select formControlName="amountOfKids">
           <mat-option *ngFor="let i of optionValues" [value]="i">{{
             i
-            }}</mat-option>
+          }}</mat-option>
         </mat-select>
         <mat-error *ngIf="amountOfKids && amountOfKids.hasError('required')">
           Please choose an option
@@ -30,44 +29,47 @@
         <mat-error *ngIf="income && income.hasError('required')">
           Please insert the income
         </mat-error>
-        <mat-error *ngIf="income && income.hasError('pattern')">Please enter a number</mat-error>
+        <mat-error *ngIf="income && income.hasError('pattern')"
+          >Please enter a number</mat-error
+        >
       </mat-form-field>
       <div class="obligationContainer">
         <mat-label class="block">Do you have any obligations?</mat-label>
-        <mat-icon matSuffix matTooltip="Represent any outstanding debts or regular payments that a party must make."
-          [matTooltipPosition]="'right'">help_outline</mat-icon>
+        <mat-icon
+          matSuffix
+          matTooltip="Represent any outstanding debts or regular payments that a party must make."
+          [matTooltipPosition]="'right'"
+          >help_outline</mat-icon
+        >
       </div>
-
-      <mat-radio-group aria-label="Select an option" formControlName="obligation">
+      <mat-radio-group
+        aria-label="Select an option"
+        formControlName="obligation"
+      >
         <mat-radio-button [value]="false" checked>No</mat-radio-button>
-        <mat-radio-button [value]="true ">Yes</mat-radio-button>
+        <mat-radio-button [value]="true">Yes</mat-radio-button>
       </mat-radio-group>
-
       <div *ngIf="obligation.value == true">
-        <mat-form-field class="input-wrap">
-          <mat-label>Mortgage Loans</mat-label>
-          <input matInput formControlName="mortgageLoans" />
-        </mat-form-field>
-        <mat-form-field class="input-wrap">
-          <mat-label>Consumer Loans</mat-label>
-          <input matInput formControlName="consumerLoans" />
-        </mat-form-field>
-        <mat-form-field class="input-wrap">
-          <mat-label>Leasing Amount</mat-label>
-          <input matInput formControlName="leasingAmount" />
-        </mat-form-field>
-        <mat-form-field class="input-wrap">
-          <mat-label>Credit Card Limit</mat-label>
-          <input matInput formControlName="creditCardLimit" />
-        </mat-form-field>
+        <ng-container *ngFor="let field of fields">
+          <mat-form-field class="input-wrap">
+            <mat-label>{{ field.label }}</mat-label>
+            <input matInput formControlName="{{ field.controlName }}" />
+          </mat-form-field>
+          <mat-error
+            *ngIf="
+              monthlyForm.get(field.controlName) &&
+              monthlyForm.get(field.controlName).hasError('pattern')
+            "
+          >
+            Please enter a number
+          </mat-error>
+        </ng-container>
       </div>
-
-
       <mat-form-field class="input-wrap">
         <mat-label>Monthly Payment</mat-label>
         <input matInput formControlName="monthlyPayment" />
-        <div *ngIf="monthlyPaymentResult">
-          Your monthly payment is {{ monthlyPaymentResult | number : "1.2-2" }}
+        <div>
+          {{ monthlyPaymentResult | number : "1.2-2" }}
         </div>
       </mat-form-field>
     </div>
