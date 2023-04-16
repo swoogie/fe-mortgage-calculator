@@ -104,8 +104,8 @@
         aria-label="Payment schedule options"
         formControlName="paymentScheduleType"
       >
-        <mat-radio-button value="Annuity">Annuity</mat-radio-button>
-        <mat-radio-button value="Linear">Linear</mat-radio-button>
+        <mat-radio-button value="annuity">Annuity</mat-radio-button>
+        <mat-radio-button value="linear">Linear</mat-radio-button>
       </mat-radio-group>
 
       <mat-form-field class="input-wrap">
@@ -122,4 +122,13 @@
       <button mat-raised-button>Apply</button>
     </div>
   </form>
+  <mat-label *ngIf="linearTotal"
+    >With linear payments by the end of your mortgage you'll have paid off:
+    {{ linearTotal }} € <br
+  /></mat-label>
+
+  <mat-label *ngIf="annuityTotal"
+    >With annuity payments by the end of your mortgage you'll have paid off:
+    {{ annuityTotal }} € <br
+  /></mat-label>
 </div>

@@ -6,6 +6,7 @@ import { debounceTime } from 'rxjs';
 import { Euribor } from '../interfaces/euribor';
 import { ApiService } from '../services/api.service';
 import { Constants } from '../interfaces/constants';
+import { MaxcalculationsService } from '../services/maxcalculations.service';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -74,14 +75,18 @@ export class MaxCalcComponent {
           (this.euriborValues[0].interestRate + this.baseInterest).toFixed(3)
         ) as number,
       ],
-      paymentScheduleType: ['Annuity' as string, [Validators.required]],
+      paymentScheduleType: ['annuity' as string, [Validators.required]],
       euribor: [this.euriborValues[0] as Euribor, [Validators.required]],
     },
     { updateOn: 'change' }
   );
 
   maxLoanAmount: number = this.realEstatePrice.value * 0.85;
-  constructor(private _snackBar: MatSnackBar, private api: ApiService) {
+  constructor(
+    private _snackBar: MatSnackBar,
+    private api: ApiService,
+    private calcService: MaxcalculationsService
+  ) {
     this.loanAmount.addValidators(Validators.max(this.maxLoanAmount));
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(10))
@@ -154,12 +159,23 @@ export class MaxCalcComponent {
   ngOnInit() {
     this.api.getConstants().subscribe((constants) => {
       this.constants = constants;
-      console.log(this.constants);
     });
   }
-
+  linearTotal: number;
+  annuityTotal: number;
   calculateMax() {
-    throw new Error('Method not implemented.');
+    if (this.maxCalcForm && this.paymentScheduleType.value == 'linear') {
+      this.linearTotal = this.calcService.calculateLinearTotal(
+        this.maxCalcForm
+      );
+      console.log('linear total: ', this.linearTotal);
+    }
+    if (this.maxCalcForm && this.paymentScheduleType.value == 'annuity') {
+      this.annuityTotal = this.calcService.calculateAnnuityTotal(
+        this.maxCalcForm
+      );
+      console.log('annuity total: ', this.annuityTotal);
+    }
   }
 
   overwriteIfLess() {
