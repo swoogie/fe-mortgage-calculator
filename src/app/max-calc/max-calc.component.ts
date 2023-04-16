@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime } from 'rxjs';
+import { Euribor } from '../interfaces/euribor';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -12,11 +13,26 @@ const fb = new FormBuilder().nonNullable;
   styleUrls: ['./max-calc.component.scss'],
 })
 export class MaxCalcComponent {
-  maxRealEstatePrice: number = 3000000;
+  maxRealEstatePrice: number = 1000000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 0;
   minLoanTerm: number = 1;
   maxLoanTerm: number = 30;
+  baseInterest: number = 2.5;
+  euriborValues: Euribor[] = [
+    {
+      timeInMonths: 3,
+      interestRate: 3.108,
+    },
+    {
+      timeInMonths: 6,
+      interestRate: 3.356,
+    },
+    {
+      timeInMonths: 12,
+      interestRate: 3.582,
+    },
+  ];
 
   maxCalcForm = fb.group(
     {
@@ -50,22 +66,38 @@ export class MaxCalcComponent {
           Validators.max(this.maxLoanTerm),
         ],
       ],
-      interestRate: [,],
-      paymentScheduleType: [, [Validators.required]],
+      interestRate: [
+        parseFloat(
+          (this.euriborValues[0].interestRate + this.baseInterest).toFixed(3)
+        ) as number,
+      ],
+      paymentScheduleType: ['Annuity' as string, [Validators.required]],
+      euribor: [this.euriborValues[0] as Euribor, [Validators.required]],
     },
     { updateOn: 'change' }
   );
 
-  paymentSchedules: number[] = [3, 6, 12];
   maxLoanAmount: number = this.realEstatePrice.value * 0.85;
   constructor(private _snackBar: MatSnackBar) {
     this.loanAmount.addValidators(Validators.max(this.maxLoanAmount));
-    this.maxCalcForm.valueChanges.pipe(debounceTime(50)).subscribe((value) => {
-      this.maxLoanAmount = Math.round(value.realEstatePrice * 0.85);
-      this.loanAmount.setValidators(Validators.max(this.maxLoanAmount));
-    });
+    this.realEstatePrice.valueChanges
+      .pipe(debounceTime(10))
+      .subscribe((value) => {
+        this.maxLoanAmount = Math.round(value * 0.85);
+        this.loanAmount.setValidators(Validators.max(this.maxLoanAmount));
+        if (value > this.maxRealEstatePrice) {
+          this.realEstatePrice.setValue(this.maxRealEstatePrice);
+          this._snackBar.open(
+            `Max real estate price is ${this.maxRealEstatePrice} €`,
+            '',
+            {
+              duration: 2000,
+            }
+          );
+        }
+      });
 
-    this.loanAmount.valueChanges.pipe(debounceTime(1)).subscribe((value) => {
+    this.loanAmount.valueChanges.pipe(debounceTime(10)).subscribe((value) => {
       if (this.realEstatePrice.value && value >= this.maxLoanAmount) {
         this._snackBar.open('Max loan is 85% of real estate price', '', {
           duration: 2000,
@@ -97,28 +129,10 @@ export class MaxCalcComponent {
       }
     });
 
-    this.paymentScheduleType.valueChanges.subscribe((value) => {
-      console.log('bonjourno', value);
-      switch (value) {
-        case 3:
-          this.maxCalcForm
-            .get('interestRate')
-            .setValue((2.5 + 3.108).toFixed(3));
-          break;
-        case 6:
-          this.maxCalcForm
-            .get('interestRate')
-            .setValue((2.5 + 3.356).toFixed(3));
-          break;
-        case 12:
-          this.maxCalcForm
-            .get('interestRate')
-            .setValue((2.5 + 3.582).toFixed(3));
-          break;
-        default:
-      }
-
-      console.log('after value', this.maxCalcForm.value);
+    this.euribor.valueChanges.subscribe((value) => {
+      this.interestRate.setValue(
+        parseFloat((value.interestRate + this.baseInterest).toFixed(3))
+      );
     });
 
     this.realEstatePrice.valueChanges
@@ -135,6 +149,27 @@ export class MaxCalcComponent {
   }
 
   ngOnInit() {}
+
+  overwriteIfLess() {
+    if (this.realEstatePrice.value < this.minRealEstatePrice) {
+      this.realEstatePrice.setValue(this.minRealEstatePrice);
+      this._snackBar.open(
+        `Min real estate price is ${this.minRealEstatePrice} €`,
+        '',
+        {
+          duration: 2000,
+        }
+      );
+    }
+
+    if (this.loanAmount.value < this.minLoanAmount) {
+      this.loanAmount.setValue(this.minLoanAmount);
+      this._snackBar.open(`Loan amount cannot be negative`, '', {
+        duration: 2000,
+      });
+    }
+  }
+
   positionOptions: TooltipPosition[] = [
     'after',
     'before',
@@ -145,6 +180,10 @@ export class MaxCalcComponent {
   ];
   position = this.positionOptions[2];
   realEst: number;
+
+  get euribor() {
+    return this.maxCalcForm.get('euribor');
+  }
 
   get realEstatePrice() {
     return this.maxCalcForm.get('realEstatePrice');

@@ -2,34 +2,46 @@
   <form [formGroup]="maxCalcForm">
     <div class="cal-div">
       <mat-form-field class="input-wrap">
-        <mat-label>Real Estate Price</mat-label>
+        <mat-label>Real Estate Price €</mat-label>
         <input
           matInput
           formControlName="realEstatePrice"
           id="realEstatePrice"
+          (blur)="overwriteIfLess()"
         />
         <mat-error
-          *ngIf="realEstatePrice && realEstatePrice.hasError('required')"
+          *ngIf="
+            realEstatePrice &&
+            (realEstatePrice.hasError('required') ||
+              realEstatePrice.hasError('pattern'))
+          "
         >
-          Please choose an option
+          Please enter a number
         </mat-error>
         <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('max')">
-          Max is 3,000,000
+          Max is {{ maxRealEstatePrice }}
         </mat-error>
         <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('min')">
-          Min is 10,000
+          Min is {{ minRealEstatePrice }}
         </mat-error>
       </mat-form-field>
-
-      <div class="slider-cont">
-        <label id="slider-label" class="slider-label">Loan amount </label>
+      <mat-form-field class="input-wrap">
+        <mat-label>Loan amount €</mat-label>
         <input
           matInput
           formControlName="loanAmount"
           [value]="loanAmount.value"
+          (blur)="overwriteIfLess()"
         />
-        <label>€</label>
-      </div>
+        <mat-error
+          *ngIf="
+            loanAmount &&
+            (loanAmount.hasError('pattern') || loanAmount.hasError('required'))
+          "
+        >
+          Please enter a number
+        </mat-error>
+      </mat-form-field>
       <mat-slider
         class="slider-margin"
         [max]="maxLoanAmount"
@@ -43,19 +55,18 @@
         />
       </mat-slider>
 
-      <div class="slider-cont">
-        <label id="slider-label" class="slider-label">Loan term</label>
-        <input matInput formControlName="loanTerm" [value]="loanTerm.value" />
-        <label class="slider-value-label" *ngIf="loanTerm.value == 0"
-          >Years
-        </label>
-        <label class="slider-value-label" *ngIf="loanTerm.value > 1"
-          >Years
-        </label>
-        <label class="slider-value-label" *ngIf="loanTerm.value == 1"
-          >Year
-        </label>
-      </div>
+      <mat-form-field class="input-wrap">
+        <mat-label>Loan term years</mat-label>
+        <input
+          matInput
+          formControlName="loanTerm"
+          [value]="loanTerm.value"
+          (blur)="overwriteIfLess()"
+        />
+        <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+          Please enter a number
+        </mat-error>
+      </mat-form-field>
       <mat-slider class="slider-margin" [max]="maxLoanTerm" [min]="minLoanTerm">
         <input
           matSliderThumb
@@ -66,12 +77,37 @@
 
       <mat-form-field class="input-wrap">
         <mat-label>Euribor</mat-label>
-        <mat-select formControlName="paymentScheduleType">
-          <mat-option *ngFor="let months of paymentSchedules" [value]="months"
-            >{{ months }} months</mat-option
+        <mat-select formControlName="euribor">
+          <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
+            >{{ euribor.timeInMonths }} Months -
+            {{ euribor.interestRate }}%</mat-option
           >
         </mat-select>
       </mat-form-field>
+      <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+        Please enter a number
+      </mat-error>
+
+      <div class="obligationContainer">
+        <mat-label class="block">Payment Schedule Type</mat-label>
+        <mat-icon
+          matSuffix
+          [matTooltip]="
+            'Annuity - identical monthly installments;
+             Linear - identical monthly principle, interest is calculated on outstanding principle'
+          "
+          [matTooltipPosition]="'right'"
+          fontIcon="help_outline"
+        ></mat-icon>
+      </div>
+      <mat-radio-group
+        aria-label="Payment schedule options"
+        formControlName="paymentScheduleType"
+      >
+        <mat-radio-button value="Annuity">Annuity</mat-radio-button>
+        <mat-radio-button value="Linear">Linear</mat-radio-button>
+      </mat-radio-group>
+
       <mat-form-field class="input-wrap">
         <mat-label>Down payment</mat-label>
         <input matInput formControlName="downpayment" id="downpayment" />
