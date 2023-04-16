@@ -1,5 +1,5 @@
 <div class="container">
-  <form [formGroup]="monthlyForm">
+  <form [formGroup]="monthlyForm" (ngSubmit)="onSubmit()">
     <div class="monthly-cal">
       <mat-form-field appearance="fill" class="input-wrap">
         <mat-label>Number of applicants</mat-label>
@@ -78,15 +78,22 @@
         </div>
       </mat-form-field>
     </div>
+    <div class="btn-wrap">
+      <button
+        class="btn-calculate"
+        mat-raised-button
+        (click)="monthlyPayment()"
+      >
+        Calculate
+      </button>
+      <button
+        mat-raised-button
+        *ngIf="monthlyPaymentResult > 0 && calculateBtnPushed"
+        (click)="monthlyPayment()"
+        type="submit"
+      >
+        Apply
+      </button>
+    </div>
   </form>
-  <button class="btn-calculate" mat-raised-button (click)="monthlyPayment()">
-    Calculate
-  </button>
-  <button
-    mat-raised-button
-    *ngIf="monthlyPaymentResult > 0 && calculateBtnPushed"
-    (click)="monthlyPayment()"
-  >
-    Apply
-  </button>
 </div>

@@ -99,28 +99,39 @@ export class MonthlyCalcComponent implements OnInit {
   }
 
   monthlyPayment() {
-    this.formSubmitted = true;
-    const income = Number(this.monthlyForm.get('income').value);
-    const creditCardLimit = Number(
-      this.monthlyForm.get('creditCardLimit').value || 0
-    );
-    const leasingAmount = Number(
-      this.monthlyForm.get('leasingAmount').value || 0
-    );
-    const consumerLoans = Number(
-      this.monthlyForm.get('consumerLoans').value || 0
-    );
-    const mortgageLoans = Number(
-      this.monthlyForm.get('mortgageLoans').value || 0
-    );
+    if (this.monthlyForm.valid) {
+      this.formSubmitted = true;
+      const income = Number(this.monthlyForm.get('income').value);
+      const creditCardLimit = Number(
+        this.monthlyForm.get('creditCardLimit').value || 0
+      );
+      const leasingAmount = Number(
+        this.monthlyForm.get('leasingAmount').value || 0
+      );
+      const consumerLoans = Number(
+        this.monthlyForm.get('consumerLoans').value || 0
+      );
+      const mortgageLoans = Number(
+        this.monthlyForm.get('mortgageLoans').value || 0
+      );
 
-    const totalObligations = this.monthlyForm.get('obligation').value
-      ? creditCardLimit + consumerLoans + mortgageLoans + leasingAmount
-      : 0;
-    this.monthlyPaymentResult =
-      totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4;
-    console.log(this.monthlyPaymentResult);
-    this.calculateBtnPushed = true;
+      const mortgageMonthly =
+        (mortgageLoans * (0.055 / 12)) / (1 - Math.pow(1 + 0.055 / 12, -300));
+      const leasingMonthly =
+        (leasingAmount * (0.07 / 12)) / (1 - Math.pow(1 + 0.07 / 12, -60));
+      const consumerMonthly =
+        (consumerLoans * (0.1 / 12)) / (1 - Math.pow(1 + 0.1 / 12, -60));
+      const creditCardMonthly = creditCardLimit / 36;
+
+      const totalObligations = this.monthlyForm.get('obligation').value
+        ? creditCardMonthly + consumerMonthly + mortgageMonthly + leasingMonthly
+        : 0;
+      this.monthlyPaymentResult =
+        totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4;
+
+      console.log(this.monthlyPaymentResult);
+      this.calculateBtnPushed = true;
+    }
   }
 
   onInputChanged() {
