@@ -168,13 +168,11 @@ export class MaxCalcComponent {
       this.linearTotal = this.calcService.calculateLinearTotal(
         this.maxCalcForm
       );
-      console.log('linear total: ', this.linearTotal);
     }
     if (this.maxCalcForm && this.paymentScheduleType.value == 'annuity') {
       this.annuityTotal = this.calcService.calculateAnnuityTotal(
         this.maxCalcForm
       );
-      console.log('annuity total: ', this.annuityTotal);
     }
   }
 
