@@ -67,15 +67,20 @@
       </div>
       <mat-form-field class="input-wrap">
         <mat-label>Monthly Payment</mat-label>
-        <input matInput formControlName="monthlyPayment" />
+        <input
+          matInput
+          formControlName="monthlyPayment"
+          (keyup.enter)="monthlyPayment()"
+        />
         <div>
-          {{ monthlyPaymentResult | number : "1.2-2" }}
+          {{
+            monthlyPaymentResult === 0
+              ? "Insufficient Income"
+              : (monthlyPaymentResult | number : "1.2-2")
+          }}
         </div>
       </mat-form-field>
     </div>
   </form>
-  <button class="btn-calculate" mat-raised-button (click)="monthlyPayment()">
-    Calculate
-  </button>
   <button mat-raised-button>Apply</button>
 </div>

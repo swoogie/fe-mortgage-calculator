@@ -18,6 +18,7 @@ export class MonthlyCalcComponent implements OnInit {
     { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
   ];
   monthlyPaymentResult: number;
+
   isDisabled: boolean = true;
 
   monthlyForm = fb.group(
