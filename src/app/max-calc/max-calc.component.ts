@@ -4,6 +4,8 @@ import { TooltipPosition } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime } from 'rxjs';
 import { Euribor } from '../interfaces/euribor';
+import { ApiService } from '../services/api.service';
+import { Constants } from '../interfaces/constants';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -19,6 +21,7 @@ export class MaxCalcComponent {
   minLoanTerm: number = 1;
   maxLoanTerm: number = 30;
   baseInterest: number = 2.5;
+  constants: Constants;
   euriborValues: Euribor[] = [
     {
       timeInMonths: 3,
@@ -78,7 +81,7 @@ export class MaxCalcComponent {
   );
 
   maxLoanAmount: number = this.realEstatePrice.value * 0.85;
-  constructor(private _snackBar: MatSnackBar) {
+  constructor(private _snackBar: MatSnackBar, private api: ApiService) {
     this.loanAmount.addValidators(Validators.max(this.maxLoanAmount));
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(10))
@@ -148,7 +151,16 @@ export class MaxCalcComponent {
     this.downpayment.disable();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.api.getConstants().subscribe((constants) => {
+      this.constants = constants;
+      console.log(this.constants);
+    });
+  }
+
+  calculateMax() {
+    throw new Error('Method not implemented.');
+  }
 
   overwriteIfLess() {
     if (this.realEstatePrice.value < this.minRealEstatePrice) {
@@ -169,17 +181,6 @@ export class MaxCalcComponent {
       });
     }
   }
-
-  positionOptions: TooltipPosition[] = [
-    'after',
-    'before',
-    'above',
-    'below',
-    'left',
-    'right',
-  ];
-  position = this.positionOptions[2];
-  realEst: number;
 
   get euribor() {
     return this.maxCalcForm.get('euribor');

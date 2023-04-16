@@ -21,6 +21,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { MatRadioModule } from '@angular/material/radio';
     MatFormFieldModule,
     MatSnackBarModule,
     MatRadioModule,
+    HttpClientModule,
   ],
   providers: [
     MatSnackBarModule,
