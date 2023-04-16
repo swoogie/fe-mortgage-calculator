@@ -17,8 +17,9 @@ export class MonthlyCalcComponent implements OnInit {
     { label: 'Leasing Amount', controlName: 'leasingAmount' },
     { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
   ];
-  monthlyPaymentResult: number;
-
+  monthlyPaymentResult: number = 0;
+  calculateBtnPushed: boolean = false;
+  formSubmitted = false;
   isDisabled: boolean = true;
 
   monthlyForm = fb.group(
@@ -43,23 +44,6 @@ export class MonthlyCalcComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.monthlyForm.get('income').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm.get('mortgageLoans').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm.get('consumerLoans').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm.get('leasingAmount').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm
-      .get('creditCardLimit')
-      .valueChanges.subscribe((res: any) => {
-        this.monthlyPayment();
-      });
     this.monthlyForm.get('obligation').valueChanges.subscribe((value) => {
       if (!value) {
         this.monthlyForm.get('mortgageLoans').reset();
@@ -115,6 +99,7 @@ export class MonthlyCalcComponent implements OnInit {
   }
 
   monthlyPayment() {
+    this.formSubmitted = true;
     const income = Number(this.monthlyForm.get('income').value);
     const creditCardLimit = Number(
       this.monthlyForm.get('creditCardLimit').value || 0
@@ -128,14 +113,27 @@ export class MonthlyCalcComponent implements OnInit {
     const mortgageLoans = Number(
       this.monthlyForm.get('mortgageLoans').value || 0
     );
-    const monthlyPaymentResult =
-      income * 0.4 -
-      creditCardLimit -
-      consumerLoans -
-      mortgageLoans -
-      leasingAmount;
+
+    const totalObligations = this.monthlyForm.get('obligation').value
+      ? creditCardLimit + consumerLoans + mortgageLoans + leasingAmount
+      : 0;
     this.monthlyPaymentResult =
-      monthlyPaymentResult > 0 ? monthlyPaymentResult : 0;
+      totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4;
     console.log(this.monthlyPaymentResult);
+    this.calculateBtnPushed = true;
+  }
+
+  onInputChanged() {
+    if (this.calculateBtnPushed) {
+      this.monthlyPayment();
+    }
+  }
+
+  get showInsufficientMessage() {
+    return (
+      this.formSubmitted &&
+      this.monthlyPaymentResult <= 0 &&
+      this.monthlyForm.get('income').value
+    );
   }
 }
