@@ -17,7 +17,9 @@ export class MonthlyCalcComponent implements OnInit {
     { label: 'Leasing Amount', controlName: 'leasingAmount' },
     { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
   ];
-  monthlyPaymentResult: number;
+  monthlyPaymentResult: number = 0;
+  calculateBtnPushed: boolean = false;
+  formSubmitted = false;
   isDisabled: boolean = true;
 
   monthlyForm = fb.group(
@@ -42,23 +44,6 @@ export class MonthlyCalcComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.monthlyForm.get('income').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm.get('mortgageLoans').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm.get('consumerLoans').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm.get('leasingAmount').valueChanges.subscribe((res: any) => {
-      this.monthlyPayment();
-    });
-    this.monthlyForm
-      .get('creditCardLimit')
-      .valueChanges.subscribe((res: any) => {
-        this.monthlyPayment();
-      });
     this.monthlyForm.get('obligation').valueChanges.subscribe((value) => {
       if (!value) {
         this.monthlyForm.get('mortgageLoans').reset();
@@ -114,27 +99,52 @@ export class MonthlyCalcComponent implements OnInit {
   }
 
   monthlyPayment() {
-    const income = Number(this.monthlyForm.get('income').value);
-    const creditCardLimit = Number(
-      this.monthlyForm.get('creditCardLimit').value || 0
+    if (this.monthlyForm.valid) {
+      this.formSubmitted = true;
+      const income = Number(this.monthlyForm.get('income').value);
+      const creditCardLimit = Number(
+        this.monthlyForm.get('creditCardLimit').value || 0
+      );
+      const leasingAmount = Number(
+        this.monthlyForm.get('leasingAmount').value || 0
+      );
+      const consumerLoans = Number(
+        this.monthlyForm.get('consumerLoans').value || 0
+      );
+      const mortgageLoans = Number(
+        this.monthlyForm.get('mortgageLoans').value || 0
+      );
+
+      const mortgageMonthly =
+        (mortgageLoans * (0.055 / 12)) / (1 - Math.pow(1 + 0.055 / 12, -300));
+      const leasingMonthly =
+        (leasingAmount * (0.07 / 12)) / (1 - Math.pow(1 + 0.07 / 12, -60));
+      const consumerMonthly =
+        (consumerLoans * (0.1 / 12)) / (1 - Math.pow(1 + 0.1 / 12, -60));
+      const creditCardMonthly = creditCardLimit / 36;
+
+      const totalObligations = this.monthlyForm.get('obligation').value
+        ? creditCardMonthly + consumerMonthly + mortgageMonthly + leasingMonthly
+        : 0;
+      this.monthlyPaymentResult =
+        totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4;
+
+      console.log(this.monthlyPaymentResult);
+      this.calculateBtnPushed = true;
+    }
+  }
+
+  onInputChanged() {
+    if (this.calculateBtnPushed) {
+      this.monthlyPayment();
+    }
+  }
+
+  get showInsufficientMessage() {
+    return (
+      this.formSubmitted &&
+      this.monthlyPaymentResult <= 0 &&
+      this.monthlyForm.get('income').value
     );
-    const leasingAmount = Number(
-      this.monthlyForm.get('leasingAmount').value || 0
-    );
-    const consumerLoans = Number(
-      this.monthlyForm.get('consumerLoans').value || 0
-    );
-    const mortgageLoans = Number(
-      this.monthlyForm.get('mortgageLoans').value || 0
-    );
-    const monthlyPaymentResult =
-      income * 0.4 -
-      creditCardLimit -
-      consumerLoans -
-      mortgageLoans -
-      leasingAmount;
-    this.monthlyPaymentResult =
-      monthlyPaymentResult > 0 ? monthlyPaymentResult : 0;
-    console.log(this.monthlyPaymentResult);
   }
 }
