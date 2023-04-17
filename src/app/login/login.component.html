@@ -1,1 +1,20 @@
-<p>login works!</p>
+<div class ="container">
+    <mat-card class="login-card">
+    <mat-card-title><h2>Login</h2></mat-card-title>
+    <mat-card-content>
+      <form>
+        <mat-form-field class ="form-field">
+          <input matInput placeholder="Email" type="email" [formControl]="emailFormControl">
+          <mat-error *ngIf="emailFormControl.hasError('required')">Email is required</mat-error>
+          <mat-error *ngIf="emailFormControl.hasError('email')">Invalid email</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class ="form-field">
+          <input matInput placeholder="Password" type="password" [formControl]="passwordFormControl">
+          <mat-error *ngIf="passwordFormControl.hasError('required')">Password is required</mat-error>
+        </mat-form-field>
+        <button mat-raised-button (click)="onLogin()">Login</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
