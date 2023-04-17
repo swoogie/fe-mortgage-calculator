@@ -7,7 +7,7 @@ import { Constants } from '../interfaces/constants';
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'https://be-mortgage-calculator.onrender.com/api';
+  private apiUrl = 'https://be-mortgage-calculator.onrender.com/api/v1';
 
   constants: Constants;
 
