@@ -151,11 +151,8 @@ export class MonthlyCalcComponent implements OnInit {
   }
   openDialog(): void {
     const dialogRef = this.dialog.open(ApplicationDialogComponent, {
-      data: {name: "test name"}
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`The dialog was closed with result: ${result}`);
+      data: {applicants: this.applicants.value,
+        amountOfKids: this.amountOfKids.value}
     });
   }
 }

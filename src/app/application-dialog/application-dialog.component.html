@@ -1,12 +1,21 @@
-<h1 mat-dialog-title>Hi {{data.name}}</h1>
+<h1 mat-dialog-title>Apply for a loan</h1>
 <div mat-dialog-content>
-  <p>What's your favorite animal?</p>
+  <form [formGroup]="">
+    <mat-radio-group
+      formControlName="Number of applicants"
+    >
+      <ng-container *ngFor="let i of maxApplicants()">
+        <mat-radio-button [value]="i">{{i}}</mat-radio-button>
+      </ng-container>
+    </mat-radio-group>
+
+  </form>
   <mat-form-field appearance="fill">
-    <mat-label>Favorite Animal</mat-label>
-    <input matInput [(ngModel)]="data.animal">
+    <mat-label>Number of applicants</mat-label>
+    <input matInput [(ngModel)]="applicationData.applicants">
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button>
+  <button mat-button [mat-dialog-close]="applicationData" (click)="onOkClick()" cdkFocusInitial>Ok</button>
 </div>
