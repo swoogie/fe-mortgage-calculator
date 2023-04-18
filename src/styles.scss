@@ -9,7 +9,11 @@ body {
 body {
     margin: 0;
     font-family: Poppins;
-    background-color: #7297ad;
+    // background-color: #7297ad;
+    background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%)
+}
+
+form {
     background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%)
 }
 
@@ -19,4 +23,8 @@ body {
 
 .mdc-text-field {
     border-radius: 4px;
+}
+
+button {
+    background-color: coral;
 }
