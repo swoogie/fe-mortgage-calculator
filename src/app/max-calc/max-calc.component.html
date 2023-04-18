@@ -117,10 +117,19 @@
         <mat-label>Interest Rate</mat-label>
         <input matInput formControlName="interestRate" />
       </mat-form-field>
-      <button class="btn-calculate" mat-raised-button type="submit">
+      <button
+        class="btn-calculate"
+        mat-flat-button
+        color="primary"
+        type="submit"
+      >
         Calculate
       </button>
+<<<<<<< HEAD
       <button mat-raised-button (click)="openDialog()">Apply</button>
+=======
+      <button mat-flat-button>Apply</button>
+>>>>>>> ec69a14 (changes to buttons and radios and fixed merge conflicts)
     </div>
   </form>
   <mat-label *ngIf="linearTotal"
