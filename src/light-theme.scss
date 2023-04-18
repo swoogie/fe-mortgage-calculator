@@ -2,20 +2,44 @@
 
 @include mat.core();
 
-$primary: mat.define-palette(mat.$green-palette, 600);
-$accent: mat.define-palette(mat.$blue-palette, A200, A100, A400);
-$warn: mat.define-palette(mat.$red-palette);
+$accent-palette: (
+  100: #FFF,
+  200: #FFF,
+  300: #FFF,
+  400: #FFF,
+  500: #FFF,
+  600: #FFF,
+  700: #FFF,
+  800: #FFF,
+  900: #FFF,
+  contrast: ( // ... continues to 900
+  )
+);
+$warn-palette: (
+  100:red,
+  200:red,
+  300:red,
+  400:red,
+  500:red,
+  600:red,
+  700:red,
+  800:red,
+  900:red,
+  contrast: ( // ... continues to 900
+  )
+);
 
-$theme: mat.define-light-theme((
- color: (
-   primary: $primary,
-   accent: $accent,
-   warn: $warn,
- ),
- typography: mat.define-typography-config(
-  $font-family: 'Poppins',
- ),
- density: 0,
-));
+$primary: mat.define-palette(mat.$green-palette, 600);
+$accent: mat.define-palette($accent-palette, 100, 200, 300);
+$warn: mat.define-palette($warn-palette, 100);
+
+$theme: mat.define-light-theme((color: (primary: $primary,
+        accent: $accent,
+        warn: $warn,
+      ),
+      typography: mat.define-typography-config($font-family: 'Poppins',
+      ),
+      density: 0,
+    ));
 
 @include mat.all-component-themes($theme);
