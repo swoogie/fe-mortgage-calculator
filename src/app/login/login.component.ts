@@ -5,8 +5,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
 
-const fb = new FormBuilder();
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -32,6 +30,14 @@ ngOnInit(): void {
   });
 
 
+  
+
+}
+
+
+onSubmit() {
+  console.log(this.loginForm.value);
+
   if (this.loginForm.valid) {
     // Do login logic here
     const email = this.loginForm.value.email;
@@ -53,44 +59,6 @@ ngOnInit(): void {
       }
     );
   }
-
-}
-
-
-onSubmit() {
-  console.log(this.loginForm.value);
 }
 
 }
-// emailFormControl = new FormControl('', [
-//   Validators.required,
-//   Validators.email,
-// ]);
-// passwordFormControl = new FormControl('', [
-//   Validators.required,
-// ]);
-  
-// onLogin() {
-//   if (this.emailFormControl.valid && this.passwordFormControl.valid) {
-//     // Do login logic here
-//       const email = this.emailFormControl.value;
-//       const password = this.passwordFormControl.value;
-  
-//       // Call your authentication service to authenticate the user
-//       this.authService.login(email, password).subscribe(
-//         (response) => {
-//           // If the authentication succeeds, redirect the user to the home page
-//           this.router.navigate(['/home']);
-//         },
-//         (error) => {
-//           // If the authentication fails, show an error message to the user
-//           this.snackBar.open('Invalid email or password', 'Dismiss', {
-//             duration: 5000,
-//             horizontalPosition: 'center',
-//             verticalPosition: 'bottom',
-//           });
-//         }
-//       );
-//   }
-// }
-
