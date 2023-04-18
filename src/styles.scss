@@ -1,4 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Poppins; }
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Poppins;
+    // background: linear-gradient(#1ba77c, #027f6d);
+    background: linear-gradient(217deg, #1ba77c, #027f6d 70.71%) // background-color: #1ba77c;
+}
+
+
+.material-icons {
+    color: white
+}
