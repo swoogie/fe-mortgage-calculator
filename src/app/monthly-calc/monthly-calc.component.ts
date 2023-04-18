@@ -150,9 +150,15 @@ export class MonthlyCalcComponent implements OnInit {
     );
   }
   openDialog(): void {
-    const dialogRef = this.dialog.open(ApplicationDialogComponent, {
+    this.dialog.open(ApplicationDialogComponent, {
       data: {applicants: this.applicants.value,
-        amountOfKids: this.amountOfKids.value}
+        amountOfKids: this.amountOfKids.value,
+        obligations: this.obligation.value,
+        mortgageLoans: this.mortgageLoans.value,
+        consumerLoans: this.consumerLoans.value,
+        leasingAmount: this.leasingAmount.value,
+        creditCardLimit: this.creditCardLimit.value
+      }
     });
   }
 }

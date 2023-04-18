@@ -3,7 +3,11 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ApiService} from "../services/api.service";
 import {Constants} from "../interfaces/constants";
 import {ApplicationData} from "../interfaces/application-data";
-import {FormBuilder} from "@angular/forms";
+import {FormBuilder, Validators} from "@angular/forms";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {euriborValues} from "../interfaces/euribor";
+import {Euribor} from "../interfaces/euribor";
+
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -19,16 +23,14 @@ export class ApplicationDialogComponent implements OnInit {
   loanAmountPercentage: number;
   maxKids: number;
   maxMonthlyObligationsPercentage: number;
-  maxNumOfApplicants: number;
-
-  constructor(
-    private apiService: ApiService,
-    public dialogRef: MatDialogRef<ApplicationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    public applicationData: ApplicationData,
-  ) {
-  }
-
+  euriborValues: Euribor[] = euriborValues;
+  paymentScheduleTypes: string[] = ['Annuity', 'Linear'];
+  obligationFields = [
+    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
+    { label: 'Consumer Loans', controlName: 'consumerLoans' },
+    { label: 'Leasing Amount', controlName: 'leasingAmount' },
+    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
+  ];
   ngOnInit() {
     this.apiService.getConstants().subscribe((constants) => {
       this.constants = constants;
@@ -37,22 +39,38 @@ export class ApplicationDialogComponent implements OnInit {
       this.loanAmountPercentage = constants.loanAmountPercentage;
       this.maxKids = constants.maxKids;
       this.maxMonthlyObligationsPercentage = constants.maxMonthlyObligationsPercentage;
-      this.maxNumOfApplicants = constants.maxNumOfApplicants;
     });
   }
 
-  applicationForm = formBuilder.group({
-    applicants: [this.applicationData.applicants],
-    amountOfKids: [this.applicationData.amountOfKids],
-    income: [this.applicationData.income],
+  secondFormGroup = formBuilder.group({
+    secondApplicationForm: ['', Validators.required],
+  });
+  isLinear = true;
+
+  loanDetailsForm = formBuilder.group({
+    realEstatePrice: [this.applicationData.realEstatePrice, Validators.required],
+    downPayment: [this.applicationData.downPayment, Validators.required],
+    loanAmount: [this.applicationData.loanAmount, Validators.required],
+    loanTerm: [this.applicationData.loanTerm, Validators.required],
+    euribor: [this.applicationData.euribor, [Validators.required]],
+    paymentScheduleType: [this.paymentScheduleTypes[0] as string, [Validators.required]],
+  });
+  incomeDetailsForm = formBuilder.group({
+    applicants: [this.applicationData.applicants, Validators.required],
+    amountOfKids: [this.applicationData.amountOfKids, Validators.required],
+    income: [this.applicationData.income, Validators.required],
+    obligations: [this.applicationData.obligations, Validators.required],
     mortgageLoans: [this.applicationData.mortgageLoans],
     consumerLoans: [this.applicationData.consumerLoans],
     leasingAmount: [this.applicationData.leasingAmount],
     creditCardLimit: [this.applicationData.creditCardLimit],
     monthlyPayment: [this.applicationData.monthlyPayment],
-      });
+  });
+  get obligations() {
+    return this.incomeDetailsForm.get('obligations');
+  }
 
-  onNoClick(): void {
+  onCancelClick(): void {
     this.dialogRef.close();
   }
 
@@ -61,6 +79,27 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   maxApplicants(): number[] {
-    return Array(this.maxNumOfApplicants).fill(0).map((x, i) => i + 1);
+    return Array(this.constants.maxNumOfApplicants).fill(0).map((x, i) => i + 1);
   }
+
+  children(): number[] {
+    const minKids = this.constants.minKids;
+    const maxKids = this.constants.maxKids;
+    const kids = [];
+    for (let i = minKids; i <= maxKids; i++) {
+      kids.push(i);
+    }
+    return kids;
+  }
+
+  constructor(
+    private apiService: ApiService,
+    public dialogRef: MatDialogRef<ApplicationDialogComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public applicationData: ApplicationData,
+    private _snackBar: MatSnackBar,
+  ) {
+  }
+
+
 }

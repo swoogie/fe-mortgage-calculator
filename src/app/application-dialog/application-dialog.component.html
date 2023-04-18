@@ -1,21 +1,108 @@
-<h1 mat-dialog-title>Apply for a loan</h1>
+<h1 mat-dialog-title>Application Dialog</h1>
 <div mat-dialog-content>
-  <form [formGroup]="">
-    <mat-radio-group
-      formControlName="Number of applicants"
-    >
-      <ng-container *ngFor="let i of maxApplicants()">
-        <mat-radio-button [value]="i">{{i}}</mat-radio-button>
-      </ng-container>
-    </mat-radio-group>
+  <mat-vertical-stepper [linear]="isLinear">
+    <mat-step>
+      <ng-template matStepLabel>Loan Details</ng-template>
+      <form [formGroup]="loanDetailsForm">
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Real Estate Price</mat-label>
+            <input matInput formControlName="realEstatePrice">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Down Payment</mat-label>
+            <input matInput formControlName="downPayment">
+          </mat-form-field>
+        </div>
 
-  </form>
-  <mat-form-field appearance="fill">
-    <mat-label>Number of applicants</mat-label>
-    <input matInput [(ngModel)]="applicationData.applicants">
-  </mat-form-field>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="applicationData" (click)="onOkClick()" cdkFocusInitial>Ok</button>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Loan Amount</mat-label>
+            <input matInput formControlName="loanAmount">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field class="input-wrap">
+            <mat-label>Loan term years</mat-label>
+            <input
+              matInput
+              formControlName="loanTerm"
+            />
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field class="input-wrap">
+            <mat-label>Euribor</mat-label>
+            <mat-select formControlName="euribor">
+              <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
+              >{{ euribor.timeInMonths }} Months -
+                {{ euribor.interestRate }}%
+              </mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field class="input-wrap">
+            <mat-label>Payment Schedule Type</mat-label>
+            <mat-select formControlName="paymentScheduleType">
+              <mat-option *ngFor="let type of paymentScheduleTypes" [value]="type"
+              >{{type}}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+      </form>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Income information</ng-template>
+      <form [formGroup]="incomeDetailsForm">
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Number of applicants</mat-label>
+            <mat-select formControlName="applicants">
+              <mat-option *ngFor="let applicant of maxApplicants()" [value]="applicant">
+                {{ applicant }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Number of kids</mat-label>
+            <mat-select formControlName="amountOfKids">
+              <mat-option *ngFor="let kid of children()" [value]="kid">
+                {{ kid }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <mat-radio-group
+          aria-label="Select an option"
+          formControlName="obligations"
+        >
+          <mat-radio-button [value]="false">No</mat-radio-button>
+          <mat-radio-button [value]="true">Yes</mat-radio-button>
+        </mat-radio-group>
+        <div *ngIf="obligations.value == true">
+          <ng-container *ngFor="let field of obligationFields">
+            <div class="form-field-wrapper">
+              <mat-form-field class="input-wrap">
+                <mat-label>{{ field.label }}</mat-label>
+                <input
+                  matInput
+                  formControlName="{{ field.controlName }}"
+                />
+              </mat-form-field>
+            </div>
+          </ng-container>
+        </div>
+      </form>
+    </mat-step>
+  </mat-vertical-stepper>
 </div>

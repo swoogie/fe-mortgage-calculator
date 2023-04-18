@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { TooltipPosition } from '@angular/material/tooltip';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { debounceTime } from 'rxjs';
-import { Euribor } from '../interfaces/euribor';
-import { ApiService } from '../services/api.service';
-import { Constants } from '../interfaces/constants';
-import { MaxcalculationsService } from '../services/maxcalculations.service';
+import {Component} from '@angular/core';
+import {FormBuilder, Validators} from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {debounceTime} from 'rxjs';
+import {Euribor} from '../interfaces/euribor';
+import {ApiService} from '../services/api.service';
+import {Constants} from '../interfaces/constants';
+import {MaxcalculationsService} from '../services/maxcalculations.service';
+import {ApplicationDialogComponent} from "../application-dialog/application-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 const fb = new FormBuilder().nonNullable;
 
@@ -78,14 +79,16 @@ export class MaxCalcComponent {
       paymentScheduleType: ['annuity' as string, [Validators.required]],
       euribor: [this.euriborValues[0] as Euribor, [Validators.required]],
     },
-    { updateOn: 'change' }
+    {updateOn: 'change'}
   );
 
   maxLoanAmount: number = this.realEstatePrice.value * 0.85;
+
   constructor(
     private _snackBar: MatSnackBar,
     private api: ApiService,
-    private calcService: MaxcalculationsService
+    private calcService: MaxcalculationsService,
+    public dialog: MatDialog
   ) {
     this.loanAmount.addValidators(Validators.max(this.maxLoanAmount));
     this.realEstatePrice.valueChanges
@@ -161,8 +164,10 @@ export class MaxCalcComponent {
       this.constants = constants;
     });
   }
+
   linearTotal: number;
   annuityTotal: number;
+
   calculateMax() {
     if (this.maxCalcForm && this.paymentScheduleType.value == 'linear') {
       this.linearTotal = this.calcService.calculateLinearTotal(
@@ -211,6 +216,7 @@ export class MaxCalcComponent {
   get loanAmount() {
     return this.maxCalcForm.get('loanAmount');
   }
+
   get loanTerm() {
     return this.maxCalcForm.get('loanTerm');
   }
@@ -221,5 +227,19 @@ export class MaxCalcComponent {
 
   get paymentScheduleType() {
     return this.maxCalcForm.get('paymentScheduleType');
+  }
+
+  openDialog(): void {
+    console.log("months "+this.euribor.value.timeInMonths);
+    this.dialog.open(ApplicationDialogComponent, {
+      data: {
+        loanTerm: this.loanTerm.value,
+        loanAmount: this.loanAmount.value,
+        downPayment: this.downpayment.value,
+        realEstatePrice: this.realEstatePrice.value,
+        euribor: this.euribor.value,
+        paymentScheduleType: this.paymentScheduleType.value
+      }
+    });
   }
 }
