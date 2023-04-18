@@ -28,8 +28,21 @@ $warn-palette: (
   contrast: ( // ... continues to 900
   )
 );
+$primary-palette: (
+  100:#2f3b4b,
+  200:#2f3b4b,
+  300:#2f3b4b,
+  400:#2f3b4b,
+  500:#2f3b4b,
+  600:#2f3b4b,
+  700:#2f3b4b,
+  800:#2f3b4b,
+  900:#2f3b4b,
+  contrast: ( // ... continues to 900
+  )
+);
 
-$primary: mat.define-palette(mat.$green-palette, 600);
+$primary: mat.define-palette($primary-palette, 100);
 $accent: mat.define-palette($accent-palette, 100, 200, 300);
 $warn: mat.define-palette($warn-palette, 100);
 
