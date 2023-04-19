@@ -1,11 +1,11 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {ApiService} from "../services/api.service";
-import {Constants} from "../interfaces/constants";
-import {ApplicationData} from "../interfaces/application-data";
-import {FormBuilder, Validators} from "@angular/forms";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {Euribor, euriborValuesConst} from "../interfaces/euribor";
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { ApiService } from "../services/api.service";
+import { Constants } from "../interfaces/constants";
+import { ApplicationData } from "../interfaces/application-data";
+import { FormBuilder, Validators } from "@angular/forms";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Euribor, euriborValuesConst } from "../interfaces/euribor";
 
 
 const formBuilder = new FormBuilder().nonNullable;
@@ -29,10 +29,10 @@ export class ApplicationDialogComponent implements OnInit {
   euriborValues: Euribor[] = euriborValuesConst;
   paymentScheduleTypes: string[] = ['Annuity', 'Linear'];
   obligationFields = [
-    {label: 'Mortgage Loans', controlName: 'mortgageLoans'},
-    {label: 'Consumer Loans', controlName: 'consumerLoans'},
-    {label: 'Leasing Amount', controlName: 'leasingAmount'},
-    {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
+    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
+    { label: 'Consumer Loans', controlName: 'consumerLoans' },
+    { label: 'Leasing Amount', controlName: 'leasingAmount' },
+    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
   ];
 
   ngOnInit() {
@@ -97,12 +97,41 @@ export class ApplicationDialogComponent implements OnInit {
   onDoneClick(): void {
     //form validation and post to backend
     this.saveLoanDetails();
-    console.log(`The dialog was closed with result: ${this.applicationData.realEstatePrice}`);
+    console.log(this.applicationData)
+    this.api.postApplication(this.applicationData).subscribe({
+      next: (success) => {
+        console.log(success);
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
   }
 
   saveLoanDetails(): void {
     this.applicationData.realEstatePrice = this.loanDetailsForm.value.realEstatePrice;
-//update other fields
+    this.applicationData.downPayment = this.loanDetailsForm.value.downPayment;
+    this.applicationData.loanAmount = this.loanDetailsForm.value.loanAmount;
+    this.applicationData.loanTerm = this.loanDetailsForm.value.loanTerm;
+    this.applicationData.paymentScheduleType = this.loanDetailsForm.value.paymentScheduleType;
+    this.applicationData.applicants = this.incomeDetailsForm.value.applicants;
+    this.applicationData.amountOfKids = this.incomeDetailsForm.value.amountOfKids
+    this.applicationData.income = this.incomeDetailsForm.value.income;
+    this.applicationData.obligations = this.incomeDetailsForm.value.obligations;
+    this.applicationData.mortgageLoans = this.incomeDetailsForm.value.mortgageLoans;
+    this.applicationData.consumerLoans = this.incomeDetailsForm.value.consumerLoans;
+    this.applicationData.leasingAmount = this.incomeDetailsForm.value.leasingAmount;
+    this.applicationData.creditCardLimit = this.incomeDetailsForm.value.creditCardLimit;
+    this.applicationData.monthlyPayment = this.incomeDetailsForm.value.monthlyPayment;
+    this.applicationData.euribor = this.loanDetailsForm.value.euribor;
+    this.applicationData.firstName = this.personalDetailsForm.value.firstName;
+    this.applicationData.lastName = this.personalDetailsForm.value.lastName;
+    this.applicationData.personalNumber = this.personalDetailsForm.value.personalNumber;
+    this.applicationData.email = this.personalDetailsForm.value.email;
+    this.applicationData.phoneNumber = this.personalDetailsForm.value.phoneNumber;
+    this.applicationData.address = this.personalDetailsForm.value.address;
+
+    //update other fields
   }
 
 
@@ -112,6 +141,7 @@ export class ApplicationDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public applicationData: ApplicationData,
     private _snackBar: MatSnackBar,
+    private api: ApiService,
   ) {
   }
 
