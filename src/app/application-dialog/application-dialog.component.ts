@@ -109,6 +109,7 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   saveLoanDetails(): void {
+    ["realEstatePrice", "downPayment", "loanAmount", "loanTerm", "paymentScheduleType", "applicants", "amountOfKids", "income", "obligations", "mortgageLoans", "consumerLoans",].forEach((key) => { this.applicationData[key] = this.loanDetailsForm.value[key] });
     this.applicationData.realEstatePrice = this.loanDetailsForm.value.realEstatePrice;
     this.applicationData.downPayment = this.loanDetailsForm.value.downPayment;
     this.applicationData.loanAmount = this.loanDetailsForm.value.loanAmount;
