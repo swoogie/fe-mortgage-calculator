@@ -1,12 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ApiService } from "../services/api.service";
-import { Constants } from "../interfaces/constants";
-import { ApplicationData } from "../interfaces/application-data";
-import { FormBuilder, Validators } from "@angular/forms";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { Euribor, euriborValuesConst } from "../interfaces/euribor";
-
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {ApiService} from "../services/api.service";
+import {Constants} from "../interfaces/constants";
+import {ApplicationData} from "../interfaces/application-data";
+import {FormBuilder, Validators} from "@angular/forms";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {Euribor} from "../interfaces/euribor";
+import {EuriborService} from "../services/euribor.service";
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -26,7 +26,21 @@ export class ApplicationDialogComponent implements OnInit {
   children: number[] = [];
   applicants: number[] = [];
   maxMonthlyObligationsPercentage: number;
-  euriborValues: Euribor[] = euriborValuesConst;
+  euriborValues: Euribor[] = [
+    {
+      timeInMonths: 3,
+      interestRate: 3.108,
+    },
+    {
+      timeInMonths: 6,
+      interestRate: 3.356,
+    },
+    {
+      timeInMonths: 12,
+      interestRate: 3.582,
+    },
+  ];
+  euriborValue: any;
   paymentScheduleTypes: string[] = ['Annuity', 'Linear'];
   obligationFields = [
     { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
@@ -35,7 +49,13 @@ export class ApplicationDialogComponent implements OnInit {
     { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
   ];
 
+
   ngOnInit() {
+    this.euriborService.getEuribor().subscribe((euribor) => {
+      const ratePct = euribor.non_central_bank_rates.find(rate => rate.name === 'Euribor - 3 months').rate_pct;
+      console.log("Euribor rate_pct: " + ratePct);
+      console.log("euribor: " + JSON.stringify(euribor))
+    });
     this.apiService.getConstants().subscribe((constants) => {
       console.log("constants minKids: " + constants.minKids)
       this.constants = constants;
@@ -53,7 +73,7 @@ export class ApplicationDialogComponent implements OnInit {
       for (let i = 1; i <= this.maxNumOfApplicants; i++) {
         this.applicants.push(i);
       }
-    })
+    });
   }
 
   isLinear = true;
@@ -120,16 +140,12 @@ export class ApplicationDialogComponent implements OnInit {
     personalDataKeys.forEach((key) => { this.applicationData[key] = this.personalDetailsForm.value[key] });
   }
 
-
-  constructor(
-    private apiService: ApiService,
-    public dialogRef: MatDialogRef<ApplicationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    public applicationData: ApplicationData,
-    private _snackBar: MatSnackBar,
-    private api: ApiService,
+  constructor(private euriborService: EuriborService,
+              private apiService: ApiService,
+              public dialogRef: MatDialogRef<ApplicationDialogComponent>,
+              @Inject(MAT_DIALOG_DATA)
+              public applicationData: ApplicationData,
+              private _snackBar: MatSnackBar,
   ) {
   }
-
-
 }

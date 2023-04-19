@@ -17,3 +17,5 @@ export const euriborValuesConst: Euribor[] = [
     interestRate: 3.582,
   },
 ];
+
+
