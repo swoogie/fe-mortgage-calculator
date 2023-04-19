@@ -5,8 +5,7 @@ import {Constants} from "../interfaces/constants";
 import {ApplicationData} from "../interfaces/application-data";
 import {FormBuilder, Validators} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {euriborValues} from "../interfaces/euribor";
-import {Euribor} from "../interfaces/euribor";
+import {Euribor, euriborValuesConst} from "../interfaces/euribor";
 
 
 const formBuilder = new FormBuilder().nonNullable;
@@ -23,14 +22,15 @@ export class ApplicationDialogComponent implements OnInit {
   loanAmountPercentage: number;
   maxKids: number;
   maxMonthlyObligationsPercentage: number;
-  euriborValues: Euribor[] = euriborValues;
+  euriborValues: Euribor[] = euriborValuesConst;
   paymentScheduleTypes: string[] = ['Annuity', 'Linear'];
   obligationFields = [
-    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
-    { label: 'Consumer Loans', controlName: 'consumerLoans' },
-    { label: 'Leasing Amount', controlName: 'leasingAmount' },
-    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
+    {label: 'Mortgage Loans', controlName: 'mortgageLoans'},
+    {label: 'Consumer Loans', controlName: 'consumerLoans'},
+    {label: 'Leasing Amount', controlName: 'leasingAmount'},
+    {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
   ];
+
   ngOnInit() {
     this.apiService.getConstants().subscribe((constants) => {
       this.constants = constants;
@@ -42,9 +42,6 @@ export class ApplicationDialogComponent implements OnInit {
     });
   }
 
-  secondFormGroup = formBuilder.group({
-    secondApplicationForm: ['', Validators.required],
-  });
   isLinear = true;
 
   loanDetailsForm = formBuilder.group({
@@ -66,6 +63,15 @@ export class ApplicationDialogComponent implements OnInit {
     creditCardLimit: [this.applicationData.creditCardLimit],
     monthlyPayment: [this.applicationData.monthlyPayment],
   });
+  personalDetailsForm = formBuilder.group({
+    firstName: [this.applicationData.firstName, Validators.required],
+    lastName: [this.applicationData.lastName, Validators.required],
+    personalNumber: [this.applicationData.personalNumber, Validators.required],
+    email: [this.applicationData.email, Validators.required],
+    phoneNumber: [this.applicationData.phoneNumber, Validators.required],
+    address: [this.applicationData.address, Validators.required]
+  });
+
   get obligations() {
     return this.incomeDetailsForm.get('obligations');
   }
@@ -74,8 +80,15 @@ export class ApplicationDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  onOkClick(): void {
-    console.log(`The dialog was closed with result: ${this.applicationData.applicants}`);
+  onDoneClick(): void {
+    //form validation and post to backend
+    this.saveLoanDetails();
+    console.log(`The dialog was closed with result: ${this.applicationData.realEstatePrice}`);
+  }
+
+  saveLoanDetails(): void {
+    this.applicationData.realEstatePrice = this.loanDetailsForm.value.realEstatePrice;
+//update other fields
   }
 
   maxApplicants(): number[] {

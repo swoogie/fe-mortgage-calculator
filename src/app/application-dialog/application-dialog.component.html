@@ -1,9 +1,9 @@
 <h1 mat-dialog-title>Application Dialog</h1>
 <div mat-dialog-content>
-  <mat-vertical-stepper [linear]="isLinear">
-    <mat-step>
-      <ng-template matStepLabel>Loan Details</ng-template>
+  <mat-stepper orientation="vertical" [linear]="isLinear">
+    <mat-step [stepControl]="loanDetailsForm">
       <form [formGroup]="loanDetailsForm">
+        <ng-template matStepLabel>Loan Details</ng-template>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Real Estate Price</mat-label>
@@ -54,13 +54,15 @@
             </mat-select>
           </mat-form-field>
         </div>
-
+        <div>
+          <button mat-raised-button matStepperNext class="form-button">Next</button>
+        </div>
       </form>
     </mat-step>
 
-    <mat-step>
-      <ng-template matStepLabel>Income information</ng-template>
+    <mat-step step [stepControl]="incomeDetailsForm">
       <form [formGroup]="incomeDetailsForm">
+        <ng-template matStepLabel>Income information</ng-template>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Number of applicants</mat-label>
@@ -80,6 +82,15 @@
                 {{ kid }}
               </mat-option>
             </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field class="input-wrap">
+            <mat-label>Income</mat-label>
+            <input
+              matInput
+              formControlName="income"
+            />
           </mat-form-field>
         </div>
         <mat-radio-group
@@ -102,7 +113,67 @@
             </div>
           </ng-container>
         </div>
+        <div>
+          <button mat-raised-button matStepperPrevious class="form-button">Back</button>
+          <button mat-raised-button matStepperNext class="form-button">Next</button>
+        </div>
       </form>
     </mat-step>
-  </mat-vertical-stepper>
+    <mat-step step [stepControl]="personalDetailsForm">
+      <form [formGroup]="personalDetailsForm">
+        <ng-template matStepLabel>Personal Details</ng-template>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Personal Number</mat-label>
+            <input matInput formControlName="personalNumber">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Address</mat-label>
+            <input matInput formControlName="address">
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-raised-button matStepperPrevious class="form-button">Back</button>
+          <button mat-raised-button matStepperNext class="form-button">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Form Submission</ng-template>
+      <div>
+        If the info is correct, click Done to submit the form.
+      </div>
+      <div>
+        <button mat-raised-button matStepperPrevious class="form-button">Back</button>
+        <button mat-raised-button  class="form-button" (click)="onDoneClick()">Done</button>
+      </div>
+
+    </mat-step>
+  </mat-stepper>
 </div>

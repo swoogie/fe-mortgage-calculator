@@ -154,11 +154,13 @@ export class MonthlyCalcComponent implements OnInit {
       data: {applicants: this.applicants.value,
         amountOfKids: this.amountOfKids.value,
         obligations: this.obligation.value,
+        income: this.income.value,
         mortgageLoans: this.mortgageLoans.value,
         consumerLoans: this.consumerLoans.value,
         leasingAmount: this.leasingAmount.value,
         creditCardLimit: this.creditCardLimit.value
-      }
+      },
+      minWidth: '400px',
     });
   }
 }

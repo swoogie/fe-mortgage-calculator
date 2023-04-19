@@ -239,7 +239,8 @@ export class MaxCalcComponent {
         realEstatePrice: this.realEstatePrice.value,
         euribor: this.euribor.value,
         paymentScheduleType: this.paymentScheduleType.value
-      }
+      },
+      minWidth: '400px',
     });
   }
 }
