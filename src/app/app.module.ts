@@ -23,8 +23,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { HttpClientModule } from '@angular/common/http';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
-import {MatDialogModule} from "@angular/material/dialog";
-import {MatStepperModule} from "@angular/material/stepper";
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
+import { DonutComponent } from './donut/donut.component';
+import { ChartModule } from 'angular-highcharts';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,7 @@ import {MatStepperModule} from "@angular/material/stepper";
     PagenotfoundComponent,
     LoginComponent,
     ApplicationDialogComponent,
+    DonutComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,7 +59,8 @@ import {MatStepperModule} from "@angular/material/stepper";
     MatCardModule,
     HttpClientModule,
     MatDialogModule,
-    MatStepperModule
+    MatStepperModule,
+    ChartModule,
   ],
   providers: [MatSnackBarModule],
   bootstrap: [AppComponent],

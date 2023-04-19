@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
-import {ApplicationDialogComponent} from "../application-dialog/application-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -151,14 +151,15 @@ export class MonthlyCalcComponent implements OnInit {
   }
   openDialog(): void {
     this.dialog.open(ApplicationDialogComponent, {
-      data: {applicants: this.applicants.value,
+      data: {
+        applicants: this.applicants.value,
         amountOfKids: this.amountOfKids.value,
         obligations: this.obligation.value,
         income: this.income.value,
         mortgageLoans: this.mortgageLoans.value,
         consumerLoans: this.consumerLoans.value,
         leasingAmount: this.leasingAmount.value,
-        creditCardLimit: this.creditCardLimit.value
+        creditCardLimit: this.creditCardLimit.value,
       },
       minWidth: '400px',
     });
