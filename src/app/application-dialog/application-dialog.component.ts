@@ -109,30 +109,11 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   saveLoanDetails(): void {
-    ["realEstatePrice", "downPayment", "loanAmount", "loanTerm", "paymentScheduleType", "applicants", "amountOfKids", "income", "obligations", "mortgageLoans", "consumerLoans",].forEach((key) => { this.applicationData[key] = this.loanDetailsForm.value[key] });
-    this.applicationData.realEstatePrice = this.loanDetailsForm.value.realEstatePrice;
-    this.applicationData.downPayment = this.loanDetailsForm.value.downPayment;
-    this.applicationData.loanAmount = this.loanDetailsForm.value.loanAmount;
-    this.applicationData.loanTerm = this.loanDetailsForm.value.loanTerm;
-    this.applicationData.paymentScheduleType = this.loanDetailsForm.value.paymentScheduleType;
-    this.applicationData.applicants = this.incomeDetailsForm.value.applicants;
-    this.applicationData.amountOfKids = this.incomeDetailsForm.value.amountOfKids
-    this.applicationData.income = this.incomeDetailsForm.value.income;
-    this.applicationData.obligations = this.incomeDetailsForm.value.obligations;
-    this.applicationData.mortgageLoans = this.incomeDetailsForm.value.mortgageLoans;
-    this.applicationData.consumerLoans = this.incomeDetailsForm.value.consumerLoans;
-    this.applicationData.leasingAmount = this.incomeDetailsForm.value.leasingAmount;
-    this.applicationData.creditCardLimit = this.incomeDetailsForm.value.creditCardLimit;
-    this.applicationData.monthlyPayment = this.incomeDetailsForm.value.monthlyPayment;
-    this.applicationData.euribor = this.loanDetailsForm.value.euribor;
-    this.applicationData.firstName = this.personalDetailsForm.value.firstName;
-    this.applicationData.lastName = this.personalDetailsForm.value.lastName;
-    this.applicationData.personalNumber = this.personalDetailsForm.value.personalNumber;
-    this.applicationData.email = this.personalDetailsForm.value.email;
-    this.applicationData.phoneNumber = this.personalDetailsForm.value.phoneNumber;
-    this.applicationData.address = this.personalDetailsForm.value.address;
-
-    //update other fields
+    const formDataKeys: string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm", "paymentScheduleType",
+      "applicants", "amountOfKids", "income", "obligations", "mortgageLoans", "consumerLoans",
+      "leasingAmount", "creditCardLimit", "monthlyPayment", "euribor", "firstName", "lastName", "personalNumber",
+      "email", "phoneNumber", "address"]
+    formDataKeys.forEach((key) => { this.applicationData[key] = this.loanDetailsForm.value[key] });
   }
 
 
