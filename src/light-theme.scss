@@ -1,5 +1,4 @@
 @use '@angular/material' as mat;
-@use 'sass:map';
 @include mat.core();
 
 $accent-palette: (
@@ -12,7 +11,7 @@ $accent-palette: (
   700: #FFF,
   800: #FFF,
   900: #FFF,
-  contrast: (
+  contrast: ( // ... continues to 900
   )
 );
 $warn-palette: (
@@ -25,7 +24,7 @@ $warn-palette: (
   700:red,
   800:red,
   900:red,
-  contrast: (
+  contrast: ( // ... continues to 900
   )
 );
 $primary-palette: (
@@ -38,50 +37,21 @@ $primary-palette: (
   700:#2f3b4b,
   800:#2f3b4b,
   900:#2f3b4b,
-  contrast: (
+  contrast: ( // ... continues to 900
   )
-);
-
-
-// the foreground that would be used if it was possible
-$light-text: #ffffff;
-$light-primary-text: rgba($light-text, 0.87);
-$light-accent-text: rgba($light-primary-text, 0.54);
-$light-disabled-text: rgba($light-primary-text, 0.38);
-$light-dividers: rgba($light-primary-text, 0.12);
-$light-focused: rgba($light-primary-text, 0.12);
-
-$mat-light-theme-foreground: (
-  base:              black,
-  divider:           $light-dividers,
-  dividers:          $light-dividers,
-  disabled:          $light-disabled-text,
-  disabled-button:   rgba($light-text, 0.26),
-  disabled-text:     $light-disabled-text,
-  elevation:         black,
-  secondary-text:    $light-accent-text,
-  hint-text:         $light-disabled-text,
-  accent-text:       $light-accent-text,
-  icon:              $light-accent-text,
-  icons:             $light-accent-text,
-  text:              $light-primary-text,
-  slider-min:        $light-primary-text,
-  slider-off:        rgba($light-text, 0.26),
-  slider-off-active: $light-disabled-text,
 );
 
 $primary: mat.define-palette($primary-palette, 100);
 $accent: mat.define-palette($accent-palette, 100, 200, 300);
 $warn: mat.define-palette($warn-palette, 100);
 
-$theme: mat.define-light-theme((color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn,
-  ),
-  typography: mat.define-typography-config($font-family: 'Poppins',
-),
-  density: 0,
-));
+$theme: mat.define-light-theme((color: (primary: $primary,
+        accent: $accent,
+        warn: $warn,
+      ),
+      typography: mat.define-typography-config($font-family: 'Poppins',
+      ),
+      density: 0,
+    ));
 
 @include mat.all-component-themes($theme);

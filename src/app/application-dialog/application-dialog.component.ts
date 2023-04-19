@@ -109,11 +109,15 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   saveLoanDetails(): void {
-    const formDataKeys: string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm", "paymentScheduleType",
-      "applicants", "amountOfKids", "income", "obligations", "mortgageLoans", "consumerLoans",
-      "leasingAmount", "creditCardLimit", "monthlyPayment", "euribor", "firstName", "lastName", "personalNumber",
-      "email", "phoneNumber", "address"]
-    formDataKeys.forEach((key) => { this.applicationData[key] = this.loanDetailsForm.value[key] });
+    const loanDataKeys: string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm",
+      "paymentScheduleType", "euribor"];
+    const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "obligations", "mortgageLoans", "consumerLoans",
+      "leasingAmount", "creditCardLimit", "monthlyPayment"];
+    const personalDataKeys: string[] = ["firstName", "lastName", "personalNumber",
+      "email", "phoneNumber", "address"];
+    loanDataKeys.forEach((key) => { this.applicationData[key] = this.loanDetailsForm.value[key] });
+    incomeDataKeys.forEach((key) => { this.applicationData[key] = this.incomeDetailsForm.value[key] });
+    personalDataKeys.forEach((key) => { this.applicationData[key] = this.personalDetailsForm.value[key] });
   }
 
 
