@@ -2,11 +2,12 @@
     display: flex;
     justify-content: space-between;
     height: 70px;
-    background: #262626;
+    background: #2f3b4b;
     padding: 0 5%;
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .2);
 }
 
 ul {

@@ -1,4 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Poppins; }
+html,
+body {
+    height: 100%;
+    color: #fff;
+}
+
+body {
+    margin: 0;
+    font-family: Poppins;
+    // background-color: #7297ad;
+    background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%)
+}
+
+form {
+    background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%)
+}
+
+.material-icons {
+    color: black;
+}
+
+.mdc-text-field {
+    border-radius: 4px;
+}
+
+// .mdc-radio__background {
+
+// }
+
+.material-icons {
+  color: white;
+}
+
+
+.mat-mdc-radio-button .mdc-form-field {
+  color: var(--mdc-theme-text-primary-on-background, rgba(255, 255, 255, 0.87) 0.87);
+}
+
+
+.mat-mdc-radio-button.mat-primary {
+  --mdc-radio-disabled-selected-icon-color: #FFF;
+  --mdc-radio-disabled-unselected-icon-color: #FFF;
+  --mdc-radio-unselected-focus-icon-color: #FFF;
+  --mdc-radio-unselected-hover-icon-color: #FFF;
+  --mdc-radio-unselected-icon-color: rgba(255, 255, 255, 0.54);
+  --mdc-radio-unselected-pressed-icon-color: rgba(255, 255, 255, 0.54);
+  --mat-mdc-radio-ripple-color: #FFF;
+}

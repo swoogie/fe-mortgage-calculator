@@ -1,0 +1,87 @@
+@use '@angular/material' as mat;
+@use 'sass:map';
+@include mat.core();
+
+$accent-palette: (
+  100: #FFF,
+  200: #FFF,
+  300: #FFF,
+  400: #FFF,
+  500: #FFF,
+  600: #FFF,
+  700: #FFF,
+  800: #FFF,
+  900: #FFF,
+  contrast: (
+  )
+);
+$warn-palette: (
+  100:red,
+  200:red,
+  300:red,
+  400:red,
+  500:red,
+  600:red,
+  700:red,
+  800:red,
+  900:red,
+  contrast: (
+  )
+);
+$primary-palette: (
+  100:#2f3b4b,
+  200:#2f3b4b,
+  300:#2f3b4b,
+  400:#2f3b4b,
+  500:#2f3b4b,
+  600:#2f3b4b,
+  700:#2f3b4b,
+  800:#2f3b4b,
+  900:#2f3b4b,
+  contrast: (
+  )
+);
+
+
+// the foreground that would be used if it was possible
+$light-text: #ffffff;
+$light-primary-text: rgba($light-text, 0.87);
+$light-accent-text: rgba($light-primary-text, 0.54);
+$light-disabled-text: rgba($light-primary-text, 0.38);
+$light-dividers: rgba($light-primary-text, 0.12);
+$light-focused: rgba($light-primary-text, 0.12);
+
+$mat-light-theme-foreground: (
+  base:              black,
+  divider:           $light-dividers,
+  dividers:          $light-dividers,
+  disabled:          $light-disabled-text,
+  disabled-button:   rgba($light-text, 0.26),
+  disabled-text:     $light-disabled-text,
+  elevation:         black,
+  secondary-text:    $light-accent-text,
+  hint-text:         $light-disabled-text,
+  accent-text:       $light-accent-text,
+  icon:              $light-accent-text,
+  icons:             $light-accent-text,
+  text:              $light-primary-text,
+  slider-min:        $light-primary-text,
+  slider-off:        rgba($light-text, 0.26),
+  slider-off-active: $light-disabled-text,
+);
+
+$primary: mat.define-palette($primary-palette, 100);
+$accent: mat.define-palette($accent-palette, 100, 200, 300);
+$warn: mat.define-palette($warn-palette, 100);
+
+$theme: mat.define-light-theme((color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+  typography: mat.define-typography-config($font-family: 'Poppins',
+),
+  density: 0,
+));
+
+@include mat.all-component-themes($theme);
