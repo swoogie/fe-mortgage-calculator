@@ -1,9 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
 
 html,
 body {
     height: 100%;
-    color: black;
+    color: #fff;
 }
 
 body {
@@ -25,6 +24,26 @@ form {
     border-radius: 4px;
 }
 
-button {
-    background-color: coral;
+// .mdc-radio__background {
+
+// }
+
+.material-icons {
+  color: white;
+}
+
+
+.mat-mdc-radio-button .mdc-form-field {
+  color: var(--mdc-theme-text-primary-on-background, rgba(255, 255, 255, 0.87) 0.87);
+}
+
+
+.mat-mdc-radio-button.mat-primary {
+  --mdc-radio-disabled-selected-icon-color: #FFF;
+  --mdc-radio-disabled-unselected-icon-color: #FFF;
+  --mdc-radio-unselected-focus-icon-color: #FFF;
+  --mdc-radio-unselected-hover-icon-color: #FFF;
+  --mdc-radio-unselected-icon-color: rgba(255, 255, 255, 0.54);
+  --mdc-radio-unselected-pressed-icon-color: rgba(255, 255, 255, 0.54);
+  --mat-mdc-radio-ripple-color: #FFF;
 }

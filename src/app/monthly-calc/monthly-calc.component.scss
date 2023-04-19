@@ -1,15 +1,36 @@
 .container {
+  padding: calc((100vh - 70px - 552.3px) / 2) 10%;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
   text-align: center;
-  padding-top: 100px;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+  gap: 50px;
+  background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%);
 
-  .monthly-cal {
-    display: inline-block;
-    min-width: 150px;
-    max-width: 300px;
-    width: 100%;
+  .left-container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
 
-    .input-wrap {
-      width: 100%;
+  .right-container-card {
+    background-color: white;
+    height: fit-content;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2);
+    padding: 20px 10px;
+
+
+    .image {
+      max-width: 90%;
+      height: 90%;
+    }
+
+    .funkyText {
+      margin-bottom: 20px;
+      margin-top: 0;
+      color: #000;
     }
   }
 
