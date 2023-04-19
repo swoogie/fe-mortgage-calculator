@@ -41,7 +41,7 @@ export class MonthlyCalcComponent implements OnInit {
 
   constructor(public dialog: MatDialog) {
     this.monthlyForm.valueChanges.subscribe((value) => {
-      console.log('form changed', value);
+      // console.log('form changed', value);
     });
   }
 

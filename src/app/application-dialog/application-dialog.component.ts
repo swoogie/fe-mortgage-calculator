@@ -20,7 +20,11 @@ export class ApplicationDialogComponent implements OnInit {
   minLoanTerm: number;
   maxLoanTerm: number;
   loanAmountPercentage: number;
+  minKids: number;
   maxKids: number;
+  maxNumOfApplicants: number;
+  children: number[] = [];
+  applicants: number[] = [];
   maxMonthlyObligationsPercentage: number;
   euriborValues: Euribor[] = euriborValuesConst;
   paymentScheduleTypes: string[] = ['Annuity', 'Linear'];
@@ -33,13 +37,23 @@ export class ApplicationDialogComponent implements OnInit {
 
   ngOnInit() {
     this.apiService.getConstants().subscribe((constants) => {
+      console.log("constants minKids: " + constants.minKids)
       this.constants = constants;
       this.minLoanTerm = constants.minLoanTerm;
       this.maxLoanTerm = constants.maxLoanTerm;
       this.loanAmountPercentage = constants.loanAmountPercentage;
+      this.minKids = constants.minKids;
       this.maxKids = constants.maxKids;
       this.maxMonthlyObligationsPercentage = constants.maxMonthlyObligationsPercentage;
-    });
+      this.maxNumOfApplicants = constants.maxNumOfApplicants;
+      console.log("min kids: ", this.minKids);
+      for (let i = this.minKids; i <= this.maxKids; i++) {
+        this.children.push(i);
+      }
+      for (let i = 1; i <= this.maxNumOfApplicants; i++) {
+        this.applicants.push(i);
+      }
+    })
   }
 
   isLinear = true;
@@ -91,19 +105,6 @@ export class ApplicationDialogComponent implements OnInit {
 //update other fields
   }
 
-  maxApplicants(): number[] {
-    return Array(this.constants.maxNumOfApplicants).fill(0).map((x, i) => i + 1);
-  }
-
-  children(): number[] {
-    const minKids = this.constants.minKids;
-    const maxKids = this.constants.maxKids;
-    const kids = [];
-    for (let i = minKids; i <= maxKids; i++) {
-      kids.push(i);
-    }
-    return kids;
-  }
 
   constructor(
     private apiService: ApiService,

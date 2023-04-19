@@ -67,7 +67,7 @@
           <mat-form-field>
             <mat-label>Number of applicants</mat-label>
             <mat-select formControlName="applicants">
-              <mat-option *ngFor="let applicant of maxApplicants()" [value]="applicant">
+              <mat-option *ngFor="let applicant of applicants" [value]="applicant">
                 {{ applicant }}
               </mat-option>
             </mat-select>
@@ -78,7 +78,7 @@
           <mat-form-field>
             <mat-label>Number of kids</mat-label>
             <mat-select formControlName="amountOfKids">
-              <mat-option *ngFor="let kid of children()" [value]="kid">
+              <mat-option *ngFor="let kid of children" [value]="kid">
                 {{ kid }}
               </mat-option>
             </mat-select>
