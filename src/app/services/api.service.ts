@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ApplicationData } from '../interfaces/application-data';
 import { Constants } from '../interfaces/constants';
 
 @Injectable({
@@ -11,9 +12,13 @@ export class ApiService {
 
   constants: Constants;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getConstants(): Observable<Constants> {
     return this.http.get<Constants>(`${this.apiUrl}/constants`);
+  }
+
+  postApplication(applicationData: ApplicationData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/applications`, applicationData)
   }
 }
