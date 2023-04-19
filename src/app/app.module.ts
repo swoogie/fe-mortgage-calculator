@@ -22,6 +22,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { HttpClientModule } from '@angular/common/http';
+import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatStepperModule} from "@angular/material/stepper";
 
 @NgModule({
   declarations: [
@@ -32,6 +35,7 @@ import { HttpClientModule } from '@angular/common/http';
     MaxCalcComponent,
     PagenotfoundComponent,
     LoginComponent,
+    ApplicationDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +55,8 @@ import { HttpClientModule } from '@angular/common/http';
     MatRadioModule,
     MatCardModule,
     HttpClientModule,
+    MatDialogModule,
+    MatStepperModule
   ],
   providers: [MatSnackBarModule],
   bootstrap: [AppComponent],

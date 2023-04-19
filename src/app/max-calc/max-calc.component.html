@@ -119,7 +119,7 @@
       <button class="btn-calculate" mat-raised-button type="submit">
         Calculate
       </button>
-      <button mat-raised-button>Apply</button>
+      <button mat-raised-button (click)="openDialog()">Apply</button>
     </div>
   </form>
   <mat-label *ngIf="linearTotal"

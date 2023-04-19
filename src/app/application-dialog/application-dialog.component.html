@@ -1,0 +1,179 @@
+<h1 mat-dialog-title>Application Dialog</h1>
+<div mat-dialog-content>
+  <mat-stepper orientation="vertical" [linear]="isLinear">
+    <mat-step [stepControl]="loanDetailsForm">
+      <form [formGroup]="loanDetailsForm">
+        <ng-template matStepLabel>Loan Details</ng-template>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Real Estate Price</mat-label>
+            <input matInput formControlName="realEstatePrice">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Down Payment</mat-label>
+            <input matInput formControlName="downPayment">
+          </mat-form-field>
+        </div>
+
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Loan Amount</mat-label>
+            <input matInput formControlName="loanAmount">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field class="input-wrap">
+            <mat-label>Loan term years</mat-label>
+            <input
+              matInput
+              formControlName="loanTerm"
+            />
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field class="input-wrap">
+            <mat-label>Euribor</mat-label>
+            <mat-select formControlName="euribor">
+              <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
+              >{{ euribor.timeInMonths }} Months -
+                {{ euribor.interestRate }}%
+              </mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field class="input-wrap">
+            <mat-label>Payment Schedule Type</mat-label>
+            <mat-select formControlName="paymentScheduleType">
+              <mat-option *ngFor="let type of paymentScheduleTypes" [value]="type"
+              >{{type}}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-raised-button matStepperNext class="form-button">Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step step [stepControl]="incomeDetailsForm">
+      <form [formGroup]="incomeDetailsForm">
+        <ng-template matStepLabel>Income information</ng-template>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Number of applicants</mat-label>
+            <mat-select formControlName="applicants">
+              <mat-option *ngFor="let applicant of applicants" [value]="applicant">
+                {{ applicant }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Number of kids</mat-label>
+            <mat-select formControlName="amountOfKids">
+              <mat-option *ngFor="let kid of children" [value]="kid">
+                {{ kid }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field class="input-wrap">
+            <mat-label>Income</mat-label>
+            <input
+              matInput
+              formControlName="income"
+            />
+          </mat-form-field>
+        </div>
+        <mat-radio-group
+          aria-label="Select an option"
+          formControlName="obligations"
+        >
+          <mat-radio-button [value]="false">No</mat-radio-button>
+          <mat-radio-button [value]="true">Yes</mat-radio-button>
+        </mat-radio-group>
+        <div *ngIf="obligations.value == true">
+          <ng-container *ngFor="let field of obligationFields">
+            <div class="form-field-wrapper">
+              <mat-form-field class="input-wrap">
+                <mat-label>{{ field.label }}</mat-label>
+                <input
+                  matInput
+                  formControlName="{{ field.controlName }}"
+                />
+              </mat-form-field>
+            </div>
+          </ng-container>
+        </div>
+        <div>
+          <button mat-raised-button matStepperPrevious class="form-button">Back</button>
+          <button mat-raised-button matStepperNext class="form-button">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step step [stepControl]="personalDetailsForm">
+      <form [formGroup]="personalDetailsForm">
+        <ng-template matStepLabel>Personal Details</ng-template>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Personal Number</mat-label>
+            <input matInput formControlName="personalNumber">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber">
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Address</mat-label>
+            <input matInput formControlName="address">
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-raised-button matStepperPrevious class="form-button">Back</button>
+          <button mat-raised-button matStepperNext class="form-button">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Form Submission</ng-template>
+      <div>
+        If the info is correct, click Done to submit the form.
+      </div>
+      <div>
+        <button mat-raised-button matStepperPrevious class="form-button">Back</button>
+        <button mat-raised-button mat-dialog-close class="form-button" (click)="onDoneClick()">Done</button>
+      </div>
+
+    </mat-step>
+  </mat-stepper>
+</div>
