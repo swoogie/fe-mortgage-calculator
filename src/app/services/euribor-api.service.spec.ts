@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { EuriborApiService } from './euribor-api.service';
 
-describe('EuriborService', () => {
+describe('EuriborApiService', () => {
   let service: EuriborApiService;
 
   beforeEach(() => {
