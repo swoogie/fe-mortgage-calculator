@@ -1,74 +1,59 @@
-<form [formGroup]="monthlyForm" (ngSubmit)="onSubmit()" class="container">
-  <div class="left-container">
-    <mat-form-field appearance="fill" class="input-wrap">
-      <mat-label>Number of applicants</mat-label>
-      <mat-select formControlName="applicants">
-        <mat-option [value]="1">1</mat-option>
-        <mat-option [value]="2">2</mat-option>
-      </mat-select>
-      <mat-error *ngIf="applicants && applicants.hasError('required')">
-        Please choose an option
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="fill" class="input-wrap">
-      <mat-label>Number of children</mat-label>
-      <mat-select formControlName="amountOfKids">
-        <mat-option *ngFor="let i of optionValues" [value]="i">{{
-          i
-        }}</mat-option>
-      </mat-select>
-      <mat-error *ngIf="amountOfKids && amountOfKids.hasError('required')">
-        Please choose an option
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field class="input-wrap">
-      <mat-label>Income</mat-label>
-      <input matInput formControlName="income" (change)="onInputChanged()" />
-      <mat-error *ngIf="income && income.hasError('required')">
-        Please insert the income
-      </mat-error>
-      <mat-error *ngIf="income && income.hasError('pattern')"
-        >Please enter a number</mat-error
-      >
-    </mat-form-field>
-    <div class="obligationContainer">
-      <mat-label class="block">Do you have any obligations?</mat-label>
-      <mat-icon
-        matSuffix
-        matTooltip="Represent any outstanding debts or regular payments that a party must make."
-        [matTooltipPosition]="'right'"
-        >help_outline</mat-icon
-      >
-    </div>
-    <mat-radio-group
-      aria-label="Select an option"
-      color="primary"
-      formControlName="obligation"
-    >
-      <mat-radio-button [value]="false" checked>No</mat-radio-button>
-      <mat-radio-button [value]="true">Yes</mat-radio-button>
-    </mat-radio-group>
-    <div *ngIf="obligation.value == true">
-      <ng-container *ngFor="let field of fields">
-        <mat-form-field class="input-wrap">
-          <mat-label>{{ field.label }}</mat-label>
-          <input
-            matInput
-            formControlName="{{ field.controlName }}"
-            (change)="onInputChanged()"
-          />
-        </mat-form-field>
-        <mat-error
-          *ngIf="
-            monthlyForm.get(field.controlName) &&
-            monthlyForm.get(field.controlName).hasError('pattern')
-          "
-        >
-          Please enter a number
+<div class="format">
+  <form [formGroup]="monthlyForm" (ngSubmit)="onSubmit()" class="container">
+    <div class="left-container">
+      <mat-form-field appearance="fill" class="input-wrap">
+        <mat-label>Number of applicants</mat-label>
+        <mat-select formControlName="applicants">
+          <mat-option [value]="1">1</mat-option>
+          <mat-option [value]="2">2</mat-option>
+        </mat-select>
+        <mat-error *ngIf="applicants && applicants.hasError('required')">
+          Please choose an option
         </mat-error>
-      </ng-container>
-    </div>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="input-wrap">
+        <mat-label>Number of children</mat-label>
+        <mat-select formControlName="amountOfKids">
+          <mat-option *ngFor="let i of optionValues" [value]="i">{{
+            i
+            }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="amountOfKids && amountOfKids.hasError('required')">
+          Please choose an option
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="input-wrap">
+        <mat-label>Income</mat-label>
+        <input matInput formControlName="income" (change)="onInputChanged()" />
+        <mat-error *ngIf="income && income.hasError('required')">
+          Please insert the income
+        </mat-error>
+        <mat-error *ngIf="income && income.hasError('pattern')">Please enter a number</mat-error>
+      </mat-form-field>
+      <div class="obligationContainer">
+        <mat-label class="block">Do you have any obligations?</mat-label>
+        <mat-icon matSuffix matTooltip="Represent any outstanding debts or regular payments that a party must make."
+          [matTooltipPosition]="'right'">help_outline</mat-icon>
+      </div>
+      <mat-radio-group aria-label="Select an option" color="primary" formControlName="obligation">
+        <mat-radio-button [value]="false" checked>No</mat-radio-button>
+        <mat-radio-button [value]="true">Yes</mat-radio-button>
+      </mat-radio-group>
+      <div *ngIf="obligation.value == true">
+        <ng-container *ngFor="let field of fields">
+          <mat-form-field class="input-wrap">
+            <mat-label>{{ field.label }}</mat-label>
+            <input matInput formControlName="{{ field.controlName }}" (change)="onInputChanged()" />
+          </mat-form-field>
+          <mat-error *ngIf="
+              monthlyForm.get(field.controlName) &&
+              monthlyForm.get(field.controlName).hasError('pattern')
+            ">
+            Please enter a number
+          </mat-error>
+        </ng-container>
+      </div>
   </div>
   <div class="right-container-card">
     <div class="btn-wrap">
@@ -107,5 +92,6 @@
         </div>
       </div>
     </div>
+    </div>
+  </form>
   </div>
-</form>
