@@ -73,9 +73,10 @@
     <mat-step step [stepControl]="incomeDetailsForm">
       <form [formGroup]="incomeDetailsForm">
         <ng-template matStepLabel>Income information</ng-template>
-        <div class="form-field-wrapper">
+        <div>
           <mat-label class="block">Number of Applicants</mat-label>
-          <div class="form-field-wrapper">
+        </div>
+        <div class="form-field-wrapper">
             <mat-radio-group
               aria-label="Number of applicants"
               formControlName="applicants"
@@ -85,7 +86,7 @@
               </mat-radio-button>
             </mat-radio-group>
           </div>
-        </div>
+
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Number of kids</mat-label>
