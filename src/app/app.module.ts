@@ -22,9 +22,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { HttpClientModule } from '@angular/common/http';
+
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
-import {MatDialogModule} from "@angular/material/dialog";
-import {MatStepperModule} from "@angular/material/stepper";
 
 @NgModule({
   declarations: [
@@ -56,7 +58,8 @@ import {MatStepperModule} from "@angular/material/stepper";
     MatCardModule,
     HttpClientModule,
     MatDialogModule,
-    MatStepperModule
+    MatStepperModule,
+    MatGridListModule,
   ],
   providers: [MatSnackBarModule],
   bootstrap: [AppComponent],
