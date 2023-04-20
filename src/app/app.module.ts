@@ -23,8 +23,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { HttpClientModule } from '@angular/common/http';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
-import {MatDialogModule} from "@angular/material/dialog";
-import {MatStepperModule} from "@angular/material/stepper";
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import {MatStepperModule} from "@angular/material/stepper";
     MatCardModule,
     HttpClientModule,
     MatDialogModule,
-    MatStepperModule
+    MatStepperModule,
+    MatGridListModule,
   ],
   providers: [MatSnackBarModule],
   bootstrap: [AppComponent],
