@@ -16,9 +16,12 @@ const formBuilder = new FormBuilder().nonNullable;
   styleUrls: ['./application-dialog.component.scss']
 })
 export class ApplicationDialogComponent implements OnInit {
+  private maxRealEstatePrice: number = 3200000;
+  private minRealEstatePrice: number = 10000;
+  minLoanAmount: number = 0;
   constants: Constants;
-  minLoanTerm: number;
-  maxLoanTerm: number;
+  minLoanTerm!: number;
+  maxLoanTerm!: number;
   loanAmountPercentage: number;
   minKids: number;
   maxKids: number;
@@ -37,32 +40,78 @@ export class ApplicationDialogComponent implements OnInit {
   isLinear = true;
 
   loanDetailsForm = formBuilder.group({
-    realEstatePrice: [this.applicationData.realEstatePrice, Validators.required],
-    downPayment: [this.applicationData.downPayment, Validators.required],
-    loanAmount: [this.applicationData.loanAmount, Validators.required],
-    loanTerm: [this.applicationData.loanTerm, Validators.required],
+    realEstatePrice: [this.applicationData.realEstatePrice, [
+      Validators.required,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+      Validators.max(this.maxRealEstatePrice),
+      Validators.min(this.minRealEstatePrice),
+    ],
+    ],
+    downPayment: [this.applicationData.downPayment,
+      [
+        Validators.required,
+        Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
+      ],
+    ],
+    loanAmount: [this.applicationData.loanAmount,
+      [
+        Validators.required,
+        Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+        Validators.min(this.minLoanAmount),
+      ],
+    ],
+    loanTerm: [this.applicationData.loanTerm,
+      [
+        Validators.required,
+        Validators.pattern('[0-9]*'),
+        Validators.min(this.minLoanTerm),
+        Validators.max(this.maxLoanTerm),
+      ],
+    ],
     euribor: [this.applicationData.euribor, [Validators.required]],
     paymentScheduleType: [this.applicationData.paymentScheduleType as string, [Validators.required]],
   });
   incomeDetailsForm = formBuilder.group({
     applicants: [this.applicationData.applicants, Validators.required],
     amountOfKids: [this.applicationData.amountOfKids, Validators.required],
-    income: [this.applicationData.income, Validators.required],
+    income: [this.applicationData.income,
+      [
+        Validators.required,
+        Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
+      ],
+    ],
     obligations: [this.applicationData.obligations, Validators.required],
-    mortgageLoans: [this.applicationData.mortgageLoans],
-    consumerLoans: [this.applicationData.consumerLoans],
-    leasingAmount: [this.applicationData.leasingAmount],
-    creditCardLimit: [this.applicationData.creditCardLimit],
-    monthlyPayment: [this.applicationData.monthlyPayment],
+    mortgageLoans: [this.applicationData.mortgageLoans,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
+    ],
+    consumerLoans: [this.applicationData.consumerLoans,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
+],
+    leasingAmount: [this.applicationData.leasingAmount,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')],
+    creditCardLimit: [this.applicationData.creditCardLimit,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')],
+    monthlyPayment: [this.applicationData.monthlyPayment,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')],
   });
   personalDetailsForm = formBuilder.group({
     firstName: [this.applicationData.firstName, Validators.required],
     lastName: [this.applicationData.lastName, Validators.required],
     personalNumber: [this.applicationData.personalNumber, Validators.required],
-    email: [this.applicationData.email, Validators.required],
-    phoneNumber: [this.applicationData.phoneNumber, Validators.required],
+    email: [this.applicationData.email,
+      [
+        Validators.required,
+        // Validators.email,
+        Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")],
+    ],
+    phoneNumber: [this.applicationData.phoneNumber,
+      [
+        Validators.required,
+        Validators.pattern(/^(5|6)\d{7}$/)],
+      ],
     address: [this.applicationData.address, Validators.required]
   });
+
 
   constructor(private euriborValuesService: EuriborValuesService,
               private apiService: ApiService,
