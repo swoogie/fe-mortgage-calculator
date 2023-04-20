@@ -7,14 +7,15 @@ import { UserAuthService } from '../services/user-auth.service';
   providedIn: 'root'
 })
 export class UserGuard implements CanActivate {
-  constructor(private userAuthService: UserAuthService, private router: Router) {}
+  constructor(private userAuthService: UserAuthService, private router: Router) { }
 
   canActivate(): boolean {
-    if (this.userAuthService.isAuthenticated()) {
-      return true;
-    } else {
-      this.router.navigate(['/login']);
+    if (!this.userAuthService.isLoggedIn()) {
+      this.router.navigate(['/user-page']);
       return false;
+    } else {
+      this.router.navigate(['login']);
+      return true;
     }
   }
 }

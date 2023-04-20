@@ -78,7 +78,7 @@ export class LoginComponent implements OnInit {
     this.userAuthService.login(email, password).subscribe(
       (response) => {
         // If the authentication succeeds, redirect the user to the user page
-        this.router.navigate(['/userpage']);
+        this.router.navigate(['/user-page']);
       },
       (error) => {
         // If the authentication fails, show an error message to the user
