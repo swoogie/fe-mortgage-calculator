@@ -37,22 +37,32 @@
             <mat-label>Euribor</mat-label>
             <mat-select formControlName="euribor">
               <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
-              >{{ euribor.timeInMonths }} Months -
-                {{ euribor.interestRate }}%
-              </mat-option
-              >
+              >{{ euribor.timeInMonths }} Months
+                <span *ngIf="euribor.interestRate !== null"> - {{ euribor.interestRate.toFixed(3) }}%</span>
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
-          <mat-form-field class="input-wrap">
-            <mat-label>Payment Schedule Type</mat-label>
-            <mat-select formControlName="paymentScheduleType">
-              <mat-option *ngFor="let type of paymentScheduleTypes" [value]="type"
-              >{{type}}</mat-option
-              >
-            </mat-select>
-          </mat-form-field>
+          <mat-label class="block">Payment Schedule Type</mat-label>
+          <mat-icon
+            matSuffix
+            [matTooltip]="'Annuity - identical monthly installments;
+             Linear - identical monthly principle, interest is calculated on outstanding principle'"
+            [matTooltipPosition]="'right'"
+            fontIcon="help_outline"
+          ></mat-icon>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-radio-group
+            aria-label="Payment schedule options"
+            formControlName="paymentScheduleType"
+            color="primary"
+          >
+            <mat-radio-button *ngFor="let type of paymentScheduleTypes" [value]="type">
+              {{type | titlecase}}
+            </mat-radio-button>
+          </mat-radio-group>
         </div>
         <div>
           <button mat-raised-button matStepperNext class="form-button">Next</button>
@@ -92,6 +102,15 @@
               formControlName="income"
             />
           </mat-form-field>
+        </div>
+        <div class="obligationContainer">
+          <mat-label class="block">Do you have any obligations?</mat-label>
+          <mat-icon
+            matSuffix
+            matTooltip="Represent any outstanding debts or regular payments that a party must make."
+            [matTooltipPosition]="'right'"
+          >help_outline</mat-icon
+          >
         </div>
         <mat-radio-group
           aria-label="Select an option"

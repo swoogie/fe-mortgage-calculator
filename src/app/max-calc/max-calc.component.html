@@ -78,10 +78,10 @@
       <mat-form-field class="input-wrap">
         <mat-label>Euribor</mat-label>
         <mat-select formControlName="euribor">
-          <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
-            >{{ euribor.timeInMonths }} Months -
-            {{ euribor.interestRate }}%</mat-option
-          >
+          <mat-option *ngFor="let euribor of euriborValues" [value]="euribor">
+            {{ euribor.timeInMonths }} Months
+            <span *ngIf="euribor.interestRate !== null"> - {{ euribor.interestRate.toFixed(3) }}%</span>
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
@@ -111,11 +111,11 @@
 
       <mat-form-field class="input-wrap">
         <mat-label>Down payment</mat-label>
-        <input matInput formControlName="downpayment" id="downpayment" />
+        <input matInput formControlName="downpayment" id="downpayment"/>
       </mat-form-field>
       <mat-form-field class="input-wrap">
         <mat-label>Interest Rate</mat-label>
-        <input matInput formControlName="interestRate" />
+        <input matInput formControlName="interestRate"/>
       </mat-form-field>
       <button
         class="btn-calculate"
@@ -129,12 +129,12 @@
     </div>
   </form>
   <mat-label *ngIf="linearTotal"
-    >With linear payments by the end of your mortgage you'll have paid off:
+  >With linear payments by the end of your mortgage you'll have paid off:
     {{ linearTotal }} € <br
-  /></mat-label>
+    /></mat-label>
 
   <mat-label *ngIf="annuityTotal"
-    >With annuity payments by the end of your mortgage you'll have paid off:
+  >With annuity payments by the end of your mortgage you'll have paid off:
     {{ annuityTotal }} € <br
-  /></mat-label>
+    /></mat-label>
 </div>
