@@ -18,13 +18,22 @@
     background-color: white;
     height: fit-content;
     border-radius: 10px;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     padding: 20px 10px;
-
 
     .image {
       max-width: 90%;
       height: 90%;
+    }
+
+    .result-display-warp {
+      display: flex;
+      flex-direction: column;
+      margin: 1em 10em;
+    }
+
+    .input-wrap {
+      text-align: center;
     }
 
     .funkyText {
@@ -44,5 +53,4 @@
     align-items: center;
     gap: 5px;
   }
-
 }

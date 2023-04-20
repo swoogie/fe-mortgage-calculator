@@ -74,10 +74,10 @@
     <div class="btn-wrap">
       <app-donut [data]="chartData" [labels]="chartLabels"></app-donut>
       <div>
-        <div>
-          <mat-form-field class="input-wrap">
-            <mat-label>Monthly Payment</mat-label>
-            <input matInput formControlName="monthlyPayment" />
+        <div class="result-display-warp">
+          <mat-label>Monthly Payment</mat-label>
+          <mat-form-field class="input-wrap funkyText">
+            <input matInput formControlName="monthlyPaymentDisplay" />
             <div *ngIf="showInsufficientMessage">Insufficient Income</div>
             <div *ngIf="!showInsufficientMessage">
               {{ monthlyPaymentResult | number : "1.2-2" }}

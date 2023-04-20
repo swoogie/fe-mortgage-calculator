@@ -25,7 +25,7 @@ export class MonthlyCalcComponent implements OnInit {
     { label: 'Consumer Loans', controlName: 'consumerLoans' },
     { label: 'Leasing Amount', controlName: 'leasingAmount' },
     { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
-    { label: 'Monthly max payment', controlName: 'monthlyMaxPayment' },
+    { label: 'Monthly max payment', controlName: 'monthlyPaymentDisplay' },
   ];
   monthlyPaymentResult: number = 0;
   calculateBtnPushed: boolean = false;
@@ -39,7 +39,7 @@ export class MonthlyCalcComponent implements OnInit {
       applicants: ['', Validators.required],
       amountOfKids: ['', Validators.required],
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-      monthlyPayment: [{ value: '', disabled: this.isDisabled }],
+      monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
       mortgageLoans: ['', Validators.pattern('[0-9]*')],
       consumerLoans: ['', Validators.pattern('[0-9]*')],
@@ -91,9 +91,12 @@ export class MonthlyCalcComponent implements OnInit {
   get amountOfKids() {
     return this.monthlyForm.get('amountOfKids');
   }
-
   get income() {
     return this.monthlyForm.get('income');
+  }
+
+  get monthlyPaymentDisplay() {
+    return this.monthlyForm.get('monthlyPaymentDisplay');
   }
   get obligation() {
     return this.monthlyForm.get('obligation');
