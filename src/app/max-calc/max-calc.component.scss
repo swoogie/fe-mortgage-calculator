@@ -2,6 +2,7 @@
   padding: calc((100vh - 70px - 552.3px) / 2) 10%;
   display: grid;
   grid-template-columns: 0.8fr 0.4fr 1fr;
+  grid-template-rows: repeat(6 1fr);
   text-align: center;
   justify-content: center;
   align-items: center;
@@ -21,7 +22,7 @@
 
   .slider-input-field {
     grid-column: 2;
-    width: 80%;
+    width: 100%;
     justify-self: center;
   }
   .slider-container {
@@ -37,10 +38,6 @@
     }
   }
 
-
-  mat-radio-group {
-    text-align: left;
-  }
   // .slider-container {
   //   display: grid;
   // }
@@ -53,13 +50,13 @@
   }
 
   .right-container-card {
-    background-color: white;
-    height: fit-content;
-    border-radius: 10px;
+    background-color: whitesmoke;
+    height: 100%;
+    border-radius: 5px;
     grid-column: 3 ;
     grid-row: 1 / span 5;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2);
-    padding: 20px 10px;
+    margin-top: 20px;
 
 
     .image {
@@ -74,8 +71,24 @@
     }
   }
 
+  mat-radio-button {
+    flex: 1;
+  }
+
+  mat-radio-group{
+    display:flex;
+    justify-content: center;
+  }
+
+  .calc-button {
+    grid-row: 6;
+    button {
+      margin: 5px;
+    }
+  }
+
   .cal-div {
-    display: inline-block;
+    display: block;
     min-width: 150px;
     max-width: 300px;
     width: 100%;

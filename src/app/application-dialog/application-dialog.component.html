@@ -2,43 +2,44 @@
 <div mat-dialog-content>
   <mat-stepper orientation="vertical" [linear]="isLinear">
     <mat-step [stepControl]="loanDetailsForm">
-      <form [formGroup]="loanDetailsForm">
+      <form [formGroup]="loanDetailsForm" color="accent">
         <ng-template matStepLabel>Loan Details</ng-template>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Real Estate Price</mat-label>
-            <input matInput formControlName="realEstatePrice">
+            <input matInput formControlName="realEstatePrice" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Down Payment</mat-label>
-            <input matInput formControlName="downPayment">
+            <input matInput formControlName="downPayment" />
           </mat-form-field>
         </div>
 
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Loan Amount</mat-label>
-            <input matInput formControlName="loanAmount">
+            <input matInput formControlName="loanAmount" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Loan term years</mat-label>
-            <input
-              matInput
-              formControlName="loanTerm"
-            />
+            <input matInput formControlName="loanTerm" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Euribor</mat-label>
             <mat-select formControlName="euribor">
-              <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
-              >{{ euribor.timeInMonths }} Months
-                <span *ngIf="euribor.interestRate !== null"> - {{ euribor.interestRate.toFixed(3) }}%</span>
+              <mat-option
+                *ngFor="let euribor of euriborValues"
+                [value]="euribor"
+                >{{ euribor.timeInMonths }} Months
+                <span *ngIf="euribor.interestRate !== null">
+                  - {{ euribor.interestRate.toFixed(3) }}%</span
+                >
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -47,8 +48,10 @@
           <mat-label class="block">Payment Schedule Type</mat-label>
           <mat-icon
             matSuffix
-            [matTooltip]="'Annuity - identical monthly installments;
-             Linear - identical monthly principle, interest is calculated on outstanding principle'"
+            [matTooltip]="
+              'Annuity - identical monthly installments;
+             Linear - identical monthly principle, interest is calculated on outstanding principle'
+            "
             [matTooltipPosition]="'right'"
             fontIcon="help_outline"
           ></mat-icon>
@@ -59,13 +62,18 @@
             formControlName="paymentScheduleType"
             color="primary"
           >
-            <mat-radio-button *ngFor="let type of paymentScheduleTypes" [value]="type">
-              {{type | titlecase}}
+            <mat-radio-button
+              *ngFor="let type of paymentScheduleTypes"
+              [value]="type"
+            >
+              {{ type | titlecase }}
             </mat-radio-button>
           </mat-radio-group>
         </div>
         <div>
-          <button mat-raised-button matStepperNext class="form-button">Next</button>
+          <button mat-raised-button matStepperNext class="form-button">
+            Next
+          </button>
         </div>
       </form>
     </mat-step>
@@ -80,9 +88,13 @@
           <mat-radio-group
             aria-label="Number of applicants"
             formControlName="applicants"
-            color="primary">
-            <mat-radio-button *ngFor="let applicant of applicants" [value]="applicant">
-              {{applicant}}
+            color="primary"
+          >
+            <mat-radio-button
+              *ngFor="let applicant of applicants"
+              [value]="applicant"
+            >
+              {{ applicant }}
             </mat-radio-button>
           </mat-radio-group>
         </div>
@@ -100,10 +112,7 @@
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Income</mat-label>
-            <input
-              matInput
-              formControlName="income"
-            />
+            <input matInput formControlName="income" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
@@ -112,9 +121,8 @@
             matSuffix
             matTooltip="Represent any outstanding debts or regular payments that a party must make."
             [matTooltipPosition]="'right'"
-          >help_outline
-          </mat-icon
-          >
+            >help_outline
+          </mat-icon>
         </div>
         <mat-radio-group
           aria-label="Select an option"
@@ -128,17 +136,18 @@
             <div class="form-field-wrapper">
               <mat-form-field class="input-wrap">
                 <mat-label>{{ field.label }}</mat-label>
-                <input
-                  matInput
-                  formControlName="{{ field.controlName }}"
-                />
+                <input matInput formControlName="{{ field.controlName }}" />
               </mat-form-field>
             </div>
           </ng-container>
         </div>
         <div>
-          <button mat-raised-button matStepperPrevious class="form-button">Back</button>
-          <button mat-raised-button matStepperNext class="form-button">Next</button>
+          <button mat-raised-button matStepperPrevious class="form-button">
+            Back
+          </button>
+          <button mat-raised-button matStepperNext class="form-button">
+            Next
+          </button>
         </div>
       </form>
     </mat-step>
@@ -148,55 +157,65 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstName">
+            <input matInput formControlName="firstName" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Last Name</mat-label>
-            <input matInput formControlName="lastName">
+            <input matInput formControlName="lastName" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Personal Number</mat-label>
-            <input matInput formControlName="personalNumber">
+            <input matInput formControlName="personalNumber" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email">
+            <input matInput formControlName="email" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="phoneNumber">
+            <input matInput formControlName="phoneNumber" />
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Address</mat-label>
-            <input matInput formControlName="address">
+            <input matInput formControlName="address" />
           </mat-form-field>
         </div>
         <div>
-          <button mat-raised-button matStepperPrevious class="form-button">Back</button>
-          <button mat-raised-button matStepperNext class="form-button">Next</button>
+          <button mat-raised-button matStepperPrevious class="form-button">
+            Back
+          </button>
+          <button mat-raised-button matStepperNext class="form-button">
+            Next
+          </button>
         </div>
       </form>
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Form Submission</ng-template>
+      <div>If the info is correct, click Done to submit the form.</div>
       <div>
-        If the info is correct, click Done to submit the form.
+        <button mat-raised-button matStepperPrevious class="form-button">
+          Back
+        </button>
+        <button
+          mat-raised-button
+          mat-dialog-close
+          class="form-button"
+          (click)="onDoneClick()"
+        >
+          Done
+        </button>
       </div>
-      <div>
-        <button mat-raised-button matStepperPrevious class="form-button">Back</button>
-        <button mat-raised-button mat-dialog-close class="form-button" (click)="onDoneClick()">Done</button>
-      </div>
-
     </mat-step>
   </mat-stepper>
 </div>

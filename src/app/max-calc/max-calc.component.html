@@ -1,5 +1,5 @@
 <form [formGroup]="maxCalcForm" (ngSubmit)="calculateMax()" class="container">
-  <mat-form-field class="input-wrap input-field" appearance="outline">
+  <mat-form-field class="input-wrap input-field">
     <mat-label>Real Estate Price €</mat-label>
     <input
       matInput
@@ -99,27 +99,29 @@
   <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
     Please enter a number
   </mat-error>
-
-  <div class="obligationContainer">
-    <mat-label class="block">Payment Schedule Type</mat-label>
-    <mat-icon
-      matSuffix
-      [matTooltip]="
-        'Annuity - identical monthly installments;
-             Linear - identical monthly principle, interest is calculated on outstanding principle'
-      "
-      [matTooltipPosition]="'right'"
-      fontIcon="help_outline"
-    ></mat-icon>
+  <div>
+    <div class="obligationContainer">
+      <mat-label class="block">Payment Schedule Type</mat-label>
+      <mat-icon
+        matSuffix
+        [matTooltip]="
+          'Annuity - identical monthly installments;
+               Linear - identical monthly principle, interest is calculated on outstanding principle'
+        "
+        [matTooltipPosition]="'right'"
+        fontIcon="help_outline"
+      ></mat-icon>
+    </div>
+    <mat-radio-group
+      aria-label="Payment schedule options"
+      formControlName="paymentScheduleType"
+      color="primary"
+      class="radio-group"
+    >
+      <mat-radio-button value="annuity">Annuity</mat-radio-button>
+      <mat-radio-button value="linear">Linear</mat-radio-button>
+    </mat-radio-group>
   </div>
-  <mat-radio-group
-    aria-label="Payment schedule options"
-    formControlName="paymentScheduleType"
-    color="primary"
-  >
-    <mat-radio-button value="annuity">Annuity</mat-radio-button>
-    <mat-radio-button value="linear">Linear</mat-radio-button>
-  </mat-radio-group>
 
   <!-- <mat-form-field class="input-wrap input-field">
     <mat-label>Down payment</mat-label>
@@ -129,11 +131,9 @@
     <mat-label>Interest Rate</mat-label>
     <input matInput formControlName="interestRate" />
   </mat-form-field> -->
-  <div class="input-field">
-    <button class="btn-calculate" mat-flat-button color="primary" type="submit">
-      Calculate
-    </button>
-    <!-- <button mat-flat-button>Apply</button> -->
+  <div class="calc-button">
+    <button mat-flat-button color="primary" type="submit">Calculate</button>
+    <button mat-flat-button *ngIf="annuityTotal || linearTotal">Apply</button>
   </div>
   <div class="right-container-card">
     <div class="btn-wrap">
