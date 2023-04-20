@@ -29,6 +29,11 @@ import { ApplicationDialogComponent } from './application-dialog/application-dia
 import { DonutComponent } from './donut/donut.component';
 import { ChartModule } from 'angular-highcharts';
 
+import { UserpageComponent } from './userpage/userpage.component';
+import { AdminpageComponent } from './adminpage/adminpage.component';
+import { AdminComponent } from './admin/admin.component';
+import { UserGuard } from './guard/user.guard';
+import { AdminGuard } from './guard/admin.guard';
 
 @NgModule({
   declarations: [
@@ -41,6 +46,9 @@ import { ChartModule } from 'angular-highcharts';
     LoginComponent,
     ApplicationDialogComponent,
     DonutComponent,
+    UserpageComponent,
+    AdminpageComponent,
+    AdminComponent,
   ],
   imports: [
     BrowserModule,
@@ -65,7 +73,7 @@ import { ChartModule } from 'angular-highcharts';
     ChartModule,
     MatGridListModule,
   ],
-  providers: [MatSnackBarModule],
+  providers: [MatSnackBarModule, UserGuard, AdminGuard], 
   bootstrap: [AppComponent],
 })
 export class AppModule {}
