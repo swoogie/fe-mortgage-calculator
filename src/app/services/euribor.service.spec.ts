@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EuriborService } from './euribor.service';
+import { EuriborApiService } from './euribor-api.service';
 
 describe('EuriborService', () => {
-  let service: EuriborService;
+  let service: EuriborApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EuriborService);
+    service = TestBed.inject(EuriborApiService);
   });
 
   it('should be created', () => {

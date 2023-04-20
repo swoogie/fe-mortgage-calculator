@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Euribor } from '../interfaces/euribor';
-import { EuriborService } from './euribor.service';
+import { EuriborApiService } from './euribor-api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,7 @@ export class EuriborValuesService {
     }
   ];
 
-  constructor(private euriborService: EuriborService) { }
+  constructor(private euriborService: EuriborApiService) { }
 
   getEuriborValues() {
     this.euriborData.forEach(euribor => {
