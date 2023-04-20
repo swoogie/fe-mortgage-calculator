@@ -6,5 +6,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./navigation.component.scss']
 })
 export class NavigationComponent {
-
+  isBurger = false;
+  toggleBurger() {
+    this.isBurger = !this.isBurger;
+  }
+  burgerFalse() {
+    this.isBurger = false;
+  }
 }

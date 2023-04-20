@@ -3,17 +3,4 @@ export interface Euribor {
   interestRate: number;
 }
 
-export const euriborValuesConst: Euribor[] = [
-  {
-    timeInMonths: 3,
-    interestRate: 3.108,
-  },
-  {
-    timeInMonths: 6,
-    interestRate: 3.356,
-  },
-  {
-    timeInMonths: 12,
-    interestRate: 3.582,
-  },
-];
+

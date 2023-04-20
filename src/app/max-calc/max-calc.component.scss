@@ -1,26 +1,104 @@
 .container {
+  padding: calc((100vh - 70px - 552.3px) / 2) 10%;
+  display: grid;
+  grid-template-columns: 0.8fr 0.4fr 1fr;
+  grid-template-rows: repeat(6 1fr);
   text-align: center;
-  margin-top: 20px;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+  gap: 40px;
+  row-gap: 0px;
+  background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%);
+
+  .input-field {
+    grid-column: 1 / span 2;
+    margin-bottom: -10px;
+  }
+
+  .input-field-pay-sched {
+    grid-column: 1 / span 2;
+  }
+
+  .slider-input-field {
+    grid-column: 2;
+    width: 100%;
+    justify-self: center;
+  }
+  .slider-container {
+    .slider-label {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      margin-left: 5px;
+    }
+    .slider {
+      text-align: start;
+      width: 96%;
+    }
+  }
+
+  // .slider-container {
+  //   display: grid;
+  // }
+
+  .left-container-card {
+    background-color: white;
+    height: fit-content;
+    border-radius: 10px;
+    grid-column: 2;
+  }
+
+  .right-container-card {
+    background-color: whitesmoke;
+    height: 100%;
+    border-radius: 5px;
+    grid-column: 3 ;
+    grid-row: 1 / span 5;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2);
+    margin-top: 20px;
+
+
+    .image {
+      max-width: 90%;
+      height: 90%;
+    }
+
+    .funkyText {
+      margin-bottom: 20px;
+      margin-top: 0;
+      color: #000;
+    }
+  }
+
+  mat-radio-button {
+    flex: 1;
+  }
+
+  mat-radio-group{
+    display:flex;
+    justify-content: center;
+  }
+
+  .calc-button {
+    grid-row: 6;
+    button {
+      margin: 5px;
+    }
+  }
 
   .cal-div {
-    display: inline-block;
+    display: block;
     min-width: 150px;
     max-width: 300px;
     width: 100%;
 
     .input-wrap {
       width: 100%;
-    }
-
-    .slider-margin {
-      margin: 0px;
-      min-width: 150px;
-      max-width: 280px;
-      width: 100%;
+      grid-column: 1 / span 2;
     }
 
     .slider-cont {
-      display: flex;
       justify-content: space-between;
       margin: 20px 10px 0;
       max-width: 284px;

@@ -12,10 +12,6 @@ body {
     background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%)
 }
 
-form {
-    background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%)
-}
-
 .material-icons {
     color: black;
 }
@@ -23,10 +19,6 @@ form {
 .mdc-text-field {
     border-radius: 4px;
 }
-
-// .mdc-radio__background {
-
-// }
 
 .material-icons {
   color: white;
@@ -37,6 +29,9 @@ form {
   color: var(--mdc-theme-text-primary-on-background, rgba(255, 255, 255, 0.87) 0.87);
 }
 
+.mat-step-header {
+  color: white;
+}
 
 .mat-mdc-radio-button.mat-primary {
   --mdc-radio-disabled-selected-icon-color: #FFF;

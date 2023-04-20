@@ -1,13 +1,14 @@
-import {Component} from '@angular/core';
-import {FormBuilder, Validators} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {debounceTime} from 'rxjs';
-import {Euribor} from '../interfaces/euribor';
-import {ApiService} from '../services/api.service';
-import {Constants} from '../interfaces/constants';
-import {MaxcalculationsService} from '../services/maxcalculations.service';
-import {ApplicationDialogComponent} from "../application-dialog/application-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import { Component } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { debounceTime } from 'rxjs';
+import { Euribor } from '../interfaces/euribor';
+import { ApiService } from '../services/api.service';
+import { Constants } from '../interfaces/constants';
+import { MaxcalculationsService } from '../services/maxcalculations.service';
+import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { EuriborValuesService } from '../services/euribor-values-service.service';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -24,21 +25,8 @@ export class MaxCalcComponent {
   maxLoanTerm: number = 30;
   baseInterest: number = 2.5;
   constants: Constants;
-  euriborValues: Euribor[] = [
-    {
-      timeInMonths: 3,
-      interestRate: 3.108,
-    },
-    {
-      timeInMonths: 6,
-      interestRate: 3.356,
-    },
-    {
-      timeInMonths: 12,
-      interestRate: 3.582,
-    },
-  ];
-
+  euriborValues: Euribor[] = this.euriborValuesService.getEuriborValues();
+  paymentScheduleTypes: string[] = ['annuity', 'linear'];
   maxCalcForm = fb.group(
     {
       realEstatePrice: [
@@ -76,10 +64,13 @@ export class MaxCalcComponent {
           (this.euriborValues[0].interestRate + this.baseInterest).toFixed(3)
         ) as number,
       ],
-      paymentScheduleType: ['annuity' as string, [Validators.required]],
+      paymentScheduleType: [
+        this.paymentScheduleTypes[0] as string,
+        [Validators.required],
+      ],
       euribor: [this.euriborValues[0] as Euribor, [Validators.required]],
     },
-    {updateOn: 'change'}
+    { updateOn: 'change' }
   );
 
   maxLoanAmount: number = this.realEstatePrice.value * 0.85;
@@ -87,6 +78,7 @@ export class MaxCalcComponent {
   constructor(
     private _snackBar: MatSnackBar,
     private api: ApiService,
+    private euriborValuesService: EuriborValuesService,
     private calcService: MaxcalculationsService,
     public dialog: MatDialog
   ) {
@@ -230,7 +222,7 @@ export class MaxCalcComponent {
   }
 
   openDialog(): void {
-    console.log("months "+this.euribor.value.timeInMonths);
+    console.log('months ' + this.euribor.value.timeInMonths);
     this.dialog.open(ApplicationDialogComponent, {
       data: {
         loanTerm: this.loanTerm.value,
@@ -238,7 +230,7 @@ export class MaxCalcComponent {
         downPayment: this.downpayment.value,
         realEstatePrice: this.realEstatePrice.value,
         euribor: this.euribor.value,
-        paymentScheduleType: this.paymentScheduleType.value
+        paymentScheduleType: this.paymentScheduleType.value,
       },
       minWidth: '400px',
     });
