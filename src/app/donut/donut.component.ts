@@ -35,6 +35,7 @@ export class DonutComponent implements OnInit, OnChanges {
   setupChart() {
     this.donut = new Chart({
       chart: {
+        // plotBackgroundColor: '#FE8A7F',
         type: 'pie',
         plotShadow: false,
         plotBorderWidth: null,
@@ -52,6 +53,7 @@ export class DonutComponent implements OnInit, OnChanges {
           size: '70%',
           borderColor: '#000000',
           slicedOffset: 0,
+
           dataLabels: {
             enabled: true,
             connectorWidth: 0.3,

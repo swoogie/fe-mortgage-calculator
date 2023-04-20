@@ -32,7 +32,7 @@ export class MonthlyCalcComponent implements OnInit {
   formSubmitted = false;
   isDisabled: boolean = true;
   chartData: number[] = [];
-  chartLabels: string[] = this.fields.map((field) => field.label);
+  chartLabels: string[] = this.chartFields.map((field) => field.label);
 
   monthlyForm = fb.group(
     {
