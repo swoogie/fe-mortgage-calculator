@@ -219,8 +219,6 @@ export class MaxCalcComponent {
   }
 
   openDialog(): void {
-    console.log(this.paymentScheduleType.value)
-
     this.dialog.open(ApplicationDialogComponent, {
       data: {
         loanTerm: this.loanTerm.value,
