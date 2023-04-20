@@ -10,24 +10,29 @@ import {
 import { Chart } from 'angular-highcharts';
 import * as Highcharts from 'highcharts';
 
+const COLORS = ['#c5cae9', '#FFCB6F', '#7986cb', '#4FA57F', '#FE8A7F'];
+
 @Component({
   selector: 'app-donut',
   templateUrl: './donut.component.html',
   styleUrls: ['./donut.component.scss'],
 })
 export class DonutComponent implements OnInit, OnChanges {
-  @Input() total: number;
+  @Input() data: number[];
+  @Input() labels: string[];
   donut: any = {};
 
   constructor() {
     this.donut = {};
   }
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['total'] && !changes['total'].firstChange) {
-      this.donut.title.text = `Total: ${this.total}`;
-    }
+    this.setupChart();
   }
   ngOnInit() {
+    this.setupChart();
+  }
+
+  setupChart() {
     this.donut = new Chart({
       chart: {
         type: 'pie',
@@ -35,6 +40,7 @@ export class DonutComponent implements OnInit, OnChanges {
         plotBorderWidth: null,
       },
       tooltip: {
+        // enabled: false,
         pointFormat: '<b>{point.percentage:.1f}%</b>',
         shadow: false,
       },
@@ -58,7 +64,7 @@ export class DonutComponent implements OnInit, OnChanges {
               fontWeight: '150',
             },
             distance: 15,
-            softConnector: true,
+            softConnector: false,
           },
           showInLegend: true,
         },
@@ -66,7 +72,10 @@ export class DonutComponent implements OnInit, OnChanges {
       title: {
         verticalAlign: 'middle',
         floating: false,
-        text: `Total: ${this.total}`,
+        text: `${this.data.reduce((a, b) => {
+          a += b;
+          return a;
+        }, 0)} `,
         y: -30,
       },
       subtitle: {
@@ -87,25 +96,14 @@ export class DonutComponent implements OnInit, OnChanges {
         {
           type: 'pie',
           colorByPoint: true,
-          data: [
-            { name: 'Mortgage loans', y: 68.1, color: '#c5cae9' },
-            { name: 'Consumer loans', y: 11.0, color: '#FFCB6F' },
-            { name: 'Leasing amount', y: 11.2, color: '#7986cb' },
-            { name: 'Credit card limit', y: 9.7, color: '#4FA57F' },
-          ],
+          data: this.data.map((item, i) => {
+            return { name: this.labels[i], y: item, color: this.getColor(i) };
+          }),
         },
       ],
     });
-    this.setTitleText();
   }
-
-  add() {
-    this.donut.addPoint(Math.floor(Math.random() * 10));
-  }
-
-  private setTitleText() {
-    if (this.donut) {
-      this.donut.title.text = `Total: ${this.total}`;
-    }
+  getColor(i: number) {
+    return COLORS[i % 5];
   }
 }
