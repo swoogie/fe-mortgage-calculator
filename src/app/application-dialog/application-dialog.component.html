@@ -77,15 +77,15 @@
           <mat-label class="block">Number of Applicants</mat-label>
         </div>
         <div class="form-field-wrapper">
-            <mat-radio-group
-              aria-label="Number of applicants"
-              formControlName="applicants"
-              color="primary">
-              <mat-radio-button *ngFor="let applicant of applicants" [value]="applicant">
-                {{applicant}}
-              </mat-radio-button>
-            </mat-radio-group>
-          </div>
+          <mat-radio-group
+            aria-label="Number of applicants"
+            formControlName="applicants"
+            color="primary">
+            <mat-radio-button *ngFor="let applicant of applicants" [value]="applicant">
+              {{applicant}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
 
         <div class="form-field-wrapper">
           <mat-form-field>

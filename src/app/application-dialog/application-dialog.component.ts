@@ -101,9 +101,10 @@ export class ApplicationDialogComponent implements OnInit {
     return this.incomeDetailsForm.get('obligations');
   }
 
-  showType(){
+  showType() {
 
   }
+
   onCancelClick(): void {
     this.dialogRef.close();
   }
