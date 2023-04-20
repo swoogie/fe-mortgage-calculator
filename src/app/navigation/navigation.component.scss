@@ -4,41 +4,48 @@
     height: 70px;
     background: #2f3b4b;
     padding: 0 5%;
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
+    left: 0;
     z-index: 100;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .2);
-}
 
-ul {
-    margin: 0;
-}
+    ul {
+        margin: 0;
+    }
 
-ul li {
-    list-style-type: none;
-}
+    ul li {
+        list-style-type: none;
+    }
 
-ul li a {
-    list-style-type: none;
-    display: block;
-    padding: 0 20px;
-    line-height: 70px;
-    color: white;
-    text-decoration: none;
+    ul li a {
+        list-style-type: none;
+        display: block;
+        padding: 0 20px;
+        line-height: 70px;
+        color: white;
+        text-decoration: none;
 
-}
+    }
 
-.linkContainer {
-    display: flex;
-    margin: 0;
-    width: 100%;
-}
+    .linkContainer {
+        display: flex;
+        margin: 0;
+        width: 100%;
+    }
 
-.loginLink {
-    display: flex;
-    justify-self: right;
-}
+    .loginLink {
+        display: flex;
+        justify-self: right;
+    }
 
-.nav-left {
-    display: flex;
+    .nav-left {
+        display: flex;
+    }
+
+    .image {
+        display: block;
+        max-width: 70px;
+    }
 }
