@@ -6,6 +6,4 @@ import { Observable } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
-  @Input() total$: Observable<number>;
-}
+export class HomeComponent {}

@@ -33,6 +33,9 @@ export class MonthlyCalcComponent implements OnInit {
   isDisabled: boolean = true;
   chartData: number[] = [];
   chartLabels: string[] = this.chartFields.map((field) => field.label);
+  mortgageMonthly: number;
+  totaldisplay: number[] = [];
+  // [data]="chartData" [labels]="chartLabels"
 
   monthlyForm = fb.group(
     {
@@ -156,6 +159,9 @@ export class MonthlyCalcComponent implements OnInit {
         Math.round(Number(this.creditCardLimit.value || 0)),
         Math.round(this.monthlyPaymentResult),
       ];
+      this.totaldisplay = [
+        Math.round(this.monthlyPaymentResult),
+      ]
       this.calculateBtnPushed = true;
     }
   }

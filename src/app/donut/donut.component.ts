@@ -20,6 +20,7 @@ const COLORS = ['#c5cae9', '#FFCB6F', '#7986cb', '#4FA57F', '#FE8A7F'];
 export class DonutComponent implements OnInit, OnChanges {
   @Input() data: number[];
   @Input() labels: string[];
+  @Input() total: number[];
   donut: any = {};
 
   constructor() {
@@ -56,16 +57,18 @@ export class DonutComponent implements OnInit, OnChanges {
 
           dataLabels: {
             enabled: true,
+            alignTo: 'connectors',
             connectorWidth: 0.3,
             connectorColor: '#000000',
             connectorShape: 'straight',
+            crookDistance: 20,
             format:
               '<span style="color: #2A272A; font-weight="100""><b>{point.name}:</br><span style="color: #BFA5A6;">{point.percentage:.1f}%',
             style: {
               fontSize: '10px',
               fontWeight: '150',
             },
-            distance: 15,
+            distance: 2,
             softConnector: false,
           },
           showInLegend: true,
@@ -74,10 +77,11 @@ export class DonutComponent implements OnInit, OnChanges {
       title: {
         verticalAlign: 'middle',
         floating: false,
-        text: `${this.data.reduce((a, b) => {
-          a += b;
-          return a;
-        }, 0)} `,
+        // text: `${this.data.reduce((a, b) => {
+        //   a += b;
+        //   return a;
+        // }, 0)} `,
+        text: `${this.total}`,
         y: -30,
       },
       subtitle: {
