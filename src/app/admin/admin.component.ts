@@ -1,24 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserAuthService } from '../services/user-auth.service';
-
-
-const fb = new FormBuilder();
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AdminAuthService } from '../services/admin-auth.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  selector: 'app-admin',
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.scss']
 })
-export class LoginComponent implements OnInit{
-loginForm: FormGroup;
+export class AdminComponent implements OnInit{
 
-
+  loginForm: FormGroup;
+  
 constructor(
   private fb: FormBuilder,
-  private userAuthService: UserAuthService,
+  private adminAuthService: AdminAuthService,
   private router: Router,
   private snackBar: MatSnackBar
 ) {
@@ -38,7 +35,7 @@ ngOnInit(): void {
     const password = this.loginForm.value.password;
 
     // Call your authentication service to authenticate the user
-    this.userAuthService.login(email, password).subscribe(
+    this.adminAuthService.login(email, password).subscribe(
       (response) => {
         // If the authentication succeeds, redirect the user to the home page
         this.router.navigate(['/home']);
@@ -62,7 +59,7 @@ onSubmit() {
   const email = this.loginForm.get('email').value;
   const password = this.loginForm.get('password').value;
 
-  this.userAuthService.login(email, password).subscribe(
+  this.adminAuthService.login(email, password).subscribe(
     (response) => {
       // If the authentication succeeds, redirect the user to the user page 
       this.router.navigate(['/userpage']);
@@ -77,5 +74,4 @@ onSubmit() {
     }
   );
 }
-
 }
