@@ -118,7 +118,7 @@ export class ApplicationDialogComponent implements OnInit {
     //form validation and post to backend
     this.saveLoanDetails();
     console.log(this.applicationData)
-    this.api.postApplication(this.applicationData).subscribe({
+    this.apiService.postApplication(this.applicationData).subscribe({
       next: (success) => {
         console.log(success);
       },
