@@ -21,7 +21,6 @@ const routes: Routes = [
   { path: 'user-page', component: UserpageComponent},
   { path: 'user-page', component: UserpageComponent, canActivate: [UserGuard]},
   { path: 'admin', component: AdminComponent},
- 
   { path: '**', component: PagenotfoundComponent },
 ];
 

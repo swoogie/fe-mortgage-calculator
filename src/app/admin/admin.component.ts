@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AdminAuthService } from '../services/admin-auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin',
@@ -11,9 +12,11 @@ import { AdminAuthService } from '../services/admin-auth.service';
 })
 export class AdminComponent implements OnInit{
 
+
   loginForm: FormGroup;
   
 constructor(
+  
   private fb: FormBuilder,
   private adminAuthService: AdminAuthService,
   private router: Router,
@@ -38,7 +41,7 @@ ngOnInit(): void {
     this.adminAuthService.login(email, password).subscribe(
       (response) => {
         // If the authentication succeeds, redirect the user to the home page
-        this.router.navigate(['/home']);
+        this.router.navigate(['/admin-page']);
       },
       (error) => {
         // If the authentication fails, show an error message to the user
@@ -62,7 +65,7 @@ onSubmit() {
   this.adminAuthService.login(email, password).subscribe(
     (response) => {
       // If the authentication succeeds, redirect the user to the user page 
-      this.router.navigate(['/userpage']);
+      this.router.navigate(['/admin-page']);
     },
     (error) => {
       // If the authentication fails, show an error message to the user

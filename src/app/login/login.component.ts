@@ -40,8 +40,8 @@ ngOnInit(): void {
     // Call your authentication service to authenticate the user
     this.userAuthService.login(email, password).subscribe(
       (response) => {
-        // If the authentication succeeds, redirect the user to the home page
-        this.router.navigate(['/home']);
+        // If the authentication succeeds, redirect the user to the user page
+        this.router.navigate(['/user-page']);
       },
       (error) => {
         // If the authentication fails, show an error message to the user
@@ -65,7 +65,7 @@ onSubmit() {
   this.userAuthService.login(email, password).subscribe(
     (response) => {
       // If the authentication succeeds, redirect the user to the user page 
-      this.router.navigate(['/userpage']);
+      this.router.navigate(['/user-page']);
     },
     (error) => {
       // If the authentication fails, show an error message to the user

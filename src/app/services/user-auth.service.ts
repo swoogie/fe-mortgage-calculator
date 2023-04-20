@@ -1,28 +1,30 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserAuthService {
+  private userApiUrl = "http://localhost:4200/api/auth/user"
+  
+  constructor(private httpClient : HttpClient){}
 
-  private isLoggedIn = false;
 
-  login(email: string, password: string): Observable<boolean> {
-    // Your authentication logic here
-    if (email === 'user@example.com' && password === 'password') {
-      this.isLoggedIn = true;
-      return of(true);
-    } else {
-      return of(false);
-    }
+  login(email: string, password: string): Observable<{token: string}> {
+    return this.httpClient.post<{token: string}>(`${this.userApiUrl}/login`, {email, password})
+      .pipe(
+        tap(res => {
+          localStorage.setItem('userToken', res.token);
+        })
+      );
   }
 
   logout(): void {
-    this.isLoggedIn = false;
+    localStorage.removeItem('userToken');
   }
 
-  isAuthenticated(): boolean {
-    return this.isLoggedIn;
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('userToken');
   }
 }
