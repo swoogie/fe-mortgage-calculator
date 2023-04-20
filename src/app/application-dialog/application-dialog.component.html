@@ -74,16 +74,18 @@
       <form [formGroup]="incomeDetailsForm">
         <ng-template matStepLabel>Income information</ng-template>
         <div class="form-field-wrapper">
-          <mat-form-field>
-            <mat-label>Number of applicants</mat-label>
-            <mat-select formControlName="applicants">
-              <mat-option *ngFor="let applicant of applicants" [value]="applicant">
-                {{ applicant }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+          <mat-label class="block">Number of Applicants</mat-label>
+          <div class="form-field-wrapper">
+            <mat-radio-group
+              aria-label="Number of applicants"
+              formControlName="applicants"
+              color="primary">
+              <mat-radio-button *ngFor="let applicant of applicants" [value]="applicant">
+                {{applicant}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
         </div>
-
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Number of kids</mat-label>
@@ -103,13 +105,14 @@
             />
           </mat-form-field>
         </div>
-        <div class="obligationContainer">
+        <div class="form-field-wrapper">
           <mat-label class="block">Do you have any obligations?</mat-label>
           <mat-icon
             matSuffix
             matTooltip="Represent any outstanding debts or regular payments that a party must make."
             [matTooltipPosition]="'right'"
-          >help_outline</mat-icon
+          >help_outline
+          </mat-icon
           >
         </div>
         <mat-radio-group
