@@ -21,10 +21,10 @@ export class MonthlyCalcComponent implements OnInit {
     { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
   ];
   chartFields = [
-    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
-    { label: 'Consumer Loans', controlName: 'consumerLoans' },
-    { label: 'Leasing Amount', controlName: 'leasingAmount' },
-    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
+    { label: 'Mortgage loans', controlName: 'mortgageLoans' },
+    { label: 'Consumer loans', controlName: 'consumerLoans' },
+    { label: 'Leasing amount', controlName: 'leasingAmount' },
+    { label: 'Credit card limit', controlName: 'creditCardLimit' },
     { label: 'Monthly max payment', controlName: 'monthlyPaymentDisplay' },
   ];
   monthlyPaymentResult: number = 0;
@@ -34,8 +34,7 @@ export class MonthlyCalcComponent implements OnInit {
   chartData: number[] = [];
   chartLabels: string[] = this.chartFields.map((field) => field.label);
   mortgageMonthly: number;
-  totaldisplay: number[] = [];
-  // [data]="chartData" [labels]="chartLabels"
+  totalDisplay: string = '';
 
   monthlyForm = fb.group(
     {
@@ -44,10 +43,10 @@ export class MonthlyCalcComponent implements OnInit {
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
       monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
-      mortgageLoans: ['', Validators.pattern('[0-9]*')],
-      consumerLoans: ['', Validators.pattern('[0-9]*')],
-      leasingAmount: ['', Validators.pattern('[0-9]*')],
-      creditCardLimit: ['', Validators.pattern('[0-9]*')],
+      mortgageLoans: [0, Validators.pattern('[0-9]*')],
+      consumerLoans: [0, Validators.pattern('[0-9]*')],
+      leasingAmount: [0, Validators.pattern('[0-9]*')],
+      creditCardLimit: [0, Validators.pattern('[0-9]*')],
     },
     { updateOn: 'change' }
   );
@@ -55,6 +54,7 @@ export class MonthlyCalcComponent implements OnInit {
   constructor(public dialog: MatDialog) {
     this.monthlyForm.valueChanges.subscribe((value) => {
       // console.log('form changed', value);
+      // Math.round(this.monthlyPaymentResult),
     });
     // this.chartLabels.unshift('Monthly max payment');
   }
@@ -66,6 +66,7 @@ export class MonthlyCalcComponent implements OnInit {
         this.monthlyForm.get('consumerLoans').reset();
         this.monthlyForm.get('leasingAmount').reset();
         this.monthlyForm.get('creditCardLimit').reset();
+        this.monthlyForm.get('monthlyPaymentDisplay').reset();
       }
     });
   }
@@ -149,19 +150,19 @@ export class MonthlyCalcComponent implements OnInit {
         totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4
       );
 
-      const monthlyMaxPayment = income * 0.4;
-
       console.log(this.monthlyPaymentResult);
       this.chartData = [
-        Math.round(Number(this.mortgageLoans.value || 0)),
-        Math.round(Number(this.consumerLoans.value || 0)),
-        Math.round(Number(this.leasingAmount.value || 0)),
-        Math.round(Number(this.creditCardLimit.value || 0)),
+        Math.round(Number(mortgageMonthly)),
+        Math.round(Number(consumerMonthly)),
+        Math.round(Number(leasingMonthly)),
+        Math.round(Number(creditCardMonthly)),
         Math.round(this.monthlyPaymentResult),
       ];
-      this.totaldisplay = [
-        Math.round(this.monthlyPaymentResult),
-      ]
+
+      this.chartData = [
+        { value: , label:  }
+      ].filter((item) => !!item.value);
+      this.totalDisplay = Math.round(this.monthlyPaymentResult).toString();
       this.calculateBtnPushed = true;
     }
   }

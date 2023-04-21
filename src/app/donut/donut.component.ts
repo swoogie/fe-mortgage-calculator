@@ -5,12 +5,15 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
-  ViewChild,
 } from '@angular/core';
 import { Chart } from 'angular-highcharts';
-import * as Highcharts from 'highcharts';
 
 const COLORS = ['#c5cae9', '#FFCB6F', '#7986cb', '#4FA57F', '#FE8A7F'];
+
+export interface DonutChartDataItem {
+  value: number;
+  label: string;
+}
 
 @Component({
   selector: 'app-donut',
@@ -18,9 +21,8 @@ const COLORS = ['#c5cae9', '#FFCB6F', '#7986cb', '#4FA57F', '#FE8A7F'];
   styleUrls: ['./donut.component.scss'],
 })
 export class DonutComponent implements OnInit, OnChanges {
-  @Input() data: number[];
-  @Input() labels: string[];
-  @Input() total: number[];
+  @Input() data: DonutChartDataItem[] = [];
+  @Input() mainLabel: string;
   donut: any = {};
 
   constructor() {
@@ -36,10 +38,10 @@ export class DonutComponent implements OnInit, OnChanges {
   setupChart() {
     this.donut = new Chart({
       chart: {
-        // plotBackgroundColor: '#FE8A7F',
         type: 'pie',
         plotShadow: false,
         plotBorderWidth: null,
+        plotBackgroundColor: '#F6F8FF',
       },
       tooltip: {
         // enabled: false,
@@ -54,7 +56,6 @@ export class DonutComponent implements OnInit, OnChanges {
           size: '70%',
           borderColor: '#000000',
           slicedOffset: 0,
-
           dataLabels: {
             enabled: true,
             alignTo: 'connectors',
@@ -81,7 +82,7 @@ export class DonutComponent implements OnInit, OnChanges {
         //   a += b;
         //   return a;
         // }, 0)} `,
-        text: `${this.total}`,
+        text: this.mainLabel,
         y: -30,
       },
       subtitle: {
@@ -92,7 +93,7 @@ export class DonutComponent implements OnInit, OnChanges {
       },
       legend: {
         enabled: true,
-        layout: 'vertical',
+        layout: 'horizontal',
         itemStyle: {
           fontSize: '12px',
           fontWeight: 'normal',
@@ -103,7 +104,7 @@ export class DonutComponent implements OnInit, OnChanges {
           type: 'pie',
           colorByPoint: true,
           data: this.data.map((item, i) => {
-            return { name: this.labels[i], y: item, color: this.getColor(i) };
+            return { name: item.label, y: item.value, color: this.getColor(i) };
           }),
         },
       ],
@@ -113,3 +114,6 @@ export class DonutComponent implements OnInit, OnChanges {
     return COLORS[i % 5];
   }
 }
+// if ((this.total = [] || null)) {
+//   return { name: this.labels[i], y: item, color: '#FE8A7F' };
+// }
