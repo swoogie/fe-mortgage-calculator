@@ -16,6 +16,7 @@ const formBuilder = new FormBuilder().nonNullable;
   styleUrls: ['./application-dialog.component.scss']
 })
 export class ApplicationDialogComponent implements OnInit {
+
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 0;
@@ -132,6 +133,7 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
 
+
   constructor(private euriborValuesService: EuriborValuesService,
               private apiService: ApiService,
               public dialogRef: MatDialogRef<ApplicationDialogComponent>,
@@ -167,10 +169,6 @@ export class ApplicationDialogComponent implements OnInit {
 
   get obligations() {
     return this.incomeDetailsForm.get('obligations');
-  }
-
-  showType() {
-
   }
 
   onCancelClick(): void {
