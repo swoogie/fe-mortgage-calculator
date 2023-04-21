@@ -1,43 +1,28 @@
-<h1>Home</h1>
 <div class="container">
+  <h1 class="title">Home</h1>
   <mat-card class="card" routerLink="/monthly-payment">
-    <img
-      mat-card-image
-      src="https://media.tenor.com/CowGNQSUsOYAAAAM/confused-math.gif"
-      alt="Woman doing calculations"
-    />
+    <img src="https://media.tenor.com/CowGNQSUsOYAAAAM/confused-math.gif" alt="Woman doing calculations" />
     <mat-card-header>
       <mat-card-title>Monthly Calculator</mat-card-title>
       <mat-card-subtitle>Calculate what you owe us TODAY! 💯</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
   <mat-card class="card" routerLink="/maximum-loan">
-    <img
-      mat-card-image
-      src="https://media.tenor.com/wu0z3nw60gcAAAAC/breaking-bad-money.gif"
-      alt="Huell rolling in money"
-    />
-    <mat-card-header>
-      <mat-card-title class="maximum-calculator-title"
-        ><span class="maxima">Maximum</span>Calculator</mat-card-title
-      >
+    <div>
+      <img class="money-image" src="https://media.tenor.com/wu0z3nw60gcAAAAC/breaking-bad-money.gif"
+        alt="Huell rolling in money" />
       <div class="chip">Extreme 💥</div>
-      <mat-card-subtitle
-        >When monthtly calculator is not enough 🧐</mat-card-subtitle
-      >
+    </div>
+    <mat-card-header>
+      <mat-card-title class="maximum-calculator-title"><span class="maxima">Maximum</span>Calculator</mat-card-title>
+      <mat-card-subtitle>When monthtly calculator is not enough 🧐</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
   <mat-card class="card" (click)="openDialog()">
-    <img
-      mat-card-image
-      src="https://media.tenor.com/lV48GPeMfSgAAAAC/cat-begging.gif"
-      alt="Cat begging for money"
-    />
+    <img src="https://media.tenor.com/lV48GPeMfSgAAAAC/cat-begging.gif" alt="Cat begging for money" />
     <mat-card-header>
       <mat-card-title>Apply for a loan</mat-card-title>
-      <mat-card-subtitle
-        >Already decided? Apply for a mortgage RIGHT! 💯</mat-card-subtitle
-      >
+      <mat-card-subtitle>Already decided? Apply for a mortgage RIGHT! 💯</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
 </div>
