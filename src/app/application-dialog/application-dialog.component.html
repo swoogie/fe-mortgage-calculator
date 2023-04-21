@@ -35,6 +35,9 @@
           downPayment.hasError('pattern'))">
               Please enter a number
             </mat-error>
+            <mat-error *ngIf="downPayment && downPayment.hasError('min')">
+              Min is {{ minDownPaymentAmount }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -47,7 +50,13 @@
         loanAmount &&
         (loanAmount.hasError('pattern') ||
          loanAmount.hasError('required'))">
-              Please enter a number
+              Please enter a valid number
+            </mat-error>
+            <mat-error *ngIf="loanAmount && loanAmount.hasError('max')">
+              Max is {{ maxLoanAmount.toFixed(0) }}
+            </mat-error>
+            <mat-error *ngIf="loanAmount && loanAmount.hasError('min')">
+              Min is {{ minLoanAmount }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -55,6 +64,9 @@
           <mat-form-field class="input-wrap">
             <mat-label>Loan term years</mat-label>
             <input matInput formControlName="loanTerm"/>
+            <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+              Please enter a valid number
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
