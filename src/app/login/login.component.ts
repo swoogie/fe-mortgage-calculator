@@ -44,6 +44,7 @@ onSubmit() {
 
   this.userAuthService.login(email, password).subscribe(
     (response) => {
+      console.log(response);
        // If the authentication succeeds, extract the token and decode it to get the role
        const token = response.token;
        const decodedToken: any = jwtDecode(token);
@@ -56,6 +57,7 @@ onSubmit() {
        }
     },
     (error) => {
+      console.log(error);
       // If the authentication fails, show an error message to the user
       this.snackBar.open('Invalid email or password', 'Dismiss', {
         duration: 5000,
