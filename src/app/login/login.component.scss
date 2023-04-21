@@ -1,29 +1,31 @@
 /* login.component.scss */
 .container {
-    margin: 0 auto;
-    width: 25%;
-  }
-  .login-title{
-    text-align: center;
-  }
-  
-  .login-card {
-    margin-top: 2rem;
-    padding: 2rem;
+  margin: 0 auto;
+  width: 25%;
+  padding-top: 70px;
+}
+
+.login-title {
+  text-align: center;
+}
+
+.login-card {
+  margin-top: 2rem;
+  padding: 2rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .form-field {
+    margin: 1rem 0;
+    width: 100%;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    .form-field {
-      margin: 1rem 0;
-      width: 100%;
-    }
-
-    .login-button {
-      margin-top: 1rem;
-      width: 100%;
-    }
+  .login-button {
+    margin-top: 1rem;
+    width: 100%;
   }
+}
