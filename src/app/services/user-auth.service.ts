@@ -1,24 +1,27 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
+import { Role } from '../interfaces/role';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserAuthService {
-  private userApiUrl = "http://localhost:4200/api/auth/user"
+  private userApiUrl = "https://be-mortgage-calculator.onrender.com//api/v1/auth/**";
   
-  constructor(private httpClient : HttpClient){}
-
-
-  login(email: string, password: string): Observable<{token: string}> {
-    return this.httpClient.post<{token: string}>(`${this.userApiUrl}/login`, {email, password})
-      .pipe(
-        tap(res => {
-          localStorage.setItem('userToken', res.token);
-        })
-      );
+  requestHeader = new HttpHeaders(
+    { "No-Auth":"True"}
+  )
+  constructor(private httpClient : HttpClient){
+    
   }
+
+
+  login(email: string, password: string): Observable<Role> {
+    return this.httpClient.post<Role>(`${this.userApiUrl}/login`, { email, password }, { headers:this.requestHeader});
+  }
+
+  
 
   logout(): void {
     localStorage.removeItem('userToken');
@@ -27,4 +30,6 @@ export class UserAuthService {
   isLoggedIn(): boolean {
     return !!localStorage.getItem('userToken');
   }
+
+ 
 }
