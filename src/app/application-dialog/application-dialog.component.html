@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Application Dialog</h1>
+<h1 mat-dialog-title>Apply for loan</h1>
 <div mat-dialog-content>
   <mat-stepper orientation="vertical" [linear]="isLinear">
     <mat-step [stepControl]="loanDetailsForm">
@@ -60,7 +60,7 @@
           <mat-radio-group
             aria-label="Payment schedule options"
             formControlName="paymentScheduleType"
-            color="primary"
+            color="accent"
           >
             <mat-radio-button
               *ngFor="let type of paymentScheduleTypes"

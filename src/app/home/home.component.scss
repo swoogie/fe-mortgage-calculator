@@ -1,19 +1,45 @@
 .container {
-  padding: 5vh 25vw;
+  padding: 2rem 10%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   place-items: center;
+  background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%);
+  gap: 20px;
+
+  .title {
+    grid-column: 1/ span 3;
+    justify-self: left;
+    text-align: left;
+    margin: 0;
+    padding-top: 3%;
+    padding-bottom: 2%;
+  }
+
+  .flex {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .card {
   cursor: pointer;
-  width: 20vw;
-  height: 20vw;
+  width: 100%;
+  height: 100%;
+
   img {
+    height: 200px;
     width: 100%;
-    height: 86%;
+    object-fit: cover;
+    max-height: 100%;
   }
+
   transition: transform 0.5s;
+}
+
+.maxima {
+  display: inline-block;
+  letter-spacing: 6px;
+  text-transform: uppercase;
 }
 
 .card:hover {
@@ -21,23 +47,87 @@
 }
 
 mat-card-title {
-  color: black;
+  color: #2f3b4b;
+  text-transform: uppercase;
 }
 
 mat-card-subtitle {
   margin-bottom: 10px;
 }
 
-h1 {
-  padding: 0 28vw;
-  padding-top: 3vh;
+.money-image {
+  position: relative;
 }
 
 .chip {
-  display: inline;
   height: 1.4rem;
-  padding: 0.5rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 5rem;
   background-color: orange;
   white-space: nowrap;
+  position: absolute;
+  right: 10px;
+  top: 155px;
+}
+
+.maximum-calculator-title {
+  display: inline-block;
+}
+
+@media screen and (max-width: 900px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 5%;
+    padding-bottom: 10%;
+
+    img {
+      height: 350px;
+    }
+
+    .chip {
+      top: 68%
+    }
+  }
+
+  .title {
+    grid-column: 1;
+    justify-self: left;
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+
+
+@media screen and (max-width:600px) {
+  .container {
+    img {
+      height: 300px;
+    }
+
+    .chip {
+      top: 255px;
+    }
+  }
+}
+
+@media screen and (max-width:430px) {
+  // .container {
+  //   .chip {
+  //     top: 61%;
+  //   }
+  // }
+}
+
+@media screen and (max-width:400px) {
+  .container {
+    img {
+      height: 200px;
+    }
+
+    .chip {
+      top: 155px;
+    }
+  }
 }
