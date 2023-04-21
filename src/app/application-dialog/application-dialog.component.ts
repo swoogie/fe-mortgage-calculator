@@ -16,8 +16,8 @@ const formBuilder = new FormBuilder().nonNullable;
   styleUrls: ['./application-dialog.component.scss']
 })
 export class ApplicationDialogComponent implements OnInit {
-  private maxRealEstatePrice: number = 3200000;
-  private minRealEstatePrice: number = 10000;
+  maxRealEstatePrice: number = 3200000;
+  minRealEstatePrice: number = 10000;
   minLoanAmount: number = 0;
   constants: Constants;
   minLoanTerm!: number;
@@ -30,6 +30,16 @@ export class ApplicationDialogComponent implements OnInit {
   applicants: number[] = [];
   maxMonthlyObligationsPercentage: number;
   euriborValues: Euribor[];
+  get maxLoanAmount(): number {
+    return this.realEstatePrice.value * this.loanAmountPercentage;
+  }
+  get validLoanAmount():boolean {
+    return this.loanAmount.value <= this.maxLoanAmount;
+  }
+  get validMinDownPaymentAmount():boolean {
+    return this.downPayment.value >= this.realEstatePrice.value * (1-this.loanAmountPercentage);
+  }
+
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
   obligationFields = [
     {label: 'Mortgage Loans', controlName: 'mortgageLoans'},
@@ -111,6 +121,15 @@ export class ApplicationDialogComponent implements OnInit {
       ],
     address: [this.applicationData.address, Validators.required]
   });
+  get realEstatePrice(){
+    return this.loanDetailsForm.get('realEstatePrice');
+  }
+  get downPayment(){
+    return this.loanDetailsForm.get('downPayment');
+  }
+  get loanAmount(){
+    return this.loanDetailsForm.get('loanAmount');
+  }
 
 
   constructor(private euriborValuesService: EuriborValuesService,
