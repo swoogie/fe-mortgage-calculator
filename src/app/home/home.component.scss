@@ -3,17 +3,24 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   place-items: center;
+  background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%);
 }
 
 .card {
   cursor: pointer;
-  width: 20vw;
-  height: 20vw;
+  width: 90%;
+  height: 90%;
   img {
     width: 100%;
     height: 86%;
   }
   transition: transform 0.5s;
+}
+
+.maxima {
+  display: inline-block;
+  letter-spacing: 6px;
+  text-transform: uppercase;
 }
 
 .card:hover {
@@ -22,6 +29,7 @@
 
 mat-card-title {
   color: black;
+  text-transform: uppercase;
 }
 
 mat-card-subtitle {
@@ -34,10 +42,35 @@ h1 {
 }
 
 .chip {
-  display: inline;
   height: 1.4rem;
   padding: 0.5rem;
   border-radius: 5rem;
   background-color: orange;
   white-space: nowrap;
+}
+
+.maximum-calculator-title {
+  display: inline-block;
+}
+
+@media screen and (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-top: 10%;
+    padding-bottom: 10%;
+    height: 100vh;
+  }
+}
+
+@media screen and (max-width:680px){
+  .container {
+    padding: 10% 0;
+  }
+}
+@media screen and (max-width:500px){
+  .container {
+   padding: 20% 5%;
+;
+  }
 }
