@@ -30,6 +30,10 @@
 
     }
 
+    img {
+        z-index: 101;
+    }
+
     .link-container {
         display: flex;
         margin: 0;
@@ -83,6 +87,7 @@
         height: 100%;
         width: 40%;
         right: 0;
+        z-index: 2;
     }
 
     .burger-list {
