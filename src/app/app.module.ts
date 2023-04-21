@@ -26,8 +26,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
-import {DonutComponent} from "./donut/donut.component";
-import {ChartModule} from "angular-highcharts";
+import { DonutComponent } from './donut/donut.component';
+import { ChartModule } from 'angular-highcharts';
 
 
 @NgModule({
