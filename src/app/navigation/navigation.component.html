@@ -1,65 +1,49 @@
 <nav class="nav">
-<<<<<<< HEAD
-    <img src="https://i.pinimg.com/736x/2c/1d/86/2c1d862b192eec296fcb2a3fd7fe820b.jpg" alt="goofy ahh cat"
-        routerLink="/" class="image" />
-    <div class="full-container">
-        <div class="nav-left">
-            <ul class="link-container">
-                <li><a routerLink="/monthly-payment" routerLinkActive="active" ariaCurrentWhenActive="page">Monthly
-                        Payment</a>
-                </li>
-                <li><a routerLink="/maximum-loan" routerLinkActive="active" ariaCurrentWhenActive="page">Max
-                        Loan</a></li>
-            </ul>
-        </div>
-        <ul class="nav-right">
-            <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page"
-                    class="login-link">Login</a>
-=======
-
+  <img src="https://i.pinimg.com/736x/2c/1d/86/2c1d862b192eec296fcb2a3fd7fe820b.jpg" alt="goofy ahh cat"
+       routerLink="/" class="image" />
+  <div class="full-container">
     <div class="nav-left">
-        <img src="../../assets/bank.png" alt="bank"
-            routerLink="/" class="image" />
-        <!-- <p class="image" routerLink="/">LOGO</p> -->
-        <ul class="linkContainer">
-            <li><a routerLink="/monthly-payment" routerLinkActive="active" ariaCurrentWhenActive="page">Monthly
-                    Payment</a>
->>>>>>> 35c1993 (application validation requirements added to .ts)
-            </li>
-        </ul>
-    </div>
 
-<<<<<<< HEAD
-    <div class="burger-menu">
-        <img *ngIf="isBurger == false"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Hamburger_icon_white.svg/1024px-Hamburger_icon_white.svg.png"
-            alt="burger icon" class="burger-icon" (click)="toggleBurger()">
-        <img class="burger-icon" *ngIf="isBurger == true"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/VisualEditor_-_Icon_-_Close_-_white.svg/1200px-VisualEditor_-_Icon_-_Close_-_white.svg.png"
-            alt="cross icon" (click)="toggleBurger()">
-        <div *ngIf="isBurger == true" class="overlay-blur" (click)="burgerFalse()">
-            <div class="overlay">
-                <ul class="burger-list">
-                    <li><a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page"
-                            (click)="burgerFalse()">HOME</a></li>
-                    <li><a routerLink="/monthly-payment" routerLinkActive="active" ariaCurrentWhenActive="page"
-                            (click)="burgerFalse()">Monthly
-                            Loan</a></li>
-                    <li><a routerLink="/maximum-loan" routerLinkActive="active" ariaCurrentWhenActive="page"
-                            (click)="burgerFalse()">Max
-                            Loan</a></li>
-                    <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page"
-                            (click)="burgerFalse()">LOGIN</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-=======
-    <ul>
-        <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page" class="loginLink">Login</a>
+      <ul class="link-container">
+        <li><a routerLink="/monthly-payment" routerLinkActive="active" ariaCurrentWhenActive="page">Monthly
+          Payment</a>
         </li>
+        <li><a routerLink="/maximum-loan" routerLinkActive="active" ariaCurrentWhenActive="page">Max
+          Loan</a></li>
+
+      </ul>
+    </div>
+    <ul class="nav-right">
+      <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page"
+             class="login-link">Login</a>
+      </li>
     </ul>
+  </div>
+
+  <div class="burger-menu">
+    <img *ngIf="isBurger == false"
+         src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Hamburger_icon_white.svg/1024px-Hamburger_icon_white.svg.png"
+         alt="burger icon" class="burger-icon" (click)="toggleBurger()">
+    <img class="burger-icon" *ngIf="isBurger == true"
+         src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/VisualEditor_-_Icon_-_Close_-_white.svg/1200px-VisualEditor_-_Icon_-_Close_-_white.svg.png"
+         alt="cross icon" (click)="toggleBurger()">
+    <div *ngIf="isBurger == true" class="overlay-blur" (click)="burgerFalse()">
+      <div class="overlay">
+        <ul class="burger-list">
+          <li><a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page"
+                 (click)="burgerFalse()">HOME</a></li>
+          <li><a routerLink="/monthly-payment" routerLinkActive="active" ariaCurrentWhenActive="page"
+                 (click)="burgerFalse()">Monthly
+            Loan</a></li>
+          <li><a routerLink="/maximum-loan" routerLinkActive="active" ariaCurrentWhenActive="page"
+                 (click)="burgerFalse()">Max
+            Loan</a></li>
+          <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page"
+                 (click)="burgerFalse()">LOGIN</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
 
->>>>>>> 35c1993 (application validation requirements added to .ts)
 </nav>
