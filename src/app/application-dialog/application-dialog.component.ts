@@ -19,6 +19,7 @@ export class ApplicationDialogComponent implements OnInit {
 
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
+
   minLoanAmount: number = 0;
   constants: Constants;
   minLoanTerm!: number;
@@ -131,6 +132,7 @@ export class ApplicationDialogComponent implements OnInit {
   get loanAmount(){
     return this.loanDetailsForm.get('loanAmount');
   }
+
 
 
 
