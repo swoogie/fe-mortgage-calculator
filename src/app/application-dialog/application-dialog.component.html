@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Apply for loan</h1>
+<h1 mat-dialog-title>Application for a Mortgage Loan</h1>
 <div mat-dialog-content>
   <mat-stepper orientation="vertical" [linear]="isLinear">
     <mat-step [stepControl]="loanDetailsForm">
@@ -9,6 +9,7 @@
             <mat-label>Real Estate Price</mat-label>
             <input matInput formControlName="realEstatePrice" />
           </mat-form-field>
+
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
@@ -70,11 +71,6 @@
             </mat-radio-button>
           </mat-radio-group>
         </div>
-        <div>
-          <button mat-raised-button matStepperNext class="form-button">
-            Next
-          </button>
-        </div>
       </form>
     </mat-step>
 
@@ -88,12 +84,10 @@
           <mat-radio-group
             aria-label="Number of applicants"
             formControlName="applicants"
-            color="primary"
-          >
+            color="primary">
             <mat-radio-button
               *ngFor="let applicant of applicants"
-              [value]="applicant"
-            >
+              [value]="applicant">
               {{ applicant }}
             </mat-radio-button>
           </mat-radio-group>
@@ -141,14 +135,6 @@
             </div>
           </ng-container>
         </div>
-        <div>
-          <button mat-raised-button matStepperPrevious class="form-button">
-            Back
-          </button>
-          <button mat-raised-button matStepperNext class="form-button">
-            Next
-          </button>
-        </div>
       </form>
     </mat-step>
     <mat-step step [stepControl]="personalDetailsForm">
@@ -190,31 +176,13 @@
             <input matInput formControlName="address" />
           </mat-form-field>
         </div>
-        <div>
-          <button mat-raised-button matStepperPrevious class="form-button">
-            Back
-          </button>
-          <button mat-raised-button matStepperNext class="form-button">
-            Next
-          </button>
-        </div>
       </form>
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Form Submission</ng-template>
       <div>If the info is correct, click Done to submit the form.</div>
       <div>
-        <button mat-raised-button matStepperPrevious class="form-button">
-          Back
-        </button>
-        <button
-          mat-raised-button
-          mat-dialog-close
-          class="form-button"
-          (click)="onDoneClick()"
-        >
-          Done
-        </button>
+        <button mat-raised-button mat-dialog-close class="form-button" (click)="onSubmitApplyClick()">Submit Application</button>
       </div>
     </mat-step>
   </mat-stepper>
