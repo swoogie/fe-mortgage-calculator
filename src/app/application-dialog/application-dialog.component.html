@@ -7,27 +7,54 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Real Estate Price</mat-label>
-            <input matInput formControlName="realEstatePrice" />
+            <input matInput formControlName="realEstatePrice"/>
+            <mat-error
+              *ngIf="
+        realEstatePrice &&
+        (realEstatePrice.hasError('required') ||
+          realEstatePrice.hasError('pattern'))">
+              Please enter a number
+            </mat-error>
+            <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('max')">
+              Max is {{ maxRealEstatePrice }}
+            </mat-error>
+            <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('min')">
+              Min is {{ minRealEstatePrice }}
+            </mat-error>
           </mat-form-field>
 
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Down Payment</mat-label>
-            <input matInput formControlName="downPayment" />
+            <input matInput formControlName="downPayment"/>
+            <mat-error
+              *ngIf="
+        downPayment &&
+        (downPayment.hasError('required') ||
+          downPayment.hasError('pattern'))">
+              Please enter a number
+            </mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Loan Amount</mat-label>
-            <input matInput formControlName="loanAmount" />
+            <input matInput formControlName="loanAmount"/>
+            <mat-error
+              *ngIf="
+        loanAmount &&
+        (loanAmount.hasError('pattern') ||
+         loanAmount.hasError('required'))">
+              Please enter a number
+            </mat-error>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Loan term years</mat-label>
-            <input matInput formControlName="loanTerm" />
+            <input matInput formControlName="loanTerm"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
@@ -37,7 +64,7 @@
               <mat-option
                 *ngFor="let euribor of euriborValues"
                 [value]="euribor"
-                >{{ euribor.timeInMonths }} Months
+              >{{ euribor.timeInMonths }} Months
                 <span *ngIf="euribor.interestRate !== null">
                   - {{ euribor.interestRate.toFixed(3) }}%</span
                 >
@@ -106,7 +133,7 @@
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Income</mat-label>
-            <input matInput formControlName="income" />
+            <input matInput formControlName="income"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
@@ -115,22 +142,25 @@
             matSuffix
             matTooltip="Represent any outstanding debts or regular payments that a party must make."
             [matTooltipPosition]="'right'"
-            >help_outline
+          >help_outline
           </mat-icon>
         </div>
         <mat-radio-group
           aria-label="Select an option"
           formControlName="obligations"
+          color="primary"
         >
-          <mat-radio-button [value]="false">No</mat-radio-button>
-          <mat-radio-button [value]="true">Yes</mat-radio-button>
+          <mat-radio-button [value]="false">No
+          </mat-radio-button>
+          <mat-radio-button [value]="true">Yes
+          </mat-radio-button>
         </mat-radio-group>
         <div *ngIf="obligations.value == true">
           <ng-container *ngFor="let field of obligationFields">
             <div class="form-field-wrapper">
               <mat-form-field class="input-wrap">
                 <mat-label>{{ field.label }}</mat-label>
-                <input matInput formControlName="{{ field.controlName }}" />
+                <input matInput formControlName="{{ field.controlName }}"/>
               </mat-form-field>
             </div>
           </ng-container>
@@ -143,37 +173,37 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstName" />
+            <input matInput formControlName="firstName"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Last Name</mat-label>
-            <input matInput formControlName="lastName" />
+            <input matInput formControlName="lastName"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Personal Number</mat-label>
-            <input matInput formControlName="personalNumber" />
+            <input matInput formControlName="personalNumber"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email" />
+            <input matInput formControlName="email"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="phoneNumber" />
+            <input matInput formControlName="phoneNumber"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Address</mat-label>
-            <input matInput formControlName="address" />
+            <input matInput formControlName="address"/>
           </mat-form-field>
         </div>
       </form>
@@ -182,7 +212,9 @@
       <ng-template matStepLabel>Form Submission</ng-template>
       <div>If the info is correct, click Done to submit the form.</div>
       <div>
-        <button mat-raised-button mat-dialog-close class="form-button" (click)="onSubmitApplyClick()">Submit Application</button>
+        <button mat-raised-button mat-dialog-close class="form-button" (click)="onSubmitApplyClick()">Submit
+          Application
+        </button>
       </div>
     </mat-step>
   </mat-stepper>

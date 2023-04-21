@@ -1,5 +1,5 @@
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
 import { MatCardModule } from '@angular/material/card';
 import { AppRoutingModule } from './app-routing.module';
@@ -68,5 +68,4 @@ import {ChartModule} from "angular-highcharts";
   providers: [MatSnackBarModule],
   bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}
