@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
 
 import { MatCardModule } from '@angular/material/card';
 import { AppRoutingModule } from './app-routing.module';
@@ -26,8 +26,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
-import { DonutComponent } from './donut/donut.component';
-import { ChartModule } from 'angular-highcharts';
+import {DonutComponent} from "./donut/donut.component";
+import {ChartModule} from "angular-highcharts";
 
 
 @NgModule({
@@ -68,4 +68,5 @@ import { ChartModule } from 'angular-highcharts';
   providers: [MatSnackBarModule],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+}

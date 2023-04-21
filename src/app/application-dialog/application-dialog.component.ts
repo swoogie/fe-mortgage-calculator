@@ -158,7 +158,7 @@ export class ApplicationDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  onDoneClick(): void {
+  onSubmitApplyClick(): void {
     //form validation and post to backend
     this.saveLoanDetails();
     console.log(this.applicationData)
