@@ -54,20 +54,44 @@
           </mat-error>
         </ng-container>
       </div>
-    </div>
-    <div class="right-container-card">
-      <div class="btn-wrap">
-        <img src="https://www.tibco.com/sites/tibco/files/media_entity/2022-01/doughnut-chart-example.svg"
-          class="image" />
-        <p class="funkyText">Goofy text placeholder</p>
-        <button class="btn-calculate" mat-flat-button color="primary" (click)="monthlyPayment()">
-          Calculate
-        </button>
-        <button mat-flat-button *ngIf="monthlyPaymentResult > 0 && calculateBtnPushed" (click)="openDialog()">
-          Apply
-        </button>
+  </div>
+  <div class="right-container-card">
+    <div class="btn-wrap">
+      <app-donut
+        [data]="chartData"
+        [labels]="chartLabels"
+        [total]="totaldisplay"
+      ></app-donut>
+      <div>
+        <div class="result-display-warp">
+          <mat-label>Monthly Payment</mat-label>
+          <mat-form-field class="input-wrap funkyText">
+            <input matInput formControlName="monthlyPaymentDisplay" />
+            <div *ngIf="showInsufficientMessage">Insufficient Income</div>
+            <div *ngIf="!showInsufficientMessage">
+              {{ monthlyPaymentResult | number : "1.2-2" | currency : "EUR" }}
+            </div>
+          </mat-form-field>
+        </div>
+        <div>
+          <button
+            class="btn-calculate"
+            mat-flat-button
+            color="primary"
+            (click)="monthlyPayment()"
+          >
+            Calculate
+          </button>
+          <button
+            mat-flat-button
+            *ngIf="monthlyPaymentResult > 0 && calculateBtnPushed"
+            (click)="openDialog()"
+          >
+            Apply
+          </button>
+        </div>
       </div>
     </div>
+    </div>
   </form>
-
-</div>
+  </div>

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
-import {ApplicationDialogComponent} from "../application-dialog/application-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject } from 'rxjs';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -19,17 +20,29 @@ export class MonthlyCalcComponent implements OnInit {
     { label: 'Leasing Amount', controlName: 'leasingAmount' },
     { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
   ];
+  chartFields = [
+    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
+    { label: 'Consumer Loans', controlName: 'consumerLoans' },
+    { label: 'Leasing Amount', controlName: 'leasingAmount' },
+    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
+    { label: 'Monthly max payment', controlName: 'monthlyPaymentDisplay' },
+  ];
   monthlyPaymentResult: number = 0;
   calculateBtnPushed: boolean = false;
   formSubmitted = false;
   isDisabled: boolean = true;
+  chartData: number[] = [];
+  chartLabels: string[] = this.chartFields.map((field) => field.label);
+  mortgageMonthly: number;
+  totaldisplay: number[] = [];
+  // [data]="chartData" [labels]="chartLabels"
 
   monthlyForm = fb.group(
     {
       applicants: ['', Validators.required],
       amountOfKids: ['', Validators.required],
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-      monthlyPayment: [{ value: '', disabled: this.isDisabled }],
+      monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
       mortgageLoans: ['', Validators.pattern('[0-9]*')],
       consumerLoans: ['', Validators.pattern('[0-9]*')],
@@ -43,6 +56,7 @@ export class MonthlyCalcComponent implements OnInit {
     this.monthlyForm.valueChanges.subscribe((value) => {
       // console.log('form changed', value);
     });
+    // this.chartLabels.unshift('Monthly max payment');
   }
 
   ngOnInit() {
@@ -80,9 +94,12 @@ export class MonthlyCalcComponent implements OnInit {
   get amountOfKids() {
     return this.monthlyForm.get('amountOfKids');
   }
-
   get income() {
     return this.monthlyForm.get('income');
+  }
+
+  get monthlyPaymentDisplay() {
+    return this.monthlyForm.get('monthlyPaymentDisplay');
   }
   get obligation() {
     return this.monthlyForm.get('obligation');
@@ -128,10 +145,23 @@ export class MonthlyCalcComponent implements OnInit {
       const totalObligations = this.monthlyForm.get('obligation').value
         ? creditCardMonthly + consumerMonthly + mortgageMonthly + leasingMonthly
         : 0;
-      this.monthlyPaymentResult =
-        totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4;
+      this.monthlyPaymentResult = Math.round(
+        totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4
+      );
+
+      const monthlyMaxPayment = income * 0.4;
 
       console.log(this.monthlyPaymentResult);
+      this.chartData = [
+        Math.round(Number(this.mortgageLoans.value || 0)),
+        Math.round(Number(this.consumerLoans.value || 0)),
+        Math.round(Number(this.leasingAmount.value || 0)),
+        Math.round(Number(this.creditCardLimit.value || 0)),
+        Math.round(this.monthlyPaymentResult),
+      ];
+      this.totaldisplay = [
+        Math.round(this.monthlyPaymentResult),
+      ]
       this.calculateBtnPushed = true;
     }
   }
@@ -151,14 +181,15 @@ export class MonthlyCalcComponent implements OnInit {
   }
   openDialog(): void {
     this.dialog.open(ApplicationDialogComponent, {
-      data: {applicants: this.applicants.value,
+      data: {
+        applicants: this.applicants.value,
         amountOfKids: this.amountOfKids.value,
         obligations: this.obligation.value,
         income: this.income.value,
         mortgageLoans: this.mortgageLoans.value,
         consumerLoans: this.consumerLoans.value,
         leasingAmount: this.leasingAmount.value,
-        creditCardLimit: this.creditCardLimit.value
+        creditCardLimit: this.creditCardLimit.value,
       },
       minWidth: '400px',
     });
