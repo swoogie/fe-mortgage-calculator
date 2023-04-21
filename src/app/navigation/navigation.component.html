@@ -23,7 +23,7 @@
     <div class="burger-menu">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Hamburger_icon_white.svg/1024px-Hamburger_icon_white.svg.png"
             alt="burger icon" class="burger-icon" (click)="toggleBurger()">
-        <div *ngIf="isBurger == true" class="overlay-blur">
+        <div *ngIf="isBurger == true" class="overlay-blur" (click)="burgerFalse()">
             <div class="overlay">
                 <ul class="burger-list">
                     <li><a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page"
