@@ -107,7 +107,7 @@ export class ApplicationDialogComponent implements OnInit {
     phoneNumber: [this.applicationData.phoneNumber,
       [
         Validators.required,
-        Validators.pattern(/^(5|6)\d{7}$/)],
+        Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
       ],
     address: [this.applicationData.address, Validators.required]
   });
