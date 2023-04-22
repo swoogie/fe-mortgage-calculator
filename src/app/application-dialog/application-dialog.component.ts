@@ -20,10 +20,10 @@ const formBuilder = new FormBuilder().nonNullable;
 export class ApplicationDialogComponent implements OnInit {
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
-  minLoanAmount: number = 0;
+  minLoanAmount: number = 1000;
   constants: Constants;
-  minLoanTerm!: number;
-  maxLoanTerm!: number;
+  minLoanTerm: number;
+  maxLoanTerm: number;
   loanAmountPercentage: number;
   minKids: number;
   maxKids: number;
@@ -34,6 +34,8 @@ export class ApplicationDialogComponent implements OnInit {
   euriborValues: Euribor[];
   maxLoanAmount: number = 2720000;
   minDownPaymentAmount: number = 1500;
+  maxDownPaymentAmount: number = 3199000;
+  monthlyPayment: number = 0;
 
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
   obligationFields = [
@@ -42,7 +44,7 @@ export class ApplicationDialogComponent implements OnInit {
     {label: 'Leasing Amount', controlName: 'leasingAmount'},
     {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
   ];
-  isLinear = true;
+  isLinear = false;
   attemptedToProceed = false;
   loanDetailsForm = formBuilder.group({
       realEstatePrice: [this.applicationData.realEstatePrice, [
@@ -68,9 +70,7 @@ export class ApplicationDialogComponent implements OnInit {
       loanTerm: [this.applicationData.loanTerm,
         [
           Validators.required,
-          Validators.pattern('[0-9]*'),
-          Validators.min(this.minLoanTerm),
-          Validators.max(this.maxLoanTerm),
+          Validators.pattern('[0-9]*')
         ],
       ],
       euribor: [this.applicationData.euribor, [Validators.required]],
@@ -89,18 +89,10 @@ export class ApplicationDialogComponent implements OnInit {
     ],
     coApplicantsIncome: [null as number],
     obligations: [this.applicationData.obligations, Validators.required],
-    mortgageLoans: [this.applicationData.mortgageLoans,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
-    ],
-    consumerLoans: [this.applicationData.consumerLoans,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
-    ],
-    leasingAmount: [this.applicationData.leasingAmount,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')],
-    creditCardLimit: [this.applicationData.creditCardLimit,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')],
-    monthlyPayment: [this.applicationData.monthlyPayment,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')],
+    mortgageLoans: [this.applicationData.mortgageLoans],
+    consumerLoans: [this.applicationData.consumerLoans],
+    leasingAmount: [this.applicationData.leasingAmount],
+    creditCardLimit: [this.applicationData.creditCardLimit]
   });
   personalDetailsForm = formBuilder.group({
     firstName: [this.applicationData.firstName, Validators.required],
@@ -120,6 +112,7 @@ export class ApplicationDialogComponent implements OnInit {
     address: [this.applicationData.address, Validators.required]
   });
 
+
   constructor(private euriborValuesService: EuriborValuesService,
               private apiService: ApiService,
               public dialogRef: MatDialogRef<ApplicationDialogComponent>,
@@ -131,7 +124,8 @@ export class ApplicationDialogComponent implements OnInit {
       .pipe(debounceTime(10))
       .subscribe((value) => {
         this.updateMaxLoanAmount();
-        this.updateMinDownPayment();
+        this.updateDownPaymentValidations();
+
         if (value > this.maxRealEstatePrice) {
           this.realEstatePrice.setValue(this.maxRealEstatePrice);
           this._snackBar.open(
@@ -183,6 +177,15 @@ export class ApplicationDialogComponent implements OnInit {
       }
     });
 
+    this.obligations.valueChanges.subscribe((value: boolean) => {
+      if (value === true) {
+
+        this.obligationFields.forEach((field) => {
+          this.incomeDetailsForm.get(field.controlName).setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
+        });
+      }
+    });
+
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(50))
       .subscribe((value) => {
@@ -196,6 +199,7 @@ export class ApplicationDialogComponent implements OnInit {
   ngOnInit() {
     this.euriborValues = this.euriborValuesService.getEuriborValues();
     this.getConstants();
+
   }
 
   private getConstants() {
@@ -215,19 +219,34 @@ export class ApplicationDialogComponent implements OnInit {
         this.applicantsOptions.push(i);
       }
       this.updateMaxLoanAmount();
-      this.updateMinDownPayment();
+      this.updateDownPaymentValidations();
+
+      this.loanDetailsForm.get('loanTerm').setValidators([
+        Validators.required,
+        Validators.pattern('[0-9]*'),
+        Validators.min(this.minLoanTerm),
+        Validators.max(this.maxLoanTerm)])
     });
   }
 
 
-  updateMinDownPayment() {
+  updateDownPaymentValidations() {
     this.minDownPaymentAmount = Math.round(this.realEstatePrice.value * (1 - this.loanAmountPercentage));
-    this.downPayment.addValidators(Validators.min(this.minDownPaymentAmount));
+    this.maxDownPaymentAmount = Math.round(this.realEstatePrice.value - this.minLoanAmount);
+    this.downPayment.setValidators([
+      Validators.required,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+      Validators.min(this.minDownPaymentAmount),
+      Validators.max(this.maxDownPaymentAmount)]);
   }
 
   updateMaxLoanAmount() {
     this.maxLoanAmount = Math.round(this.realEstatePrice.value * this.loanAmountPercentage);
-    this.loanAmount.addValidators(Validators.max(this.maxLoanAmount));
+    this.loanAmount.setValidators([
+      Validators.required,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+      Validators.min(this.minLoanAmount),
+      Validators.max(this.maxLoanAmount)]);
   }
 
   get realEstatePrice() {
@@ -261,7 +280,9 @@ export class ApplicationDialogComponent implements OnInit {
   get coApplicantsIncome() {
     return this.incomeDetailsForm.get('coApplicantsIncome');
   }
-
+get paymentScheduleType() {
+    return this.loanDetailsForm.get('paymentScheduleType');
+}
   onSubmitApplyClick(): void {
     //form validation and post to backend
     this.saveLoanDetails();
@@ -297,7 +318,6 @@ export class ApplicationDialogComponent implements OnInit {
   selectedIndex: number = 0;
 
   setIndex(event: StepperSelectionEvent) {
-    this.attemptedToProceed = false;
     this.selectedIndex = event.selectedIndex;
   }
 
@@ -305,4 +325,6 @@ export class ApplicationDialogComponent implements OnInit {
     this.attemptedToProceed = true;
     console.log(`Selected tab index: ${this.selectedIndex}`);
   }
+
+
 }

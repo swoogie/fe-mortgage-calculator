@@ -81,6 +81,11 @@
               <mat-form-field class="input-wrap">
                 <mat-label>{{ field.label }}</mat-label>
                 <input matInput formControlName="{{ field.controlName }}"/>
+                <mat-error *ngIf="
+              incomeDetailsForm.get(field.controlName) &&
+              incomeDetailsForm.get(field.controlName).hasError('pattern')">
+                  Please enter a valid number
+                </mat-error>
               </mat-form-field>
             </div>
           </ng-container>
@@ -88,10 +93,10 @@
       </form>
     </mat-step>
 
-    <mat-step [stepControl]="loanDetailsForm" (select)="attemptedToProceed = true">
+    <mat-step [stepControl]="loanDetailsForm">
       <form [formGroup]="loanDetailsForm" color="accent">
         <ng-template matStepLabel>
-         <div class="mat-step-header" (click)="triggerClick($event)">Loan Details</div>
+          <div class="mat-step-header" (click)="triggerClick($event)">Loan Details</div>
         </ng-template>
         <div class="form-field-wrapper">
           <mat-form-field>
@@ -100,9 +105,8 @@
             <mat-error class="error-message"
                        *ngIf="
                         realEstatePrice &&
-                         (realEstatePrice.hasError('required') ||
-          realEstatePrice.hasError('pattern'))">
-              Please enter a number
+          realEstatePrice.hasError('pattern')">
+              Please enter a valid number
             </mat-error>
             <mat-error class="error-message" *ngIf="realEstatePrice && realEstatePrice.hasError('max')">
               Max is {{ maxRealEstatePrice }}
@@ -120,9 +124,8 @@
             <mat-error class="error-message"
                        *ngIf="
         downPayment &&
-        (downPayment.hasError('required') ||
-          downPayment.hasError('pattern'))">
-              Please enter a number
+          downPayment.hasError('pattern')">
+              Please enter a valid number
             </mat-error>
             <mat-error class="error-message" *ngIf="downPayment && downPayment.hasError('min')">
               Min is {{ minDownPaymentAmount }}
@@ -137,8 +140,7 @@
             <mat-error class="error-message"
                        *ngIf="
         loanAmount &&
-        (loanAmount.hasError('pattern') ||
-         loanAmount.hasError('required'))">
+        loanAmount.hasError('pattern')">
               Please enter a valid number
             </mat-error>
             <mat-error class="error-message" *ngIf="loanAmount && loanAmount.hasError('max')">
@@ -153,8 +155,11 @@
           <mat-form-field class="input-wrap">
             <mat-label>Loan term years</mat-label>
             <input matInput formControlName="loanTerm"/>
-            <mat-error class="error-message" *ngIf="loanTerm && loanTerm.hasError('pattern')">
-              Please enter a valid number
+            <mat-error class="error-message" *ngIf="loanTerm &&
+            (loanTerm.hasError('pattern')
+            || loanTerm.hasError('min')
+            || loanTerm.hasError('max'))">
+              Please select between {{minLoanTerm}} and {{maxLoanTerm}} years
             </mat-error>
           </mat-form-field>
         </div>
@@ -174,6 +179,7 @@
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
+          <div>
           <mat-label class="block">Payment Schedule Type</mat-label>
           <mat-icon
             matSuffix
@@ -184,6 +190,10 @@
             [matTooltipPosition]="'right'"
             fontIcon="help_outline"
           ></mat-icon>
+            </div>
+          <mat-error class="error-message" *ngIf="attemptedToProceed && paymentScheduleType.hasError('required')">
+            Please select an option
+          </mat-error>
         </div>
         <div class="form-field-wrapper">
           <mat-radio-group

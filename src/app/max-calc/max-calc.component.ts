@@ -222,7 +222,6 @@ export class MaxCalcComponent {
   }
 
   openDialog(): void {
-    console.log('months ' + this.euribor.value.timeInMonths);
     this.dialog.open(ApplicationDialogComponent, {
       data: {
         loanTerm: this.loanTerm.value,
