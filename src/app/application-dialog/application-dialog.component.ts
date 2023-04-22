@@ -8,6 +8,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
 import {debounceTime} from "rxjs";
+import {StepperSelectionEvent} from "@angular/cdk/stepper";
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -28,7 +29,7 @@ export class ApplicationDialogComponent implements OnInit {
   maxKids: number;
   maxNumOfApplicants: number;
   children: number[] = [];
-  applicants: number[] = [];
+  applicantsOptions: number[] = [];
   maxMonthlyObligationsPercentage: number;
   euriborValues: Euribor[];
   maxLoanAmount: number = 2720000;
@@ -42,40 +43,40 @@ export class ApplicationDialogComponent implements OnInit {
     {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
   ];
   isLinear = true;
-
+  attemptedToProceed = false;
   loanDetailsForm = formBuilder.group({
-    realEstatePrice: [this.applicationData.realEstatePrice, [
-      Validators.required,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
-      Validators.max(this.maxRealEstatePrice),
-      Validators.min(this.minRealEstatePrice),
-    ],
-    ],
-    downPayment: [this.applicationData.downPayment,
-      [
+      realEstatePrice: [this.applicationData.realEstatePrice, [
         Validators.required,
         Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+        Validators.max(this.maxRealEstatePrice),
+        Validators.min(this.minRealEstatePrice),
       ],
-    ],
-    loanAmount: [this.applicationData.loanAmount,
-      [
-        Validators.required,
-        Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
-        Validators.min(this.minLoanAmount),
       ],
-    ],
-    loanTerm: [this.applicationData.loanTerm,
-      [
-        Validators.required,
-        Validators.pattern('[0-9]*'),
-        Validators.min(this.minLoanTerm),
-        Validators.max(this.maxLoanTerm),
+      downPayment: [this.applicationData.downPayment,
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+        ],
       ],
-    ],
-    euribor: [this.applicationData.euribor, [Validators.required]],
-    paymentScheduleType: [this.applicationData.paymentScheduleType as string, [Validators.required]],
-  },
-    { updateOn: 'change' }
+      loanAmount: [this.applicationData.loanAmount,
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+          Validators.min(this.minLoanAmount),
+        ],
+      ],
+      loanTerm: [this.applicationData.loanTerm,
+        [
+          Validators.required,
+          Validators.pattern('[0-9]*'),
+          Validators.min(this.minLoanTerm),
+          Validators.max(this.maxLoanTerm),
+        ],
+      ],
+      euribor: [this.applicationData.euribor, [Validators.required]],
+      paymentScheduleType: [this.applicationData.paymentScheduleType as string, [Validators.required]],
+    },
+    {updateOn: 'change'}
   );
   incomeDetailsForm = formBuilder.group({
     applicants: [this.applicationData.applicants, Validators.required],
@@ -86,13 +87,14 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
       ],
     ],
+    coApplicantsIncome: [null as number],
     obligations: [this.applicationData.obligations, Validators.required],
     mortgageLoans: [this.applicationData.mortgageLoans,
       Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
     ],
     consumerLoans: [this.applicationData.consumerLoans,
       Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
-],
+    ],
     leasingAmount: [this.applicationData.leasingAmount,
       Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')],
     creditCardLimit: [this.applicationData.creditCardLimit,
@@ -107,14 +109,14 @@ export class ApplicationDialogComponent implements OnInit {
     email: [this.applicationData.email,
       [
         Validators.required,
-        // Validators.email,
+        Validators.email,
         Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")],
     ],
     phoneNumber: [this.applicationData.phoneNumber,
       [
         Validators.required,
         Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
-      ],
+    ],
     address: [this.applicationData.address, Validators.required]
   });
 
@@ -175,6 +177,11 @@ export class ApplicationDialogComponent implements OnInit {
     });
 
 
+    this.applicants.valueChanges.subscribe((value: number) => {
+      if (value > 1) {
+        this.coApplicantsIncome.setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
+      }
+    });
 
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(50))
@@ -205,7 +212,7 @@ export class ApplicationDialogComponent implements OnInit {
         this.children.push(i);
       }
       for (let i = 1; i <= this.maxNumOfApplicants; i++) {
-        this.applicants.push(i);
+        this.applicantsOptions.push(i);
       }
       this.updateMaxLoanAmount();
       this.updateMinDownPayment();
@@ -223,21 +230,36 @@ export class ApplicationDialogComponent implements OnInit {
     this.loanAmount.addValidators(Validators.max(this.maxLoanAmount));
   }
 
-  get realEstatePrice(){
+  get realEstatePrice() {
     return this.loanDetailsForm.get('realEstatePrice');
   }
-  get downPayment(){
+
+  get downPayment() {
     return this.loanDetailsForm.get('downPayment');
   }
-  get loanAmount(){
+
+  get loanAmount() {
     return this.loanDetailsForm.get('loanAmount');
   }
+
   get loanTerm() {
     return this.loanDetailsForm.get('loanTerm');
   }
 
+  get income() {
+    return this.incomeDetailsForm.get('income');
+  }
+
   get obligations() {
     return this.incomeDetailsForm.get('obligations');
+  }
+
+  get applicants() {
+    return this.incomeDetailsForm.get('applicants');
+  }
+
+  get coApplicantsIncome() {
+    return this.incomeDetailsForm.get('coApplicantsIncome');
   }
 
   onSubmitApplyClick(): void {
@@ -257,7 +279,7 @@ export class ApplicationDialogComponent implements OnInit {
   saveLoanDetails(): void {
     const loanDataKeys: string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm",
       "paymentScheduleType", "euribor"];
-    const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "obligations", "mortgageLoans", "consumerLoans",
+    const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "coApplicantsIncome", "obligations", "mortgageLoans", "consumerLoans",
       "leasingAmount", "creditCardLimit", "monthlyPayment"];
     const personalDataKeys: string[] = ["firstName", "lastName", "personalNumber",
       "email", "phoneNumber", "address"];
@@ -270,5 +292,17 @@ export class ApplicationDialogComponent implements OnInit {
     personalDataKeys.forEach((key) => {
       this.applicationData[key] = this.personalDetailsForm.value[key]
     });
+  }
+
+  selectedIndex: number = 0;
+
+  setIndex(event: StepperSelectionEvent) {
+    this.attemptedToProceed = false;
+    this.selectedIndex = event.selectedIndex;
+  }
+
+  triggerClick(event) {
+    this.attemptedToProceed = true;
+    console.log(`Selected tab index: ${this.selectedIndex}`);
   }
 }
