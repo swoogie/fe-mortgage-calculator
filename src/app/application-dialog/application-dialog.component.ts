@@ -63,7 +63,7 @@ export class ApplicationDialogComponent implements OnInit {
     consumerLoans: [this.applicationData.consumerLoans],
     leasingAmount: [this.applicationData.leasingAmount],
     creditCardLimit: [this.applicationData.creditCardLimit],
-    canProceed: [false, Validators.requiredTrue]
+    canProceed: [true, Validators.requiredTrue]
   });
   loanDetailsForm = formBuilder.group({
       realEstatePrice: [this.applicationData.realEstatePrice, [
@@ -127,7 +127,7 @@ export class ApplicationDialogComponent implements OnInit {
       .pipe(debounceTime(50))
       .subscribe((realEstatePriceValue) => {
 
-        this.updateMaxLoanAmount(realEstatePriceValue);
+        this.updateLoanAmount(realEstatePriceValue);
         this.updateDownPayment(realEstatePriceValue);
 
         if (realEstatePriceValue > this.maxRealEstatePrice) {
@@ -147,6 +147,9 @@ export class ApplicationDialogComponent implements OnInit {
         this.coApplicantsIncome.setValidators([
           Validators.required,
           Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
+      }else if(value === 1){
+        this.coApplicantsIncome.clearValidators();
+        this.coApplicantsIncome.setValue(null);
       }
     });
 
@@ -154,6 +157,12 @@ export class ApplicationDialogComponent implements OnInit {
       if (value === true) {
         this.obligationFields.forEach((field) => {
           this.incomeDetailsForm.get(field.controlName).setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
+        });
+      } else if(value === false) {
+        this.updateAvailableMonthlyPayment();
+        this.obligationFields.forEach((field) => {
+          this.incomeDetailsForm.get(field.controlName).clearValidators();
+          this.incomeDetailsForm.get(field.controlName).setValue(null);
         });
       }
     });
@@ -164,6 +173,20 @@ export class ApplicationDialogComponent implements OnInit {
     combineLatest([this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(([income, coApplicantsIncome]) => {
       this.updateTotalHouseHoldIncome(income, coApplicantsIncome);
       this.updateAvailableMonthlyPayment();
+    });
+
+    this.loanAmount.valueChanges.subscribe((value: number) => {
+      const maxLoanAmount = this.realEstatePrice.value * this.loanAmountPercentage;
+      if (this.loanAmount.value > maxLoanAmount) {
+        this.loanAmount.setValue(maxLoanAmount);
+        this._snackBar.open(
+          `Max loan amount is ${maxLoanAmount} €`,
+          '',
+          {
+            duration: 2000,
+          }
+        );
+      }
     });
 
     combineLatest([this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges]).subscribe(([mortgageLoans, consumerLoans, leasingAmount, creditCardLimit]) => {
@@ -192,7 +215,7 @@ export class ApplicationDialogComponent implements OnInit {
       for (let i = 1; i <= this.maxNumOfApplicants; i++) {
         this.applicantsOptions.push(i);
       }
-      this.updateMaxLoanAmount(this.realEstatePrice.value);
+      this.updateLoanAmount(this.realEstatePrice.value);
       this.updateDownPayment(this.realEstatePrice.value);
 
       this.loanDetailsForm.get('loanTerm').setValidators([
@@ -201,6 +224,42 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.min(this.minLoanTerm),
         Validators.max(this.maxLoanTerm)])
     });
+  }
+
+  updateDownPayment(realEstatePrice: number) {
+    const currentValue = this.downPayment.value;
+    const minDownPaymentAmount = Math.round(realEstatePrice * (1 - this.loanAmountPercentage));
+    const maxDownPaymentAmount = Math.round(realEstatePrice - this.minLoanAmount);
+    const realEstatePriceValid: boolean = realEstatePrice >= this.minRealEstatePrice && realEstatePrice <= this.maxRealEstatePrice;
+    this.minDownPaymentAmount = minDownPaymentAmount;
+    this.maxDownPaymentAmount = maxDownPaymentAmount;
+
+    this.downPayment.setValidators([
+      Validators.required,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+      Validators.min(minDownPaymentAmount),
+      Validators.max(maxDownPaymentAmount)
+    ]);
+    if (realEstatePriceValid) {
+      if (currentValue < minDownPaymentAmount) {
+        this.downPayment.setValue(minDownPaymentAmount);
+      } else if (currentValue > maxDownPaymentAmount) {
+        this.downPayment.setValue(maxDownPaymentAmount);
+      }
+    } else {
+      this.downPayment.setValue(null);
+    }
+  }
+
+  updateLoanAmount(realEstatePrice: number) {
+    const maxLoanAmount = Math.round(realEstatePrice * this.loanAmountPercentage);
+
+    this.loanAmount.setValidators([
+      Validators.required,
+      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
+      Validators.min(this.minLoanAmount),
+      Validators.max(maxLoanAmount)]
+    );
   }
 
   updateTotalHouseHoldIncome(income, coApplicantsIncome) {
@@ -233,45 +292,6 @@ export class ApplicationDialogComponent implements OnInit {
     const monthlyObligations = +mortgageMonthly + +consumerMonthly + +leasingMonthly + +creditCardMonthly;
     this.totalMonthlyObligations = monthlyObligations;
     this.updateAvailableMonthlyPayment();
-  }
-
-  updateDownPayment(realEstatePrice: number) {
-    const currentValue = this.downPayment.value;
-    const minDownPaymentAmount = Math.round(realEstatePrice * (1 - this.loanAmountPercentage));
-    const maxDownPaymentAmount = Math.round(realEstatePrice - this.minLoanAmount);
-    const realEstatePriceValid: boolean = realEstatePrice >= this.minRealEstatePrice && realEstatePrice <= this.maxRealEstatePrice;
-    this.minDownPaymentAmount = minDownPaymentAmount;
-    this.maxDownPaymentAmount = maxDownPaymentAmount;
-
-    this.downPayment.setValidators([
-      Validators.required,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
-      Validators.min(minDownPaymentAmount),
-      Validators.max(maxDownPaymentAmount)
-    ]);
-    if (realEstatePriceValid) {
-      if (currentValue < minDownPaymentAmount) {
-        this.downPayment.setValue(minDownPaymentAmount);
-      } else if (currentValue > maxDownPaymentAmount) {
-        this.downPayment.setValue(maxDownPaymentAmount);
-      }
-    } else {
-      this.downPayment.setValue(null);
-    }
-  }
-
-  updateMaxLoanAmount(realEstatePrice: number) {
-    const maxLoanAmount = Math.round(realEstatePrice * this.loanAmountPercentage);
-    this.loanAmount.setValidators([
-      Validators.required,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
-      Validators.min(this.minLoanAmount),
-      Validators.max(maxLoanAmount)]
-    );
-    if (this.loanAmount.value > maxLoanAmount) {
-      console.log('max loan amount exceeded');
-      // this.loanAmount.setValue(this.maxLoanAmount as never, {});
-    }
   }
 
   onSubmitApplyClick()
@@ -363,6 +383,7 @@ export class ApplicationDialogComponent implements OnInit {
   get creditCardLimit() {
     return this.incomeDetailsForm.get('creditCardLimit');
   }
+
   get canProceed() {
     return this.incomeDetailsForm.get('canProceed');
   }
@@ -375,6 +396,6 @@ export class ApplicationDialogComponent implements OnInit {
 
   triggerClick(event) {
     this.attemptedToProceed = true;
-      console.log(`Selected tab index: ${this.selectedIndex}`);
+    console.log(`Selected tab index: ${this.selectedIndex}`);
   }
 }
