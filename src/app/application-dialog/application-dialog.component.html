@@ -26,7 +26,7 @@
 
         <div class="form-field-wrapper">
           <mat-form-field>
-            <mat-label>Number of kids</mat-label>
+            <mat-label>Number of children</mat-label>
             <mat-select formControlName="amountOfKids">
               <mat-option *ngFor="let kid of children" [value]="kid">
                 {{ kid }}
@@ -114,6 +114,13 @@
         </ng-template>
         <div class="form-field-wrapper">
           <mat-form-field>
+            <mat-label>Real Estate Address</mat-label>
+            <input matInput formControlName="realEstateAddress"/>
+          </mat-form-field>
+
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
             <mat-label>Real Estate Price</mat-label>
             <input matInput formControlName="realEstatePrice"/>
             <mat-error class="error-message"
@@ -129,7 +136,6 @@
               Min is {{ minRealEstatePrice }}
             </mat-error>
           </mat-form-field>
-
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
@@ -206,6 +212,9 @@
               {{ type | titlecase }}
             </mat-radio-button>
           </mat-radio-group>
+        </div>
+        <div *ngIf="!sufficientMonthlyPayment" class="info-node info-node-warning">
+          Your total monthly income is insufficient for this loan amount. Please decrease your loan amount or increase loan term.
         </div>
       </form>
     </mat-step>
