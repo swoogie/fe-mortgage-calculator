@@ -1,5 +1,5 @@
 <form [formGroup]="maxCalcForm" (ngSubmit)="calculateMax()" class="container">
-  <mat-form-field class="input-wrap input-field">
+  <mat-form-field class="input-field">
     <mat-label>Real Estate Price €</mat-label>
     <input
       matInput
@@ -23,7 +23,7 @@
       Min is {{ minRealEstatePrice }}
     </mat-error>
   </mat-form-field>
-  <div class="slider-container">
+  <div *ngIf="helloSlider" class="slider-container">
     <div class="slider-label">
       <p>0</p>
       <p>Loan amount €</p>
@@ -43,7 +43,7 @@
     </mat-slider>
   </div>
 
-  <mat-form-field class="input-wrap slider-input-field">
+  <mat-form-field *ngIf="helloSlider" class="slider-input-field">
     <input
       matInput
       formControlName="loanAmount"
@@ -59,7 +59,26 @@
       Please enter a number
     </mat-error>
   </mat-form-field>
-  <div class="slider-container">
+
+  <mat-form-field *ngIf="!helloSlider" class="input-field">
+    <mat-label>Loan Amount €</mat-label>
+    <input
+      matInput
+      formControlName="loanAmount"
+      [value]="loanAmount.value"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error
+      *ngIf="
+        loanAmount &&
+        (loanAmount.hasError('pattern') || loanAmount.hasError('required'))
+      "
+    >
+      Please enter a number
+    </mat-error>
+  </mat-form-field>
+
+  <div *ngIf="helloSlider" class="slider-container">
     <div class="slider-label">
       <mat-label>1</mat-label>
       <mat-label>Loan term years</mat-label>
@@ -75,7 +94,19 @@
     </mat-slider>
   </div>
 
-  <mat-form-field class="input-wrap slider-input-field">
+  <mat-form-field *ngIf="!helloSlider" class="input-field">
+    <mat-label>Loan Term</mat-label>
+    <input
+      matInput
+      formControlName="loanTerm"
+      [value]="loanTerm.value"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+      Please enter a number
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field *ngIf="helloSlider" class="slider-input-field">
     <input
       matInput
       formControlName="loanTerm"
@@ -87,7 +118,7 @@
     </mat-error>
   </mat-form-field>
 
-  <mat-form-field class="input-wrap input-field">
+  <mat-form-field class="input-field">
     <mat-label>Euribor</mat-label>
     <mat-select formControlName="euribor">
       <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime } from 'rxjs';
@@ -152,6 +152,7 @@ export class MaxCalcComponent {
   }
 
   ngOnInit() {
+    this.onWindowResize(null);
     this.api.getConstants().subscribe((constants) => {
       this.constants = constants;
     });
@@ -233,5 +234,15 @@ export class MaxCalcComponent {
       },
       minWidth: '400px',
     });
+  }
+
+  helloSlider: boolean = true;
+  @HostListener('window:resize', ['$event'])
+  onWindowResize(event) {
+    if (window.innerWidth <= 900) {
+      this.helloSlider = false;
+    } else {
+      this.helloSlider = true;
+    }
   }
 }
