@@ -146,24 +146,8 @@
             </mat-error>
           </mat-form-field>
         </div>
-
-        <div class="form-field-wrapper">
-          <mat-form-field>
-            <mat-label>Loan Amount</mat-label>
-            <input matInput formControlName="loanAmount"/>
-            <mat-error class="error-message"
-                       *ngIf="
-        loanAmount &&
-        loanAmount.hasError('pattern')">
-              Please enter a valid number
-            </mat-error>
-            <mat-error class="error-message" *ngIf="loanAmount && loanAmount.hasError('max')">
-              Max is {{ maxLoanAmount.toFixed(0) }}
-            </mat-error>
-            <mat-error class="error-message" *ngIf="loanAmount && loanAmount.hasError('min')">
-              Min is {{ minLoanAmount }}
-            </mat-error>
-          </mat-form-field>
+        <div *ngIf="loanAmount!=null"  class="info-node">
+          <strong> Loan amount:</strong> {{loanAmount | currency: 'EUR': 'symbol': '1.0-0'}}
         </div>
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">

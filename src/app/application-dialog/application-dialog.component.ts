@@ -25,6 +25,7 @@ export class ApplicationDialogComponent implements OnInit {
   minLoanTerm: number;
   maxLoanTerm: number;
   loanAmountPercentage: number;
+  loanAmount: number;
   minKids: number;
   maxKids: number;
   maxNumOfApplicants: number;
@@ -33,6 +34,7 @@ export class ApplicationDialogComponent implements OnInit {
   maxMonthlyObligationsPercentage: number;
   euriborValues: Euribor[];
   maxLoanAmount: number = 2720000;
+
   minDownPaymentAmount: number = 1500;
   maxDownPaymentAmount: number = 3199000;
   monthlyPayment: number = 0;
@@ -46,7 +48,7 @@ export class ApplicationDialogComponent implements OnInit {
     {label: 'Leasing Amount', controlName: 'leasingAmount'},
     {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
   ];
-  isLinear = true;
+  isLinear = false;
   attemptedToProceed = false;
   incomeDetailsForm = formBuilder.group({
     applicants: [this.applicationData.applicants, Validators.required],
@@ -77,13 +79,6 @@ export class ApplicationDialogComponent implements OnInit {
         [
           Validators.required,
           Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
-        ],
-      ],
-      loanAmount: [this.applicationData.loanAmount,
-        [
-          Validators.required,
-          Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
-          Validators.min(this.minLoanAmount),
         ],
       ],
       loanTerm: [this.applicationData.loanTerm,
@@ -126,9 +121,13 @@ export class ApplicationDialogComponent implements OnInit {
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(50))
       .subscribe((realEstatePriceValue) => {
-
-        this.updateLoanAmount(realEstatePriceValue);
-        this.updateDownPayment(realEstatePriceValue);
+        const isRealEstatePriceValid = this.realEstatePrice.valid;
+        if (isRealEstatePriceValid) {
+          this.updateDownPayment(realEstatePriceValue);
+        }else{
+          this.downPayment.setValue(null);
+          this.loanAmount = null;
+        }
 
         if (realEstatePriceValue > this.maxRealEstatePrice) {
           this.realEstatePrice.setValue(this.maxRealEstatePrice);
@@ -147,7 +146,7 @@ export class ApplicationDialogComponent implements OnInit {
         this.coApplicantsIncome.setValidators([
           Validators.required,
           Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
-      }else if(value === 1){
+      } else if (value === 1) {
         this.coApplicantsIncome.clearValidators();
         this.coApplicantsIncome.setValue(null);
       }
@@ -158,7 +157,7 @@ export class ApplicationDialogComponent implements OnInit {
         this.obligationFields.forEach((field) => {
           this.incomeDetailsForm.get(field.controlName).setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
         });
-      } else if(value === false) {
+      } else if (value === false) {
         this.updateAvailableMonthlyPayment();
         this.obligationFields.forEach((field) => {
           this.incomeDetailsForm.get(field.controlName).clearValidators();
@@ -175,22 +174,12 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateAvailableMonthlyPayment();
     });
 
-    this.loanAmount.valueChanges.subscribe((value: number) => {
-      const maxLoanAmount = this.realEstatePrice.value * this.loanAmountPercentage;
-      if (this.loanAmount.value > maxLoanAmount) {
-        this.loanAmount.setValue(maxLoanAmount);
-        this._snackBar.open(
-          `Max loan amount is ${maxLoanAmount} €`,
-          '',
-          {
-            duration: 2000,
-          }
-        );
-      }
-    });
 
     combineLatest([this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges]).subscribe(([mortgageLoans, consumerLoans, leasingAmount, creditCardLimit]) => {
       this.updateMonthlyObligations(mortgageLoans, consumerLoans, leasingAmount, creditCardLimit);
+    });
+    combineLatest([this.realEstatePrice.valueChanges,this.downPayment.valueChanges]).subscribe(([realEstatePrice,downPayment]) => {
+      this.updateLoanAmount();
     });
   }
 
@@ -215,7 +204,6 @@ export class ApplicationDialogComponent implements OnInit {
       for (let i = 1; i <= this.maxNumOfApplicants; i++) {
         this.applicantsOptions.push(i);
       }
-      this.updateLoanAmount(this.realEstatePrice.value);
       this.updateDownPayment(this.realEstatePrice.value);
 
       this.loanDetailsForm.get('loanTerm').setValidators([
@@ -251,16 +239,11 @@ export class ApplicationDialogComponent implements OnInit {
     }
   }
 
-  updateLoanAmount(realEstatePrice: number) {
-    const maxLoanAmount = Math.round(realEstatePrice * this.loanAmountPercentage);
-
-    this.loanAmount.setValidators([
-      Validators.required,
-      Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
-      Validators.min(this.minLoanAmount),
-      Validators.max(maxLoanAmount)]
-    );
+  updateLoanAmount() {
+const loanAmount = Math.round(this.realEstatePrice.value - this.downPayment.value);
+this.loanAmount = loanAmount;
   }
+
 
   updateTotalHouseHoldIncome(income, coApplicantsIncome) {
     const totalHouseHoldIncome = +income + (+coApplicantsIncome);
@@ -315,7 +298,7 @@ export class ApplicationDialogComponent implements OnInit {
     void {
     const loanDataKeys
       :
-      string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm",
+      string[] = ["realEstatePrice", "downPayment", "loanTerm",
       "paymentScheduleType", "euribor"];
     const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "coApplicantsIncome", "obligations", "mortgageLoans", "consumerLoans",
       "leasingAmount", "creditCardLimit", "monthlyPayment"];
@@ -330,6 +313,7 @@ export class ApplicationDialogComponent implements OnInit {
     personalDataKeys.forEach((key) => {
       this.applicationData[key] = this.personalDetailsForm.value[key]
     });
+    this.applicationData.loanAmount = this.loanAmount;
   }
 
   get realEstatePrice() {
@@ -340,9 +324,6 @@ export class ApplicationDialogComponent implements OnInit {
     return this.loanDetailsForm.get('downPayment');
   }
 
-  get loanAmount() {
-    return this.loanDetailsForm.get('loanAmount');
-  }
 
   get loanTerm() {
     return this.loanDetailsForm.get('loanTerm');
