@@ -35,6 +35,7 @@
 
           </mat-form-field>
         </div>
+        <div class="info-node">Provide your monthly income after taxes:</div>
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Your income</mat-label>
@@ -46,12 +47,15 @@
         </div>
         <div *ngIf="applicants.value==2" class="form-field-wrapper">
           <mat-form-field class="input-wrap">
-            <mat-label>Co-applicants income</mat-label>
+            <mat-label>Co-applicant's income</mat-label>
             <input matInput formControlName="coApplicantsIncome"/>
             <mat-error class="error-message" *ngIf="coApplicantsIncome && coApplicantsIncome.hasError('pattern')">
               Please enter a valid number
             </mat-error>
           </mat-form-field>
+        </div>
+        <div *ngIf="applicants.value==2 && totalHouseHoldIncome>0" class="form-field-wrapper">
+          <div class="info-node">Total Household income: {{totalHouseHoldIncome | currency: 'EUR'}}</div>
         </div>
         <div class="form-field-wrapper">
           <div>
@@ -76,6 +80,7 @@
           </mat-radio-button>
         </mat-radio-group>
         <div *ngIf="obligations.value == true">
+          <div class="info-node">Provide outstanding amount of obligations:</div>
           <ng-container *ngFor="let field of obligationFields">
             <div class="form-field-wrapper">
               <mat-form-field class="input-wrap">
@@ -89,6 +94,15 @@
               </mat-form-field>
             </div>
           </ng-container>
+            <div *ngIf="obligations.value == true && totalMonthlyObligations>0" class="info-node">
+              Total monthly obligations: {{totalMonthlyObligations | currency: 'EUR'}}
+            </div>
+            </div>
+        <div *ngIf="availableMonthlyPayment!=null" class="info-node">
+          Monthly payment for a loan: {{availableMonthlyPayment | currency: 'EUR'}}
+        </div>
+        <div *ngIf="obligations.value == true && availableMonthlyPayment==0" class="info-node info-node-warning">
+          Your total monthly obligations cannot exceed {{maxMonthlyObligationsPercentage | percent}} from your monthly incomes.
         </div>
       </form>
     </mat-step>
@@ -121,14 +135,14 @@
           <mat-form-field>
             <mat-label>Down Payment</mat-label>
             <input matInput formControlName="downPayment"/>
-            <mat-error class="error-message"
-                       *ngIf="
-        downPayment &&
-          downPayment.hasError('pattern')">
+            <mat-error class="error-message" *ngIf="downPayment && downPayment.hasError('pattern')">
               Please enter a valid number
             </mat-error>
             <mat-error class="error-message" *ngIf="downPayment && downPayment.hasError('min')">
               Min is {{ minDownPaymentAmount }}
+            </mat-error>
+            <mat-error class="error-message" *ngIf="downPayment && downPayment.hasError('max')">
+              Max is {{ maxDownPaymentAmount }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -180,17 +194,17 @@
         </div>
         <div class="form-field-wrapper">
           <div>
-          <mat-label class="block">Payment Schedule Type</mat-label>
-          <mat-icon
-            matSuffix
-            [matTooltip]="
+            <mat-label class="block">Payment Schedule Type</mat-label>
+            <mat-icon
+              matSuffix
+              [matTooltip]="
               'Annuity - identical monthly installments;
              Linear - identical monthly principle, interest is calculated on outstanding principle'
             "
-            [matTooltipPosition]="'right'"
-            fontIcon="help_outline"
-          ></mat-icon>
-            </div>
+              [matTooltipPosition]="'right'"
+              fontIcon="help_outline"
+            ></mat-icon>
+          </div>
           <mat-error class="error-message" *ngIf="attemptedToProceed && paymentScheduleType.hasError('required')">
             Please select an option
           </mat-error>

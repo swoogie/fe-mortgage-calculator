@@ -1,4 +1,4 @@
-.form-button{
+.form-button {
   margin: 5px 10px 0px 0px;
 }
 
@@ -44,13 +44,29 @@ mat-radio-group {
   color: rgba(0, 0, 0, 0.6);
 }
 
-.form-field-wrapper{
+.form-field-wrapper {
   display: flex;
   flex-direction: column;
   width: 90%;
   min-width: 250px;
   margin-bottom: 10px;
 }
-.mat-step-header{
-color: rgba(0, 0, 0, 0.54)
+
+.mat-step-header {
+  color: rgba(0, 0, 0, 0.8)
+}
+
+.info-node {
+  color: rgba(0, 0, 0, 0.8);
+  font-size: 14px;
+  margin: 20px 0px;
+  min-width: 250px;
+  max-width: 350px;
+}
+
+.info-node-warning{
+  color: #d79200;
+  background-color: #fff3d5;
+  border: 1px solid #fadc64;
+  padding: 5px;
 }

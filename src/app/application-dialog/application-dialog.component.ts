@@ -7,7 +7,7 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
-import {debounceTime} from "rxjs";
+import {combineLatest, debounceTime} from "rxjs";
 import {StepperSelectionEvent} from "@angular/cdk/stepper";
 
 const formBuilder = new FormBuilder().nonNullable;
@@ -36,7 +36,9 @@ export class ApplicationDialogComponent implements OnInit {
   minDownPaymentAmount: number = 1500;
   maxDownPaymentAmount: number = 3199000;
   monthlyPayment: number = 0;
-
+  totalHouseHoldIncome: number = 0;
+  totalMonthlyObligations: number = 0;
+  availableMonthlyPayment: number = null;
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
   obligationFields = [
     {label: 'Mortgage Loans', controlName: 'mortgageLoans'},
@@ -121,12 +123,13 @@ export class ApplicationDialogComponent implements OnInit {
               private _snackBar: MatSnackBar,
   ) {
     this.realEstatePrice.valueChanges
-      .pipe(debounceTime(10))
-      .subscribe((value) => {
-        this.updateMaxLoanAmount();
-        this.updateDownPaymentValidations();
+      .pipe(debounceTime(50))
+      .subscribe((realEstatePriceValue) => {
 
-        if (value > this.maxRealEstatePrice) {
+        this.updateMaxLoanAmount(realEstatePriceValue);
+        this.updateDownPayment(realEstatePriceValue);
+
+        if (realEstatePriceValue > this.maxRealEstatePrice) {
           this.realEstatePrice.setValue(this.maxRealEstatePrice);
           this._snackBar.open(
             `Max real estate price is ${this.maxRealEstatePrice} €`,
@@ -138,71 +141,41 @@ export class ApplicationDialogComponent implements OnInit {
         }
       });
 
-    this.loanAmount.valueChanges.pipe(debounceTime(10)).subscribe((value) => {
-      if (this.realEstatePrice.value && value >= this.maxLoanAmount) {
-        // this._snackBar.open('Max loan is 85% of real estate price', '', {
-        //   duration: 2000,
-        // });
-      }
-      if (this.realEstatePrice.value && value > this.maxLoanAmount) {
-        // this.loanAmount.setValue(this.maxLoanAmount);
-      }
-      if (
-        this.loanAmount.value &&
-        this.loanAmount.valid &&
-        value <= this.maxLoanAmount
-      ) {
-        // this.downPayment.setValue(this.realEstatePrice.value - value);
-      }
-      if (!this.loanAmount.value) {
-        // this.downPayment.setValue(null);
-      }
-    });
-
-    this.loanTerm.valueChanges.subscribe((value: number) => {
-      if (value >= this.maxLoanTerm) {
-        // this._snackBar.open(`Max loan term is ${this.maxLoanTerm} years`, '', {
-        //   duration: 2000,
-        // });
-      }
-      if (value > this.maxLoanTerm) {
-        // this.loanTerm.setValue(this.maxLoanTerm);
-      }
-    });
-
-
     this.applicants.valueChanges.subscribe((value: number) => {
       if (value > 1) {
-        this.coApplicantsIncome.setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
+        this.coApplicantsIncome.setValidators([
+          Validators.required,
+          Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
       }
     });
 
     this.obligations.valueChanges.subscribe((value: boolean) => {
       if (value === true) {
-
         this.obligationFields.forEach((field) => {
           this.incomeDetailsForm.get(field.controlName).setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
         });
       }
     });
 
-    this.realEstatePrice.valueChanges
-      .pipe(debounceTime(50))
-      .subscribe((value) => {
-        this.maxLoanAmount = value * this.loanAmountPercentage;
-        if (this.loanAmount.value > this.maxLoanAmount) {
-          // this.loanAmount.setValue(this.maxLoanAmount as never, {});
-        }
-      });
+    this.income.valueChanges.subscribe((value: number) => {
+      this.updateAvailableMonthlyPayment();
+    });
+    combineLatest([this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(([income, coApplicantsIncome]) => {
+      this.updateTotalHouseHoldIncome(income, coApplicantsIncome);
+      this.updateAvailableMonthlyPayment();
+    });
+
+    combineLatest([this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges]).subscribe(([mortgageLoans, consumerLoans, leasingAmount, creditCardLimit]) => {
+      this.updateMonthlyObligations(mortgageLoans, consumerLoans, leasingAmount, creditCardLimit);
+    });
   }
 
   ngOnInit() {
     this.euriborValues = this.euriborValuesService.getEuriborValues();
     this.getConstants();
-
   }
 
-  private getConstants() {
+  getConstants() {
     this.apiService.getConstants().subscribe((constants) => {
       this.constants = constants;
       this.minLoanTerm = constants.minLoanTerm;
@@ -218,8 +191,8 @@ export class ApplicationDialogComponent implements OnInit {
       for (let i = 1; i <= this.maxNumOfApplicants; i++) {
         this.applicantsOptions.push(i);
       }
-      this.updateMaxLoanAmount();
-      this.updateDownPaymentValidations();
+      this.updateMaxLoanAmount(this.realEstatePrice.value);
+      this.updateDownPayment(this.realEstatePrice.value);
 
       this.loanDetailsForm.get('loanTerm').setValidators([
         Validators.required,
@@ -229,24 +202,79 @@ export class ApplicationDialogComponent implements OnInit {
     });
   }
 
+  updateTotalHouseHoldIncome(income, coApplicantsIncome) {
+    const totalHouseHoldIncome = +income + (+coApplicantsIncome);
+    this.totalHouseHoldIncome = totalHouseHoldIncome;
+  }
 
-  updateDownPaymentValidations() {
-    this.minDownPaymentAmount = Math.round(this.realEstatePrice.value * (1 - this.loanAmountPercentage));
-    this.maxDownPaymentAmount = Math.round(this.realEstatePrice.value - this.minLoanAmount);
+  updateAvailableMonthlyPayment() {
+    const income = this.applicants.value == 2 ? this.totalHouseHoldIncome : this.income.value;
+    const monthlyCapacity = income * this.maxMonthlyObligationsPercentage;
+    const monthlyObligations = this.totalMonthlyObligations;
+    if (monthlyObligations > monthlyCapacity) {
+      this.availableMonthlyPayment = 0;
+    } else {
+      this.availableMonthlyPayment = monthlyCapacity - monthlyObligations;
+    }
+  }
+
+  updateMonthlyObligations(mortgageLoans, consumerLoans, leasingAmount, creditCardLimit) {
+    const mortgageMonthly =
+      (mortgageLoans * (0.055 / 12)) / (1 - Math.pow(1 + 0.055 / 12, -300));
+    const consumerMonthly =
+      (consumerLoans * (0.1 / 12)) / (1 - Math.pow(1 + 0.1 / 12, -60));
+    const leasingMonthly =
+      (leasingAmount * (0.07 / 12)) / (1 - Math.pow(1 + 0.07 / 12, -60));
+    const creditCardMonthly = creditCardLimit / 36;
+
+    const monthlyObligations = +mortgageMonthly + +consumerMonthly + +leasingMonthly + +creditCardMonthly;
+    this.totalMonthlyObligations = monthlyObligations;
+    this.updateAvailableMonthlyPayment();
+  }
+
+  updateDownPayment(realEstatePrice
+                      :
+                      number
+  ) {
+    const currentValue = this.downPayment.value;
+    const minDownPaymentAmount = Math.round(realEstatePrice * (1 - this.loanAmountPercentage));
+    const maxDownPaymentAmount = Math.round(realEstatePrice - this.minLoanAmount);
+    const realEstatePriceValid: boolean = realEstatePrice >= this.minRealEstatePrice && realEstatePrice <= this.maxRealEstatePrice;
+    this.minDownPaymentAmount = minDownPaymentAmount;
+    this.maxDownPaymentAmount = maxDownPaymentAmount;
+
     this.downPayment.setValidators([
       Validators.required,
       Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
-      Validators.min(this.minDownPaymentAmount),
-      Validators.max(this.maxDownPaymentAmount)]);
+      Validators.min(minDownPaymentAmount),
+      Validators.max(maxDownPaymentAmount)
+    ]);
+    if (realEstatePriceValid) {
+      if (currentValue < minDownPaymentAmount) {
+        this.downPayment.setValue(minDownPaymentAmount);
+      } else if (currentValue > maxDownPaymentAmount) {
+        this.downPayment.setValue(maxDownPaymentAmount);
+      }
+    } else {
+      this.downPayment.setValue(null);
+    }
   }
 
-  updateMaxLoanAmount() {
-    this.maxLoanAmount = Math.round(this.realEstatePrice.value * this.loanAmountPercentage);
+  updateMaxLoanAmount(realEstatePrice
+                        :
+                        number
+  ) {
+    const maxLoanAmount = Math.round(realEstatePrice * this.loanAmountPercentage);
     this.loanAmount.setValidators([
       Validators.required,
       Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
       Validators.min(this.minLoanAmount),
-      Validators.max(this.maxLoanAmount)]);
+      Validators.max(maxLoanAmount)]
+    );
+    if (this.loanAmount.value > maxLoanAmount) {
+      console.log('max loan amount exceeded');
+      // this.loanAmount.setValue(this.maxLoanAmount as never, {});
+    }
   }
 
   get realEstatePrice() {
@@ -280,10 +308,30 @@ export class ApplicationDialogComponent implements OnInit {
   get coApplicantsIncome() {
     return this.incomeDetailsForm.get('coApplicantsIncome');
   }
-get paymentScheduleType() {
+
+  get paymentScheduleType() {
     return this.loanDetailsForm.get('paymentScheduleType');
-}
-  onSubmitApplyClick(): void {
+  }
+
+  get mortgageLoans() {
+    return this.incomeDetailsForm.get('mortgageLoans');
+  }
+
+  get consumerLoans() {
+    return this.incomeDetailsForm.get('consumerLoans');
+  }
+
+  get leasingAmount() {
+    return this.incomeDetailsForm.get('leasingAmount');
+  }
+
+  get creditCardLimit() {
+    return this.incomeDetailsForm.get('creditCardLimit');
+  }
+
+  onSubmitApplyClick()
+    :
+    void {
     //form validation and post to backend
     this.saveLoanDetails();
     console.log(this.applicationData)
@@ -297,8 +345,12 @@ get paymentScheduleType() {
     })
   }
 
-  saveLoanDetails(): void {
-    const loanDataKeys: string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm",
+  saveLoanDetails()
+    :
+    void {
+    const loanDataKeys
+      :
+      string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm",
       "paymentScheduleType", "euribor"];
     const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "coApplicantsIncome", "obligations", "mortgageLoans", "consumerLoans",
       "leasingAmount", "creditCardLimit", "monthlyPayment"];
@@ -317,7 +369,10 @@ get paymentScheduleType() {
 
   selectedIndex: number = 0;
 
-  setIndex(event: StepperSelectionEvent) {
+  setIndex(event
+             :
+             StepperSelectionEvent
+  ) {
     this.selectedIndex = event.selectedIndex;
   }
 

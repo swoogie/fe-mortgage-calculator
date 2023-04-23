@@ -63,7 +63,7 @@
 
             <div *ngIf="showInsufficientMessage">Insufficient Income</div>
             <div *ngIf="!showInsufficientMessage">
-              <p class="monthly-payment-text">Monthly Payment: {{ monthlyPaymentResult | number : "1.2-2" | currency :
+              <p class="monthly-payment-text">Monthly Payment: {{ monthlyPaymentResult | currency :
                 "EUR" }}</p>
             </div>
           </div>
