@@ -46,8 +46,25 @@ export class ApplicationDialogComponent implements OnInit {
     {label: 'Leasing Amount', controlName: 'leasingAmount'},
     {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
   ];
-  isLinear = false;
+  isLinear = true;
   attemptedToProceed = false;
+  incomeDetailsForm = formBuilder.group({
+    applicants: [this.applicationData.applicants, Validators.required],
+    amountOfKids: [this.applicationData.amountOfKids, Validators.required],
+    income: [this.applicationData.income,
+      [
+        Validators.required,
+        Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
+      ],
+    ],
+    coApplicantsIncome: [null as number],
+    obligations: [this.applicationData.obligations, Validators.required],
+    mortgageLoans: [this.applicationData.mortgageLoans],
+    consumerLoans: [this.applicationData.consumerLoans],
+    leasingAmount: [this.applicationData.leasingAmount],
+    creditCardLimit: [this.applicationData.creditCardLimit],
+    canProceed: [false, Validators.requiredTrue]
+  });
   loanDetailsForm = formBuilder.group({
       realEstatePrice: [this.applicationData.realEstatePrice, [
         Validators.required,
@@ -80,22 +97,6 @@ export class ApplicationDialogComponent implements OnInit {
     },
     {updateOn: 'change'}
   );
-  incomeDetailsForm = formBuilder.group({
-    applicants: [this.applicationData.applicants, Validators.required],
-    amountOfKids: [this.applicationData.amountOfKids, Validators.required],
-    income: [this.applicationData.income,
-      [
-        Validators.required,
-        Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
-      ],
-    ],
-    coApplicantsIncome: [null as number],
-    obligations: [this.applicationData.obligations, Validators.required],
-    mortgageLoans: [this.applicationData.mortgageLoans],
-    consumerLoans: [this.applicationData.consumerLoans],
-    leasingAmount: [this.applicationData.leasingAmount],
-    creditCardLimit: [this.applicationData.creditCardLimit]
-  });
   personalDetailsForm = formBuilder.group({
     firstName: [this.applicationData.firstName, Validators.required],
     lastName: [this.applicationData.lastName, Validators.required],
@@ -213,8 +214,10 @@ export class ApplicationDialogComponent implements OnInit {
     const monthlyObligations = this.totalMonthlyObligations;
     if (monthlyObligations > monthlyCapacity) {
       this.availableMonthlyPayment = 0;
+      this.canProceed.setValue(false);
     } else {
       this.availableMonthlyPayment = monthlyCapacity - monthlyObligations;
+      this.canProceed.setValue(true);
     }
   }
 
@@ -232,10 +235,7 @@ export class ApplicationDialogComponent implements OnInit {
     this.updateAvailableMonthlyPayment();
   }
 
-  updateDownPayment(realEstatePrice
-                      :
-                      number
-  ) {
+  updateDownPayment(realEstatePrice: number) {
     const currentValue = this.downPayment.value;
     const minDownPaymentAmount = Math.round(realEstatePrice * (1 - this.loanAmountPercentage));
     const maxDownPaymentAmount = Math.round(realEstatePrice - this.minLoanAmount);
@@ -260,10 +260,7 @@ export class ApplicationDialogComponent implements OnInit {
     }
   }
 
-  updateMaxLoanAmount(realEstatePrice
-                        :
-                        number
-  ) {
+  updateMaxLoanAmount(realEstatePrice: number) {
     const maxLoanAmount = Math.round(realEstatePrice * this.loanAmountPercentage);
     this.loanAmount.setValidators([
       Validators.required,
@@ -275,6 +272,44 @@ export class ApplicationDialogComponent implements OnInit {
       console.log('max loan amount exceeded');
       // this.loanAmount.setValue(this.maxLoanAmount as never, {});
     }
+  }
+
+  onSubmitApplyClick()
+    :
+    void {
+    //form validation and post to backend
+    this.saveLoanDetails();
+    console.log(this.applicationData)
+    this.apiService.postApplication(this.applicationData).subscribe({
+      next: (success) => {
+        console.log(success);
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
+  }
+
+  saveLoanDetails()
+    :
+    void {
+    const loanDataKeys
+      :
+      string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm",
+      "paymentScheduleType", "euribor"];
+    const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "coApplicantsIncome", "obligations", "mortgageLoans", "consumerLoans",
+      "leasingAmount", "creditCardLimit", "monthlyPayment"];
+    const personalDataKeys: string[] = ["firstName", "lastName", "personalNumber",
+      "email", "phoneNumber", "address"];
+    loanDataKeys.forEach((key) => {
+      this.applicationData[key] = this.loanDetailsForm.value[key]
+    });
+    incomeDataKeys.forEach((key) => {
+      this.applicationData[key] = this.incomeDetailsForm.value[key]
+    });
+    personalDataKeys.forEach((key) => {
+      this.applicationData[key] = this.personalDetailsForm.value[key]
+    });
   }
 
   get realEstatePrice() {
@@ -328,58 +363,18 @@ export class ApplicationDialogComponent implements OnInit {
   get creditCardLimit() {
     return this.incomeDetailsForm.get('creditCardLimit');
   }
-
-  onSubmitApplyClick()
-    :
-    void {
-    //form validation and post to backend
-    this.saveLoanDetails();
-    console.log(this.applicationData)
-    this.apiService.postApplication(this.applicationData).subscribe({
-      next: (success) => {
-        console.log(success);
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
-  }
-
-  saveLoanDetails()
-    :
-    void {
-    const loanDataKeys
-      :
-      string[] = ["realEstatePrice", "downPayment", "loanAmount", "loanTerm",
-      "paymentScheduleType", "euribor"];
-    const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "coApplicantsIncome", "obligations", "mortgageLoans", "consumerLoans",
-      "leasingAmount", "creditCardLimit", "monthlyPayment"];
-    const personalDataKeys: string[] = ["firstName", "lastName", "personalNumber",
-      "email", "phoneNumber", "address"];
-    loanDataKeys.forEach((key) => {
-      this.applicationData[key] = this.loanDetailsForm.value[key]
-    });
-    incomeDataKeys.forEach((key) => {
-      this.applicationData[key] = this.incomeDetailsForm.value[key]
-    });
-    personalDataKeys.forEach((key) => {
-      this.applicationData[key] = this.personalDetailsForm.value[key]
-    });
+  get canProceed() {
+    return this.incomeDetailsForm.get('canProceed');
   }
 
   selectedIndex: number = 0;
 
-  setIndex(event
-             :
-             StepperSelectionEvent
-  ) {
+  setIndex(event: StepperSelectionEvent) {
     this.selectedIndex = event.selectedIndex;
   }
 
   triggerClick(event) {
     this.attemptedToProceed = true;
-    console.log(`Selected tab index: ${this.selectedIndex}`);
+      console.log(`Selected tab index: ${this.selectedIndex}`);
   }
-
-
 }
