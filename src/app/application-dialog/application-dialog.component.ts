@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {ApiService} from "../services/api.service";
 import {Constants} from "../interfaces/constants";
 import {ApplicationData} from "../interfaces/application-data";
@@ -9,7 +9,6 @@ import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
 import {combineLatest, debounceTime} from "rxjs";
 import {StepperSelectionEvent} from "@angular/cdk/stepper";
-import {MaxcalculationsService} from "../services/maxcalculations.service";
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -19,19 +18,19 @@ const formBuilder = new FormBuilder().nonNullable;
   styleUrls: ['./application-dialog.component.scss']
 })
 export class ApplicationDialogComponent implements OnInit {
+  constants: Constants;
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 1000;
-  constants: Constants;
   minLoanTerm: number;
   maxLoanTerm: number;
   loanAmountPercentage: number;
-  loanAmount: number;
   minKids: number;
   maxKids: number;
   maxNumOfApplicants: number;
   children: number[] = [];
   applicantsOptions: number[] = [];
+  loanAmount: number;
   maxMonthlyObligationsPercentage: number;
   euriborValues: Euribor[];
   maxLoanAmount: number = 2720000;
@@ -40,7 +39,7 @@ export class ApplicationDialogComponent implements OnInit {
   maxDownPaymentAmount: number = 3199000;
   monthlyPayment: number = 0;
   totalHouseHoldIncome: number = 0;
-  sufficientMonthlyPayment: boolean = true;
+  isSufficientMonthlyPayment: boolean = true;
   totalMonthlyObligations: number = 0;
   availableMonthlyPayment: number = null;
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
@@ -50,7 +49,7 @@ export class ApplicationDialogComponent implements OnInit {
     {label: 'Leasing Amount', controlName: 'leasingAmount'},
     {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
   ];
-  isLinear = false;
+  isLinear = true;
   attemptedToProceed = false;
 
   incomeDetailsForm = formBuilder.group({
@@ -93,6 +92,7 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       euribor: [this.applicationData.euribor, [Validators.required]],
       paymentScheduleType: [this.applicationData.paymentScheduleType as string, [Validators.required]],
+      canProceed: [true, Validators.requiredTrue]
     },
     {updateOn: 'blur'}
   );
@@ -114,26 +114,14 @@ export class ApplicationDialogComponent implements OnInit {
     address: [this.applicationData.address, Validators.required]
   });
 
-
   constructor(private euriborValuesService: EuriborValuesService,
               private apiService: ApiService,
-              private calcService: MaxcalculationsService,
-              public dialogRef: MatDialogRef<ApplicationDialogComponent>,
               @Inject(MAT_DIALOG_DATA)
               public applicationData: ApplicationData,
               private _snackBar: MatSnackBar,
   ) {
-
     this.applicants.valueChanges.subscribe((value: number) => {
-      if (value > 1) {
-        this.coApplicantsIncome.setValidators([
-          Validators.required,
-          Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
-      } else if (value === 1) {
-        this.coApplicantsIncome.clearValidators();
-        this.coApplicantsIncome.setValue(null);
-        this.totalHouseHoldIncome = this.income.value;
-      }
+      this.updateCoApplicantsIncomeValidations(value);
     });
 
     this.income.valueChanges.subscribe((value: number) => {
@@ -146,18 +134,7 @@ export class ApplicationDialogComponent implements OnInit {
     });
 
     this.obligations.valueChanges.subscribe((value: boolean) => {
-      if (value === true) {
-        this.obligationFields.forEach((field) => {
-          this.incomeDetailsForm.get(field.controlName).setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
-          this.incomeDetailsForm.get(field.controlName).setValue(0);
-        });
-      } else if (value === false) {
-        this.updateAvailableMonthlyPayment();
-        this.obligationFields.forEach((field) => {
-          this.incomeDetailsForm.get(field.controlName).clearValidators();
-          this.incomeDetailsForm.get(field.controlName).setValue(null);
-        });
-      }
+      this.updateObligationsValidations(value);
     });
 
     combineLatest([this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges]).subscribe(([mortgageLoans, consumerLoans, leasingAmount, creditCardLimit]) => {
@@ -167,15 +144,7 @@ export class ApplicationDialogComponent implements OnInit {
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(50))
       .subscribe((realEstatePriceValue) => {
-
-        if (realEstatePriceValue > this.maxRealEstatePrice) {
-          this.realEstatePrice.setValue(this.maxRealEstatePrice);
-          this._snackBar.open(
-            `Max real estate price is ${this.maxRealEstatePrice} €`,
-            '',
-            {duration: 2000}
-          );
-        }
+        this.updateRealEstatePriceValue(realEstatePriceValue);
         this.updateDownPayment();
         this.updateLoanAmount();
       });
@@ -185,31 +154,80 @@ export class ApplicationDialogComponent implements OnInit {
     });
 
     this.loanTerm.valueChanges.subscribe((loanTermValue) => {
-      const minLoanTerm = this.minLoanTerm;
-      const maxLoanTerm = this.maxLoanTerm;
-      if (loanTermValue < minLoanTerm) {
-        this.loanTerm.setValue(minLoanTerm);
-        this._snackBar.open(
-          `Min loan term is ${minLoanTerm} ${minLoanTerm % 10 == 1 ? "year" : "years"}`,
-          '',
-          {duration: 2000}
-        );
-      } else if (loanTermValue > maxLoanTerm) {
-        this.loanTerm.setValue(maxLoanTerm);
-        this._snackBar.open(
-          `Max loan term is ${maxLoanTerm} ${maxLoanTerm % 10 == 1 ? "year" : "years"}`,
-          '',
-          {duration: 2000}
-        );
-      }
+      this.updateLoanTerm(loanTermValue);
     });
 
     combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges]).subscribe(([realEstatePrice, downPayment]) => {
       this.updateLoanAmount();
     });
+
     this.loanDetailsForm.valueChanges.subscribe((value) => {
       this.updateSufficientMonthlyPayment();
     });
+  }
+
+  private updateRealEstatePriceValue(realEstatePriceValue: number) {
+    if (realEstatePriceValue > this.maxRealEstatePrice) {
+      this.realEstatePrice.setValue(this.maxRealEstatePrice);
+      this._snackBar.open(
+        `Max real estate price is ${this.maxRealEstatePrice} €`,
+        '',
+        {duration: 2000}
+      );
+    } else if (realEstatePriceValue < this.minRealEstatePrice) {
+      this.realEstatePrice.setValue(this.minRealEstatePrice);
+      this._snackBar.open(
+        `Min real estate price is ${this.minRealEstatePrice} €`,
+        '',
+        {duration: 2000}
+      );
+    }
+  }
+
+  private updateObligationsValidations(obligationsValue: boolean) {
+    if (obligationsValue === true) {
+      this.obligationFields.forEach((field) => {
+        this.incomeDetailsForm.get(field.controlName).setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
+        this.incomeDetailsForm.get(field.controlName).setValue(0);
+      });
+    } else if (obligationsValue === false) {
+      this.updateAvailableMonthlyPayment();
+      this.obligationFields.forEach((field) => {
+        this.incomeDetailsForm.get(field.controlName).clearValidators();
+        this.incomeDetailsForm.get(field.controlName).setValue(null);
+      });
+    }
+  }
+
+  private updateCoApplicantsIncomeValidations(value: number) {
+    if (value > 1) {
+      this.coApplicantsIncome.setValidators([
+        Validators.required,
+        Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
+    } else if (value === 1) {
+      this.coApplicantsIncome.clearValidators();
+      this.coApplicantsIncome.setValue(null);
+    }
+  }
+
+  updateLoanTerm(loanTermValue: number) {
+    const minLoanTerm = this.minLoanTerm;
+    const maxLoanTerm = this.maxLoanTerm;
+    if (loanTermValue < minLoanTerm) {
+      this.loanTerm.setValue(minLoanTerm);
+      this._snackBar.open(
+        `Min loan term is ${minLoanTerm} ${minLoanTerm % 10 == 1 ? "year" : "years"}`,
+        '',
+        {duration: 2000}
+      );
+    } else if (loanTermValue > maxLoanTerm) {
+      this.loanTerm.setValue(maxLoanTerm);
+      this._snackBar.open(
+        `Max loan term is ${maxLoanTerm} ${maxLoanTerm % 10 == 1 ? "year" : "years"}`,
+        '',
+        {duration: 2000}
+      );
+    }
   }
 
   ngOnInit() {
@@ -249,7 +267,8 @@ export class ApplicationDialogComponent implements OnInit {
 
   updateDownPayment() {
     const realEstatePrice = this.realEstatePrice.value;
-    if (realEstatePrice != null) {
+    const isRealEstatePriceValid = realEstatePrice != null && realEstatePrice >= this.minRealEstatePrice && realEstatePrice <= this.maxRealEstatePrice;
+    if (isRealEstatePriceValid) {
       const currentValue = this.downPayment.value;
       const minDownPaymentAmount = Math.round(realEstatePrice * (1 - this.loanAmountPercentage));
       const maxDownPaymentAmount = Math.round(realEstatePrice - this.minLoanAmount);
@@ -291,29 +310,33 @@ export class ApplicationDialogComponent implements OnInit {
 
 
   updateTotalHouseHoldIncome(income, coApplicantsIncome) {
-    const totalHouseHoldIncome = +income + (+coApplicantsIncome);
+    const totalHouseHoldIncome = +income + +coApplicantsIncome;
     this.totalHouseHoldIncome = totalHouseHoldIncome;
   }
 
   updateAvailableMonthlyPayment() {
-    const income = this.applicants.value == 2 ? this.totalHouseHoldIncome : this.income.value;
+    const income = this.getTotalIncome();
     const monthlyCapacity = income * this.maxMonthlyObligationsPercentage;
-    if(monthlyCapacity > 0) {
+    if (monthlyCapacity > 0) {
       const monthlyObligations = this.totalMonthlyObligations;
       if (monthlyObligations > monthlyCapacity) {
         this.availableMonthlyPayment = 0;
-        this.canProceed.setValue(false);
-        this.sufficientMonthlyPayment = false;
+        this.canProceedToLoanDetails.setValue(false);
+        this.isSufficientMonthlyPayment = false;
       } else {
         this.availableMonthlyPayment = monthlyCapacity - monthlyObligations;
-        this.canProceed.setValue(true);
+        this.canProceedToLoanDetails.setValue(true);
         this.updateSufficientMonthlyPayment();
       }
-    }else {
+    } else {
       this.availableMonthlyPayment = null;
-      this.canProceed.setValue(false);
-      this.sufficientMonthlyPayment = false;
+      this.canProceedToLoanDetails.setValue(false);
+      this.isSufficientMonthlyPayment = false;
     }
+  }
+
+  getTotalIncome() {
+    return this.applicants.value > 1 ? this.totalHouseHoldIncome : this.income.value;
   }
 
   updateMonthlyObligations(mortgageLoans, consumerLoans, leasingAmount, creditCardLimit) {
@@ -418,7 +441,7 @@ export class ApplicationDialogComponent implements OnInit {
     return this.incomeDetailsForm.get('creditCardLimit');
   }
 
-  get canProceed() {
+  get canProceedToLoanDetails() {
     return this.incomeDetailsForm.get('canProceed');
   }
 
@@ -426,29 +449,51 @@ export class ApplicationDialogComponent implements OnInit {
     return this.loanDetailsForm.get('euribor');
   }
 
-  selectedIndex: number = 0;
-
   updateSufficientMonthlyPayment() {
     let totalMortgagePayment = 0;
     const loanTermInMonths = this.loanTerm.value * 12;
     const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
+    let isSufficientMonthlyPayment = usersTotalCapacity >= totalMortgagePayment;
     if (this.loanDetailsForm.valid) {
       const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
       let loanAmount: number = this.loanAmount;
       if (this.paymentScheduleType.value == 'annuity') {
-        const monthlyAnnuity = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -loanTermInMonths));
-        totalMortgagePayment = monthlyAnnuity * loanTermInMonths;
+        totalMortgagePayment = this.calculateTotalAnnuityMortgageAmount(loanAmount, monthlyInterestRate, loanTermInMonths);
       } else if (this.paymentScheduleType.value == 'linear') {
-        let outstandingLoan = loanAmount;
-        let principal = loanAmount / loanTermInMonths;
-        while (outstandingLoan > 0) {
-          totalMortgagePayment += principal + monthlyInterestRate * outstandingLoan;
-          outstandingLoan -= principal;
-        }
+        totalMortgagePayment = this.calculateTotalLinearMortgageAmount(loanAmount, loanTermInMonths, monthlyInterestRate);
+      }
+      if (isSufficientMonthlyPayment) {
+        console.log('call sufficient');
+        this.canProceedToPersonalDetails.setValue(true);
+      } else {
+        this.canProceedToPersonalDetails.setValue(false);
       }
     }
-    this.sufficientMonthlyPayment = usersTotalCapacity >= totalMortgagePayment;
+    this.isSufficientMonthlyPayment = isSufficientMonthlyPayment;
+console.log('call sufficient');
   }
+
+  get canProceedToPersonalDetails() {
+    return this.loanDetailsForm.get('canProceed');
+  }
+
+  calculateTotalLinearMortgageAmount(loanAmount: number, loanTermInMonths: number, monthlyInterestRate: number) {
+    let outstandingLoan = loanAmount;
+    let principal = loanAmount / loanTermInMonths;
+    let totalMortgagePayment = 0;
+    while (outstandingLoan > 0) {
+      totalMortgagePayment += principal + monthlyInterestRate * outstandingLoan;
+      outstandingLoan -= principal;
+    }
+    return totalMortgagePayment;
+  }
+
+  calculateTotalAnnuityMortgageAmount(loanAmount: number, monthlyInterestRate: number, loanTermInMonths: number) {
+    const monthlyAnnuity = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -loanTermInMonths));
+    return monthlyAnnuity * loanTermInMonths;
+  }
+
+  selectedIndex: number = 0;
 
   setIndex(event: StepperSelectionEvent) {
     if (this.selectedIndex != event.selectedIndex) {
