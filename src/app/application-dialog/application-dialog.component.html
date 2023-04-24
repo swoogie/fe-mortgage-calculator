@@ -34,7 +34,7 @@
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Your income</mat-label>
-            <input matInput formControlName="income" />
+            <input matInput formControlName="income"/>
             <mat-error class="error-message" *ngIf="income && income.hasError('pattern')">
               Please enter a valid number
             </mat-error>
@@ -43,7 +43,7 @@
         <div *ngIf="applicants.value==2" class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Co-applicant's income</mat-label>
-            <input matInput formControlName="coApplicantsIncome" />
+            <input matInput formControlName="coApplicantsIncome"/>
             <mat-error class="error-message" *ngIf="coApplicantsIncome && coApplicantsIncome.hasError('pattern')">
               Please enter a valid number
             </mat-error>
@@ -52,11 +52,14 @@
         <div *ngIf="applicants.value==2 && totalHouseHoldIncome>0" class="form-field-wrapper">
           <div class="info-node">Total Household income: {{totalHouseHoldIncome | currency: 'EUR'}}</div>
         </div>
+        <div class="info-node info-node-warning" *ngIf="isSufficientHouseholdIncome==false">
+          In order to apply for a loan your <span *ngIf="applicants.value==2">total household</span> income should be at
+          least {{minHouseholdIncome}}</div>
         <div class="form-field-wrapper">
           <div>
             <mat-label class="block">Do you have any obligations?</mat-label>
             <mat-icon matSuffix matTooltip="Represent any outstanding debts or regular payments that a party must make."
-              [matTooltipPosition]="'right'">help_outline
+                      [matTooltipPosition]="'right'">help_outline
             </mat-icon>
           </div>
           <mat-error class="error-message" *ngIf="attemptedToProceed && obligations.hasError('required')">
@@ -75,7 +78,7 @@
             <div class="form-field-wrapper">
               <mat-form-field class="input-wrap">
                 <mat-label>{{ field.label }}</mat-label>
-                <input matInput formControlName="{{ field.controlName }}" />
+                <input matInput formControlName="{{ field.controlName }}"/>
                 <mat-error *ngIf="
               incomeDetailsForm.get(field.controlName) &&
               incomeDetailsForm.get(field.controlName).hasError('pattern')">
@@ -84,9 +87,6 @@
               </mat-form-field>
             </div>
           </ng-container>
-          <!-- <div *ngIf="obligations.value == true && totalMonthlyObligations!=null" class="info-node">
-            Total monthly obligations: {{totalMonthlyObligations | currency: 'EUR'}}
-          </div> -->
         </div>
         <div *ngIf="availableMonthlyPayment!=null" class="info-node">
           Monthly payment for a loan: {{availableMonthlyPayment | currency: 'EUR'}}
@@ -106,14 +106,14 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Real Estate Address</mat-label>
-            <input matInput formControlName="realEstateAddress" />
+            <input matInput formControlName="realEstateAddress"/>
           </mat-form-field>
 
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Real Estate Price</mat-label>
-            <input matInput formControlName="realEstatePrice" />
+            <input matInput formControlName="realEstatePrice"/>
             <mat-error class="error-message" *ngIf="
                         realEstatePrice &&
           realEstatePrice.hasError('pattern')">
@@ -130,7 +130,7 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Down Payment</mat-label>
-            <input matInput formControlName="downPayment" />
+            <input matInput formControlName="downPayment"/>
             <mat-error class="error-message" *ngIf="downPayment && downPayment.hasError('pattern')">
               Please enter a valid number
             </mat-error>
@@ -148,7 +148,7 @@
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Loan term years</mat-label>
-            <input matInput formControlName="loanTerm" />
+            <input matInput formControlName="loanTerm"/>
             <mat-error class="error-message" *ngIf="loanTerm &&
             (loanTerm.hasError('pattern')
             || loanTerm.hasError('min')
@@ -200,19 +200,19 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstName" />
+            <input matInput formControlName="firstName"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Last Name</mat-label>
-            <input matInput formControlName="lastName" />
+            <input matInput formControlName="lastName"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Personal Number</mat-label>
-            <input matInput formControlName="personalNumber" />
+            <input matInput formControlName="personalNumber"/>
             <mat-error class="error-message" *ngIf="personalNumber && personalNumber.hasError('invalidPersonalNumber')">
               Please enter a valid personal number
             </mat-error>
@@ -228,7 +228,7 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email" />
+            <input matInput formControlName="email"/>
             <mat-error class="error-message" *ngIf="personalEmail && personalEmail.hasError('pattern')">
               Please enter a valid email address
             </mat-error>
@@ -237,7 +237,7 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="phoneNumber" />
+            <input matInput formControlName="phoneNumber"/>
             <mat-error class="error-message" *ngIf="personalPhoneNumber && personalPhoneNumber.hasError('pattern')">
               Please enter a valid phone number
             </mat-error>
@@ -246,7 +246,7 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Address</mat-label>
-            <input matInput formControlName="address" />
+            <input matInput formControlName="address"/>
           </mat-form-field>
         </div>
       </form>
@@ -257,19 +257,19 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstName" />
+            <input matInput formControlName="firstName"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Last Name</mat-label>
-            <input matInput formControlName="lastName" />
+            <input matInput formControlName="lastName"/>
           </mat-form-field>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email" />
+            <input matInput formControlName="email"/>
             <mat-error class="error-message" *ngIf="coApplicantEmail && coApplicantEmail.hasError('pattern')">
               Please enter a valid email address
             </mat-error>
@@ -278,9 +278,9 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="phoneNumber" />
+            <input matInput formControlName="phoneNumber"/>
             <mat-error class="error-message"
-              *ngIf="coApplicantPhoneNumber && coApplicantPhoneNumber.hasError('pattern')">
+                       *ngIf="coApplicantPhoneNumber && coApplicantPhoneNumber.hasError('pattern')">
               Please enter a valid phone number
             </mat-error>
           </mat-form-field>
@@ -289,7 +289,58 @@
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Form Submission</ng-template>
-      <div>If the info is correct, click Done to submit the form.</div>
+      <table class="form-submission-info">
+        <tbody>
+        <tr>
+          <th>Real Estate Address</th>
+          <td>{{realEstateAddress.value}}</td>
+        </tr>
+        <tr>
+          <th>Loan amount</th>
+          <td>{{loanAmount | currency: 'EUR': 'symbol': '1.0-0'}}</td>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <td>{{personalFirstName.value}} {{personalLastName.value}}</td>
+        </tr>
+        <tr>
+          <th>Phone number</th>
+          <td>{{personalPhoneNumber.value}}</td>
+        </tr>
+        <tr>
+          <th>E-mail</th>
+          <td>{{personalEmail.value}}</td>
+        </tr>
+        <tr>
+          <th>Address</th>
+          <td>{{personalAddress.value}}</td>
+        </tr>
+        <tr>
+          <th>Application date</th>
+          <td>{{applicationDate | date }}</td>
+        </tr>
+        </tbody>
+      </table>
+      <br>
+      <table *ngIf="applicants.value==2" class="form-submission-info">
+        <tbody>
+        <th [colSpan]="2">Co-applicant's contact details</th>
+        <tr>
+          <th>Name</th>
+          <td>{{coApplicantFirstName.value}} {{coApplicantLastName.value}}</td>
+        </tr>
+        <tr>
+          <th>Phone number</th>
+          <td>{{coApplicantPhoneNumber.value}}</td>
+        </tr>
+        <tr>
+          <th>E-mail</th>
+          <td>{{coApplicantEmail.value}}</td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="info-node info-node-reminder"> If the info is correct, click 'Submit Application'.
+      </div>
       <div>
         <button mat-raised-button mat-dialog-close class="form-button" (click)="onSubmitApplyClick()">Submit
           Application

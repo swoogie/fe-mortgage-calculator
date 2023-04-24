@@ -7,7 +7,7 @@ import {AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators}
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
-import {combineLatest, debounceTime} from "rxjs";
+import {combineLatest, debounceTime, merge} from "rxjs";
 import {StepperSelectionEvent} from "@angular/cdk/stepper";
 
 const formBuilder = new FormBuilder().nonNullable;
@@ -39,6 +39,8 @@ export class ApplicationDialogComponent implements OnInit {
   maxDownPaymentAmount: number = 3199000;
   monthlyPayment: number = 0;
   totalHouseHoldIncome: number = 0;
+  minHouseholdIncome: number;
+  isSufficientHouseholdIncome: boolean;
   isSufficientMonthlyPayment: boolean;
   totalMonthlyObligations: number = 0;
   availableMonthlyPayment: number = null;
@@ -49,9 +51,10 @@ export class ApplicationDialogComponent implements OnInit {
     {label: 'Leasing Amount', controlName: 'leasingAmount'},
     {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
   ];
+  applicationDate = Date.now();
   isLinear = true;
   attemptedToProceed = false;
-  showAgeWarning:boolean = false;
+  showAgeWarning: boolean = false;
   ageAtLoanTermEnd: number;
   incomeDetailsForm = formBuilder.group({
     applicants: [this.applicationData.applicants, Validators.required],
@@ -169,7 +172,6 @@ export class ApplicationDialogComponent implements OnInit {
 
       const age = ageDate.getUTCFullYear() - 1970;
 
-      console.log('age', age);
       if (matches[1] === '5' || matches[1] === '6') {
         if (age < 0) {
           return {invalidPersonalNumber: true};
@@ -182,7 +184,7 @@ export class ApplicationDialogComponent implements OnInit {
       if (ageAtLoanTermEnd > 65) {
         this.showAgeWarning = true;
         this.ageAtLoanTermEnd = ageAtLoanTermEnd;
-      }else{
+      } else {
         this.showAgeWarning = false;
         this.ageAtLoanTermEnd = null;
       }
@@ -200,6 +202,10 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateCoApplicantsIncomeValidations(value);
     });
 
+    combineLatest([this.applicants.valueChanges, this.amountOfKids.valueChanges, this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(() => {
+      this.updateSufficientHouseholdIncome();
+    });
+
     this.income.valueChanges.subscribe((value: number) => {
       this.updateAvailableMonthlyPayment();
     });
@@ -214,8 +220,8 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
     });
 
-    combineLatest([this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges]).subscribe(([mortgageLoans, consumerLoans, leasingAmount, creditCardLimit]) => {
-      this.updateMonthlyObligations(mortgageLoans, consumerLoans, leasingAmount, creditCardLimit);
+    merge(this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges).subscribe(() => {
+      this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
       this.updateAvailableMonthlyPayment();
     });
 
@@ -333,6 +339,11 @@ export class ApplicationDialogComponent implements OnInit {
       }
 
       this.updateDownPayment();
+      if (this.obligations.value == true) {
+        this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
+      }
+
+      this.updateAvailableMonthlyPayment();
 
       this.loanDetailsForm.get('loanTerm').setValidators([
         Validators.required,
@@ -388,8 +399,26 @@ export class ApplicationDialogComponent implements OnInit {
   updateTotalHouseHoldIncome(income, coApplicantsIncome) {
     const totalHouseHoldIncome = +income + +coApplicantsIncome;
     this.totalHouseHoldIncome = totalHouseHoldIncome;
+    this.updateSufficientHouseholdIncome();
   }
 
+  updateSufficientHouseholdIncome() {
+    let minHouseholdIncome = 0;
+    if (this.applicants.value == 1) {
+      minHouseholdIncome = 600;
+    } else if (this.applicants.value == 2) {
+      minHouseholdIncome = 1000;
+    }
+
+    minHouseholdIncome = minHouseholdIncome + this.amountOfKids.value * 300;
+    this.minHouseholdIncome = minHouseholdIncome;
+    if (this.totalHouseHoldIncome < minHouseholdIncome) {
+      this.isSufficientHouseholdIncome = false;
+    } else {
+      this.isSufficientHouseholdIncome = true;
+    }
+    this.updateCanProceedToLoanDetails();
+  }
 
   updateMonthlyObligations(mortgageLoans, consumerLoans, leasingAmount, creditCardLimit) {
     const mortgageMonthly =
@@ -421,7 +450,7 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateCanProceedToLoanDetails() {
-    if (this.availableMonthlyPayment > 0) {
+    if (this.availableMonthlyPayment > 0 && this.isSufficientHouseholdIncome == true) {
       this.canProceedToLoanDetails.setValue(true);
     } else {
       this.canProceedToLoanDetails.setValue(false);
@@ -465,6 +494,10 @@ export class ApplicationDialogComponent implements OnInit {
     this.applicationData.loanAmount = this.loanAmount;
   }
 
+  get realEstateAddress() {
+    return this.loanDetailsForm.get('realEstateAddress');
+  }
+
   get realEstatePrice() {
     return this.loanDetailsForm.get('realEstatePrice');
   }
@@ -488,6 +521,10 @@ export class ApplicationDialogComponent implements OnInit {
 
   get applicants() {
     return this.incomeDetailsForm.get('applicants');
+  }
+
+  get amountOfKids() {
+    return this.incomeDetailsForm.get('amountOfKids');
   }
 
   get coApplicantsIncome() {
@@ -522,10 +559,18 @@ export class ApplicationDialogComponent implements OnInit {
     return this.loanDetailsForm.get('euribor');
   }
 
+  get personalFirstName() {
+    return this.personalDetailsForm.get('firstName');
+  }
+
+  get personalLastName() {
+    return this.personalDetailsForm.get('lastName');
+  }
+
+
   get personalNumber() {
     return this.personalDetailsForm.get('personalNumber');
   }
-
 
   get personalEmail() {
     return this.personalDetailsForm.get('email');
@@ -534,6 +579,19 @@ export class ApplicationDialogComponent implements OnInit {
   get personalPhoneNumber() {
     return this.personalDetailsForm.get('phoneNumber');
   }
+
+  get personalAddress() {
+    return this.personalDetailsForm.get('address');
+  }
+
+  get coApplicantFirstName() {
+    return this.coApplicantDetailsForm.get('firstName');
+  }
+
+  get coApplicantLastName() {
+    return this.coApplicantDetailsForm.get('lastName');
+  }
+
   get coApplicantEmail() {
     return this.coApplicantDetailsForm.get('email');
   }
@@ -541,8 +599,8 @@ export class ApplicationDialogComponent implements OnInit {
   get coApplicantPhoneNumber() {
     return this.coApplicantDetailsForm.get('phoneNumber');
   }
+
   updateSufficientMonthlyPayment() {
-    console.log('call sufficient');
     let totalMortgagePayment = 0;
     const loanTermInMonths = this.loanTerm.value * 12;
     const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
@@ -597,6 +655,5 @@ export class ApplicationDialogComponent implements OnInit {
 
   triggerClick(event) {
     this.attemptedToProceed = true;
-    console.log(`Selected tab index: ${this.selectedIndex}`);
   }
 }
