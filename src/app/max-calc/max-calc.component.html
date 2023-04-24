@@ -167,13 +167,7 @@
   </mat-form-field> -->
   <div class="calc-button">
     <button mat-flat-button color="primary" type="submit">Calculate</button>
-    <button
-      mat-flat-button
-      *ngIf="annuityTotal || linearTotal"
-      (click)="openDialog()"
-    >
-      Apply
-    </button>
+    <button mat-flat-button (click)="openDialog()">Apply</button>
   </div>
   <div class="right-container-card">
     <div class="btn-wrap">

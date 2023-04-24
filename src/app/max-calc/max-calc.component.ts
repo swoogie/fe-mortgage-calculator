@@ -198,14 +198,18 @@ export class MaxCalcComponent {
             this.maxCalcForm
           );
           this.interestFromTotal = this.getInterest(this.linearTotal);
-          this.principalFromTotal = this.linearTotal - this.interestFromTotal;
+          this.principalFromTotal = parseFloat(
+            (this.linearTotal - this.interestFromTotal).toFixed(2)
+          );
         }
         if (this.maxCalcForm && this.paymentScheduleType.value == 'annuity') {
           this.annuityTotal = this.calcService.calculateAnnuityTotal(
             this.maxCalcForm
           );
           this.interestFromTotal = this.getInterest(this.annuityTotal);
-          this.principalFromTotal = this.annuityTotal - this.interestFromTotal;
+          this.principalFromTotal = parseFloat(
+            (this.annuityTotal - this.interestFromTotal).toFixed(2)
+          );
         }
       });
   }

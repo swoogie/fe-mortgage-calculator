@@ -38,7 +38,7 @@ export class MonthlyCalcComponent implements OnInit {
 
   monthlyForm = fb.group(
     {
-      applicants: ['', Validators.required],
+      applicants: [1 as number, Validators.required],
       amountOfKids: ['', Validators.required],
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
       monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
