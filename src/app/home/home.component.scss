@@ -27,7 +27,7 @@
   height: 100%;
 
   img {
-    height: 200px;
+    height: 500px;
     width: 100%;
     object-fit: cover;
     max-height: 100%;
@@ -57,10 +57,6 @@ mat-card-subtitle {
   margin-bottom: 10px;
 }
 
-.money-image {
-  position: relative;
-}
-
 .chip {
   height: 1.4rem;
   padding: 0.5rem 0.9rem;
@@ -69,7 +65,7 @@ mat-card-subtitle {
   white-space: nowrap;
   position: absolute;
   right: 10px;
-  top: 155px;
+  top: 450px;
 }
 
 .maximum-calculator-title {
