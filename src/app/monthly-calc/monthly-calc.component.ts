@@ -5,7 +5,6 @@ import { ApplicationDialogComponent } from '../application-dialog/application-di
 import { MatDialog } from '@angular/material/dialog';
 
 const fb = new FormBuilder().nonNullable;
-
 @Component({
   selector: 'app-monthly-calc',
   templateUrl: './monthly-calc.component.html',
@@ -40,7 +39,10 @@ export class MonthlyCalcComponent implements OnInit {
     {
       applicants: [1 as number, Validators.required],
       amountOfKids: ['', Validators.required],
-      income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
+      income: [
+        '',
+        [Validators.required, Validators.pattern('^[0-9]*(.|,)?[0-9]{1,2}$')],
+      ],
       monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
       mortgageLoans: ['', Validators.pattern('[0-9]*')],
@@ -68,6 +70,27 @@ export class MonthlyCalcComponent implements OnInit {
       }
     });
   }
+
+  transformToValid() {
+    const regex: RegExp = /^[0-9]*(\,|\.){1}[0-9]{1,2}/;
+    const checkForComma: RegExp = /^[0-9]*\,{1}[0-9]{1,2}/;
+
+    if (regex.test(this.income.value)) {
+      console.log('checkpassed');
+      console.log(this.income.value.match(regex)[0]);
+      this.income.setValue(this.income.value.match(regex)[0]);
+    }
+
+    if (checkForComma.test(this.income.value)) {
+      const commaIndex = this.income.value.indexOf(',');
+      this.income.setValue(
+        this.income.value.substring(0, commaIndex) +
+          '.' +
+          this.income.value.substring(commaIndex + 1)
+      );
+    }
+  }
+
   onSubmit() {
     if (this.monthlyForm.valid) {
       // submit form data

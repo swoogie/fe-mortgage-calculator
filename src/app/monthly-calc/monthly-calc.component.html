@@ -20,17 +20,6 @@
         <mat-radio-button [value]="1" checked>1</mat-radio-button>
         <mat-radio-button [value]="2">2</mat-radio-button>
       </mat-radio-group>
-
-      <!-- <mat-form-field appearance="fill" class="input-wrap">
-        <mat-label>Number of applicants</mat-label>
-        <mat-select formControlName="applicants">
-          <mat-option [value]="1">1</mat-option>
-          <mat-option [value]="2">2</mat-option>
-        </mat-select>
-        <mat-error *ngIf="applicants && applicants.hasError('required')">
-          Please choose an option
-        </mat-error>
-      </mat-form-field> -->
       <mat-form-field appearance="fill" class="input-wrap">
         <mat-label>Number of children</mat-label>
         <mat-select formControlName="amountOfKids">
@@ -45,12 +34,16 @@
 
       <mat-form-field class="input-wrap">
         <mat-label>Income</mat-label>
-        <input matInput formControlName="income" (change)="onInputChanged()" />
+        <input
+          matInput
+          formControlName="income"
+          (change)="onInputChanged(); transformToValid()"
+        />
         <mat-error *ngIf="income && income.hasError('required')">
           Please insert the income
         </mat-error>
         <mat-error *ngIf="income && income.hasError('pattern')"
-          >Please enter a number</mat-error
+          >Please enter a valid income</mat-error
         >
       </mat-form-field>
       <div class="obligationContainer">
