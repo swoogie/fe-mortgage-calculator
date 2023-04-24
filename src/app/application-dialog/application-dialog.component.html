@@ -52,6 +52,9 @@
         <div *ngIf="applicants.value==2 && totalHouseHoldIncome>0" class="form-field-wrapper">
           <div class="info-node">Total Household income: {{totalHouseHoldIncome | currency: 'EUR'}}</div>
         </div>
+        <div class="info-node info-node-warning" *ngIf="isSufficientHouseholdIncome==false">
+          In order to apply for a loan your <span *ngIf="applicants.value==2">total household</span> income should be at
+          least {{minHouseholdIncome}}</div>
         <div class="form-field-wrapper">
           <div>
             <mat-label class="block">Do you have any obligations?</mat-label>
@@ -84,9 +87,6 @@
               </mat-form-field>
             </div>
           </ng-container>
-          <!-- <div *ngIf="obligations.value == true && totalMonthlyObligations!=null" class="info-node">
-            Total monthly obligations: {{totalMonthlyObligations | currency: 'EUR'}}
-          </div> -->
         </div>
         <div *ngIf="availableMonthlyPayment!=null" class="info-node">
           Monthly payment for a loan: {{availableMonthlyPayment | currency: 'EUR'}}
@@ -278,9 +278,9 @@
         <div class="form-field-wrapper">
           <mat-form-field>
             <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="phoneNumber" />
+            <input matInput formControlName="phoneNumber"/>
             <mat-error class="error-message"
-              *ngIf="coApplicantPhoneNumber && coApplicantPhoneNumber.hasError('pattern')">
+                       *ngIf="coApplicantPhoneNumber && coApplicantPhoneNumber.hasError('pattern')">
               Please enter a valid phone number
             </mat-error>
           </mat-form-field>
@@ -289,7 +289,58 @@
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Form Submission</ng-template>
-      <div>If the info is correct, click Done to submit the form.</div>
+      <table class="form-submission-info">
+        <tbody>
+        <tr>
+          <th>Real Estate Address</th>
+          <td>{{realEstateAddress.value}}</td>
+        </tr>
+        <tr>
+          <th>Loan amount</th>
+          <td>{{loanAmount | currency: 'EUR': 'symbol': '1.0-0'}}</td>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <td>{{personalFirstName.value}} {{personalLastName.value}}</td>
+        </tr>
+        <tr>
+          <th>Phone number</th>
+          <td>{{personalPhoneNumber.value}}</td>
+        </tr>
+        <tr>
+          <th>E-mail</th>
+          <td>{{personalEmail.value}}</td>
+        </tr>
+        <tr>
+          <th>Address</th>
+          <td>{{personalAddress.value}}</td>
+        </tr>
+        <tr>
+          <th>Application date</th>
+          <td>{{applicationDate | date }}</td>
+        </tr>
+        </tbody>
+      </table>
+      <br>
+      <table *ngIf="applicants.value==2" class="form-submission-info">
+        <tbody>
+        <th [colSpan]="2">Co-applicant's contact details</th>
+        <tr>
+          <th>Name</th>
+          <td>{{coApplicantFirstName.value}} {{coApplicantLastName.value}}</td>
+        </tr>
+        <tr>
+          <th>Phone number</th>
+          <td>{{coApplicantPhoneNumber.value}}</td>
+        </tr>
+        <tr>
+          <th>E-mail</th>
+          <td>{{coApplicantEmail.value}}</td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="info-node info-node-warning"> If the info is correct, click 'Submit Application'.
+      </div>
       <div>
         <button mat-raised-button mat-dialog-close class="form-button" (click)="onSubmitApplyClick()">Submit
           Application
