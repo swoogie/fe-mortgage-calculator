@@ -150,17 +150,17 @@
     }
     .right-container-card {
       grid-column: 1;
-      grid-row: 2;
-      margin: 40px auto 0px auto;
+      grid-row: 8;
+      margin: 0px auto 0px auto;
       width: 70%;
       height: 100%;
       max-height: 100%;
       // overflow-y: auto;
     }
     .calc-button {
-      margin: 40px;
+      margin-bottom: 10px;
       grid-column: 0;
-      grid-row: 3;
+      grid-row: 7;
     }
   }
 }
