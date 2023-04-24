@@ -20,6 +20,12 @@
   .left-container {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
+    .applicantRadioGroup {
+      margin: 0px 11px 10px 0px;
+      mat-radio-button {
+        margin: 0px 10px 0px 10px;
+      }
+    }
   }
 
   .block {
@@ -83,14 +89,16 @@
     font-size: 16px;
   }
 
-  .clipy {
+  .clippy {
     width: 36px;
     height: 36px;
     margin-left: 10px;
   }
 
   .btn-calculate {
-    margin-right: 5px;
+    button {
+      margin: 15px 5px 0px 5px;
+    }
   }
 
   .obligationContainer {
