@@ -12,13 +12,24 @@
   background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%);
   padding-top: 120px;
 
+  .page-title {
+    margin-bottom: 30px;
+    grid-column: 1 / span 2;
+    display: flex;
+    place-items: center;
+    font-size: 16px;
+    max-width: fit-content;
+  }
+
+  .clippy {
+    width: 36px;
+    height: 36px;
+    margin-left: 10px;
+  }
+
   .input-field {
     grid-column: 1 / span 2;
     margin-bottom: -10px;
-  }
-
-  .input-field-pay-sched {
-    grid-column: 1 / span 2;
   }
 
   .slider-input-field {
@@ -41,17 +52,6 @@
     }
   }
 
-  // .slider-container {
-  //   display: grid;
-  // }
-
-  .left-container-card {
-    background-color: white;
-    height: fit-content;
-    border-radius: 10px;
-    grid-column: 2;
-  }
-
   .right-container-card {
     background-color: whitesmoke;
     height: 100%;
@@ -60,6 +60,14 @@
     grid-row: 1 / span 5;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2);
     margin-top: 20px;
+
+    .donut {
+      top: 0;
+      display: block;
+      max-width: 65%;
+      height: auto;
+      margin: 0 auto;
+    }
 
 
     .image {
@@ -84,7 +92,7 @@
   }
 
   .calc-button {
-    grid-row: 6;
+    grid-row: 7;
 
     button {
       margin: 5px;
@@ -118,5 +126,69 @@
     justify-content: center;
     align-items: center;
     gap: 0.3rem;
+  }
+}
+
+
+@media screen and (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 100px 20px 0px 20px;
+    height: 100%;
+
+    .page-title {
+      grid-column: 1;
+      margin-bottom: 0px;
+      align-self: center;
+      justify-self: center;
+    }
+
+    .input-field {
+      grid-column: 1;
+      margin-bottom: -10px;
+    }
+    .right-container-card {
+      grid-column: 1;
+      grid-row: 2;
+      margin: 40px auto 0px auto;
+      width: 70%;
+      height: 100%;
+      max-height: 100%;
+      // overflow-y: auto;
+    }
+    .calc-button {
+      margin: 40px;
+      grid-column: 0;
+      grid-row: 3;
+    }
+  }
+}
+
+@media screen and (max-width:680px) {
+  .container {
+    padding: 90px 10px 0px 10px;
+    row-gap: 10px;
+    height: unset;
+  }
+
+}
+
+@media screen and (max-width:500px) {
+  .container {
+    padding: 90px 10px 60px 10px;
+    height: unset;
+
+    .left-container {
+      width: 90%;
+    }
+
+    .right-container-card {
+      width: 90%;
+    }
+
+    .block {
+      font-size: 15px;
+    }
   }
 }
