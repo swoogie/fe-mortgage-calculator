@@ -208,6 +208,7 @@ export class ApplicationDialogComponent implements OnInit {
 
     this.income.valueChanges.subscribe((value: number) => {
       this.updateAvailableMonthlyPayment();
+      this.updateTotalHouseHoldIncome(value, this.coApplicantsIncome.value);
     });
 
     combineLatest([this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(([income, coApplicantsIncome]) => {
@@ -318,6 +319,7 @@ export class ApplicationDialogComponent implements OnInit {
     this.getConstants();
     this.updateTotalHouseHoldIncome(this.income.value, this.coApplicantsIncome.value);
     this.updateAvailableMonthlyPayment()
+    this.updateLoanAmount();
   }
 
   getConstants() {
@@ -412,7 +414,7 @@ export class ApplicationDialogComponent implements OnInit {
 
     minHouseholdIncome = minHouseholdIncome + this.amountOfKids.value * 300;
     this.minHouseholdIncome = minHouseholdIncome;
-    if (this.totalHouseHoldIncome < minHouseholdIncome) {
+    if (this.income.value > 0 && this.totalHouseHoldIncome < minHouseholdIncome) {
       this.isSufficientHouseholdIncome = false;
     } else {
       this.isSufficientHouseholdIncome = true;
