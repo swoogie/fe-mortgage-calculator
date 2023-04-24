@@ -46,6 +46,14 @@
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2);
     margin-top: 20px;
 
+    .donut {
+      top: 0;
+      display: block;
+      max-width: 65%;
+      height: auto;
+      margin: 0 auto;
+    }
+
 
     .image {
       max-width: 90%;
@@ -146,7 +154,6 @@
   .container {
     padding: 90px 10px 60px 10px;
     height: unset;
-    // padding-bottom: 0%;
 
     .left-container {
       width: 90%;

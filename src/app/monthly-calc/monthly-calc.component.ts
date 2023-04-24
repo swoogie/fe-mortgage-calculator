@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject } from 'rxjs';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -159,9 +158,7 @@ export class MonthlyCalcComponent implements OnInit {
         Math.round(Number(this.creditCardLimit.value || 0)),
         Math.round(this.monthlyPaymentResult),
       ];
-      this.totaldisplay = [
-        Math.round(this.monthlyPaymentResult),
-      ]
+      this.totaldisplay = [Math.round(this.monthlyPaymentResult)];
       this.calculateBtnPushed = true;
     }
   }

@@ -9,6 +9,7 @@ import { MaxcalculationsService } from '../services/maxcalculations.service';
 import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { EuriborValuesService } from '../services/euribor-values-service.service';
+import { EuriborApiService } from '../services/euribor-api.service';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -20,13 +21,23 @@ const fb = new FormBuilder().nonNullable;
 export class MaxCalcComponent {
   maxRealEstatePrice: number = 1000000;
   minRealEstatePrice: number = 10000;
-  minLoanAmount: number = 0;
+  minLoanAmount: number = 1000;
   minLoanTerm: number = 1;
   maxLoanTerm: number = 30;
   baseInterest: number = 2.5;
   constants: Constants;
   euriborValues: Euribor[] = this.euriborValuesService.getEuriborValues();
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
+
+  fields = [
+    { label: 'Principal', controlName: 'mortgageLoans' },
+    { label: 'Interest', controlName: 'consumerLoans' },
+  ];
+  chartFields = [
+    { label: 'Principal', controlName: 'mortgageLoans' },
+    { label: 'Interest', controlName: 'consumerLoans' },
+  ];
+
   maxCalcForm = fb.group(
     {
       realEstatePrice: [
@@ -43,7 +54,7 @@ export class MaxCalcComponent {
         [Validators.required, Validators.pattern('[0-9]*')],
       ],
       loanAmount: [
-        0 as number,
+        this.minLoanAmount,
         [
           Validators.required,
           Validators.pattern('[0-9]*'),
@@ -80,7 +91,8 @@ export class MaxCalcComponent {
     private api: ApiService,
     private euriborValuesService: EuriborValuesService,
     private calcService: MaxcalculationsService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private euriborApi: EuriborApiService
   ) {
     this.loanAmount.addValidators(Validators.max(this.maxLoanAmount));
     this.realEstatePrice.valueChanges
@@ -133,6 +145,7 @@ export class MaxCalcComponent {
     });
 
     this.euribor.valueChanges.subscribe((value) => {
+      console.log(value);
       this.interestRate.setValue(
         parseFloat((value.interestRate + this.baseInterest).toFixed(3))
       );
@@ -146,9 +159,6 @@ export class MaxCalcComponent {
           this.loanAmount.setValue(this.maxLoanAmount as never, {});
         }
       });
-
-    this.interestRate.disable();
-    this.downpayment.disable();
   }
 
   ngOnInit() {
@@ -160,18 +170,48 @@ export class MaxCalcComponent {
 
   linearTotal: number;
   annuityTotal: number;
-
+  interestFromTotal: number;
+  principalFromTotal: number;
   calculateMax() {
-    if (this.maxCalcForm && this.paymentScheduleType.value == 'linear') {
-      this.linearTotal = this.calcService.calculateLinearTotal(
-        this.maxCalcForm
-      );
+    if (this.loanAmount.value == 0) {
+      this._snackBar.open(`Loan amount can't be 0 🥲`, '', {
+        duration: 2000,
+      });
     }
-    if (this.maxCalcForm && this.paymentScheduleType.value == 'annuity') {
-      this.annuityTotal = this.calcService.calculateAnnuityTotal(
-        this.maxCalcForm
-      );
-    }
+
+    this.linearTotal = null;
+    this.annuityTotal = null;
+    this.interestFromTotal = 0;
+    this.principalFromTotal = 0;
+    const eubieTheEuriborMonth = this.euribor.value.timeInMonths;
+    this.euriborApi
+      .getEuribor(`${eubieTheEuriborMonth} months`)
+      .subscribe((result) => {
+        const ratePct = result.non_central_bank_rates.find(
+          (rate) => rate.name === `Euribor - ${eubieTheEuriborMonth} months`
+        )?.rate_pct;
+
+        this.interestRate.setValue(this.baseInterest + ratePct);
+
+        if (this.maxCalcForm && this.paymentScheduleType.value == 'linear') {
+          this.linearTotal = this.calcService.calculateLinearTotal(
+            this.maxCalcForm
+          );
+          this.interestFromTotal = this.getInterest(this.linearTotal);
+          this.principalFromTotal = this.linearTotal - this.interestFromTotal;
+        }
+        if (this.maxCalcForm && this.paymentScheduleType.value == 'annuity') {
+          this.annuityTotal = this.calcService.calculateAnnuityTotal(
+            this.maxCalcForm
+          );
+          this.interestFromTotal = this.getInterest(this.annuityTotal);
+          this.principalFromTotal = this.annuityTotal - this.interestFromTotal;
+        }
+      });
+  }
+
+  private getInterest(result) {
+    return this.calcService.getInterest(result);
   }
 
   overwriteIfLess() {
@@ -188,9 +228,13 @@ export class MaxCalcComponent {
 
     if (this.loanAmount.value < this.minLoanAmount) {
       this.loanAmount.setValue(this.minLoanAmount);
-      this._snackBar.open(`Loan amount cannot be negative`, '', {
-        duration: 2000,
-      });
+      this._snackBar.open(
+        `Loan amount must be more than ${this.minLoanAmount}`,
+        '',
+        {
+          duration: 2000,
+        }
+      );
     }
   }
 

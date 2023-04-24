@@ -1,4 +1,5 @@
 <form [formGroup]="maxCalcForm" (ngSubmit)="calculateMax()" class="container">
+  <h3>Maximum Payment Calculator 📎</h3>
   <mat-form-field class="input-field">
     <mat-label>Real Estate Price €</mat-label>
     <input
@@ -174,20 +175,25 @@
   </div>
   <div class="right-container-card">
     <div class="btn-wrap">
-      <img
-        src="https://www.tibco.com/sites/tibco/files/media_entity/2022-01/doughnut-chart-example.svg"
-        class="image"
-      />
+      <!-- <app-donut
+        [data]="chartData"
+        [labels]="chartLabels"
+        [total]="totaldisplay"
+        class="donut"
+      ></app-donut> -->
       <p class="funkyText">Goofy text placeholder</p>
     </div>
   </div>
   <mat-label *ngIf="linearTotal"
     >With linear payments by the end of your mortgage you'll have paid off:
-    {{ linearTotal }} € <br
-  /></mat-label>
+    {{ linearTotal }} € <br />With {{ interestFromTotal }} interest <br />
+    And {{ principalFromTotal }} principal</mat-label
+  >
 
   <mat-label *ngIf="annuityTotal"
     >With annuity payments by the end of your mortgage you'll have paid off:
-    {{ annuityTotal }} € <br
-  /></mat-label>
+    {{ annuityTotal }} € <br />
+    With {{ interestFromTotal }} interest <br />
+    And {{ principalFromTotal }} principal</mat-label
+  >
 </form>
