@@ -111,20 +111,24 @@
   .container {
     grid-template-columns: 1fr;
     gap: 0;
-    padding-top: 10%;
-    padding-bottom: 10%;
-    height: unset;
+    padding: 80px 20px 0px 20px;
+    height: 100%;
     .input-field {
       grid-column: 1;
       margin-bottom: -10px;
     }
     .right-container-card {
       grid-column: 1;
-      margin: 40px auto 0 auto;
+      grid-row: 6;
+      margin: 40px auto 0px auto;
       width: 70%;
+      max-height: 100%;
+      overflow-y: auto;
     }
     .calc-button {
+      margin: 40px;
       grid-column: 1;
+      grid-row: 7;
     }
   }
 }
@@ -138,7 +142,8 @@
 
 @media screen and (max-width:500px) {
   .container {
-    padding: 20% 5%;
+    padding: 90px 10px 0px 10px;
+    // padding-bottom: 0%;
 
     .left-container {
       width: 90%;
@@ -151,10 +156,5 @@
     .block {
       font-size: 15px;
     }
-
-    //  .mat-icon {
-    //   font-size: 18px;
-    //   align-items: center;
-    //  }
   }
 }
