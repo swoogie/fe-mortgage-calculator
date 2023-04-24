@@ -29,7 +29,7 @@ export class ApplicationDialogComponent implements OnInit {
   maxKids: number;
   maxNumOfApplicants: number;
   children: number[] = [];
-  applicantsOptions: number[] = [1, 2];
+  applicantsOptions: number[] = [];
   loanAmount: number;
   maxMonthlyObligationsPercentage: number;
   euriborValues: Euribor[];
@@ -335,7 +335,7 @@ export class ApplicationDialogComponent implements OnInit {
         this.children.push(i);
       }
       for (let i = 1; i <= this.maxNumOfApplicants; i++) {
-        //this.applicantsOptions.push(i);
+        this.applicantsOptions.push(i);
       }
 
       this.updateDownPayment();
@@ -627,14 +627,7 @@ export class ApplicationDialogComponent implements OnInit {
     return this.loanDetailsForm.get('canProceed');
   }
 
-  calculateTotalLinearMortgageAmount(loanAmount
-                                       :
-                                       number, loanTermInMonths
-                                       :
-                                       number, monthlyInterestRate
-                                       :
-                                       number
-  ) {
+  calculateTotalLinearMortgageAmount(loanAmount: number, loanTermInMonths: number, monthlyInterestRate: number) {
     let outstandingLoan = loanAmount;
     let principal = loanAmount / loanTermInMonths;
     let totalMortgagePayment = 0;
@@ -645,24 +638,14 @@ export class ApplicationDialogComponent implements OnInit {
     return totalMortgagePayment;
   }
 
-  calculateTotalAnnuityMortgageAmount(loanAmount
-                                        :
-                                        number, monthlyInterestRate
-                                        :
-                                        number, loanTermInMonths
-                                        :
-                                        number
-  ) {
+  calculateTotalAnnuityMortgageAmount(loanAmount: number, monthlyInterestRate: number, loanTermInMonths: number) {
     const monthlyAnnuity = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -loanTermInMonths));
     return monthlyAnnuity * loanTermInMonths;
   }
 
   selectedIndex: number = 0;
 
-  setIndex(event
-             :
-             StepperSelectionEvent
-  ) {
+  setIndex(event: StepperSelectionEvent) {
     if (this.selectedIndex != event.selectedIndex) {
       this.attemptedToProceed = false;
     } else {
