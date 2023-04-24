@@ -403,7 +403,6 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateSufficientHouseholdIncome() {
-    console.log('call sufficient household income');
     let minHouseholdIncome = 0;
     if (this.applicants.value == 1) {
       minHouseholdIncome = 600;
