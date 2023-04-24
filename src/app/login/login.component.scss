@@ -8,6 +8,7 @@
 
 .login-title {
   text-align: center;
+  color: #2f3b4b;
 }
 
 .login-card {
@@ -28,5 +29,14 @@ form {
   .login-button {
     margin-top: 1rem;
     width: 100%;
+  }
+
+  .switch {
+    color: #2f3b4b;
+    font-size: 15px;
+
+    span {
+      color: rgb(127, 178, 127);
+    }
   }
 }
