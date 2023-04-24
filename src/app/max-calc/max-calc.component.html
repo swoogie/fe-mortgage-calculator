@@ -1,5 +1,11 @@
 <form [formGroup]="maxCalcForm" (ngSubmit)="calculateMax()" class="container">
-  <h3>Maximum Payment Calculator 📎</h3>
+  <h3 class="page-title">
+    Maximum Payment Calculator<img
+      class="clippy"
+      src="../../assets/images/clippy.png"
+      alt="clippy"
+    />
+  </h3>
   <mat-form-field class="input-field">
     <mat-label>Real Estate Price €</mat-label>
     <input
@@ -158,16 +164,12 @@
   <!-- <mat-form-field class="input-wrap input-field">
     <mat-label>Down payment</mat-label>
     <input matInput formControlName="downpayment" id="downpayment" />
-  </mat-form-field>
-  <mat-form-field class="input-wrap input-field">
-    <mat-label>Interest Rate</mat-label>
-    <input matInput formControlName="interestRate" />
   </mat-form-field> -->
   <div class="calc-button">
     <button mat-flat-button color="primary" type="submit">Calculate</button>
     <button
       mat-flat-button
-      *ngIf=" annuityTotal || linearTotal"
+      *ngIf="annuityTotal || linearTotal"
       (click)="openDialog()"
     >
       Apply
@@ -181,7 +183,7 @@
         [total]="totaldisplay"
         class="donut"
       ></app-donut> -->
-      <p class="funkyText">Goofy text placeholder</p>
+      <p class="funkyText">text placeholder</p>
     </div>
   </div>
   <mat-label *ngIf="linearTotal"
