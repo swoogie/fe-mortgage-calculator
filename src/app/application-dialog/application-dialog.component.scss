@@ -1,4 +1,4 @@
-.form-button{
+.form-button {
   margin: 5px 10px 0px 0px;
 }
 
@@ -19,4 +19,61 @@ form {
   --mdc-radio-selected-pressed-icon-color: black;
   --mat-mdc-radio-ripple-color: #000;
   --mat-mdc-radio-checked-ripple-color: black;
+}
+
+mat-radio-button {
+  flex: 1;
+}
+
+mat-radio-group {
+  display: flex;
+  justify-content: center;
+  width: 200px;
+}
+
+.error-message {
+  font-size: 12px;
+  display: block;
+  width: 250px;
+  margin-bottom: 5px;
+  white-space: nowrap;
+}
+
+.material-icons {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.form-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  min-width: 250px;
+  margin-bottom: 10px;
+}
+
+.mat-step-header {
+  color: rgba(0, 0, 0, 0.8)
+}
+
+.info-node {
+  color: rgba(0, 0, 0, 0.8);
+  font-size: 14px;
+  margin: 20px 0px;
+  min-width: 250px;
+  max-width: 350px;
+  border-radius: 3px;
+}
+
+.info-node-warning{
+  color: #d79200;
+  background-color: #fff3d5;
+  border: 1px solid #fadc64;
+  padding: 5px;
+}
+.info-node-reminder{
+  color: #183916;
+  background-color: #cbf1c3;
+  border: 1px solid #225220;
+  padding: 5px;
 }

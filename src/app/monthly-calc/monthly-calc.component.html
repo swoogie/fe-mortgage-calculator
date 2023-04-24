@@ -34,7 +34,7 @@
       <div class="obligationContainer">
         <mat-label class="block">Do you have any obligations?</mat-label>
         <mat-icon matSuffix matTooltip="Represent any outstanding debts or regular payments that a party must make."
-          [matTooltipPosition]="'right'">help_outline</mat-icon>
+                  [matTooltipPosition]="'right'">help_outline</mat-icon>
       </div>
       <mat-radio-group aria-label="Select an option" color="primary" formControlName="obligation">
         <mat-radio-button [value]="false" checked>No</mat-radio-button>
@@ -63,7 +63,7 @@
 
             <div *ngIf="showInsufficientMessage">Insufficient Income</div>
             <div *ngIf="!showInsufficientMessage">
-              <p class="monthly-payment-text">Monthly Payment: {{ monthlyPaymentResult | number : "1.2-2" | currency :
+              <p class="monthly-payment-text">Monthly Payment: {{ monthlyPaymentResult | currency :
                 "EUR" }}</p>
             </div>
           </div>

@@ -31,7 +31,6 @@ export class EuriborValuesService {
         const fallbackRate = euribor.interestRate;
         const ratePct = result.non_central_bank_rates.find(rate => rate.name === `Euribor - ${months} months`)?.rate_pct;
         euribor.interestRate = ratePct || fallbackRate;
-        console.log(`${months} months: ${euribor.interestRate}`);
       });
     });
     return this.euriborData;
