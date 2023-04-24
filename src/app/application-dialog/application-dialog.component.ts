@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {ApiService} from "../services/api.service";
 import {Constants} from "../interfaces/constants";
 import {ApplicationData} from "../interfaces/application-data";
-import {FormBuilder, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
@@ -39,7 +39,7 @@ export class ApplicationDialogComponent implements OnInit {
   maxDownPaymentAmount: number = 3199000;
   monthlyPayment: number = 0;
   totalHouseHoldIncome: number = 0;
-  isSufficientMonthlyPayment: boolean = true;
+  isSufficientMonthlyPayment: boolean;
   totalMonthlyObligations: number = 0;
   availableMonthlyPayment: number = null;
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
@@ -51,7 +51,8 @@ export class ApplicationDialogComponent implements OnInit {
   ];
   isLinear = true;
   attemptedToProceed = false;
-
+  showAgeWarning:boolean = false;
+  ageAtLoanTermEnd: number;
   incomeDetailsForm = formBuilder.group({
     applicants: [this.applicationData.applicants, Validators.required],
     amountOfKids: [this.applicationData.amountOfKids, Validators.required],
@@ -67,7 +68,7 @@ export class ApplicationDialogComponent implements OnInit {
     consumerLoans: [this.applicationData.consumerLoans],
     leasingAmount: [this.applicationData.leasingAmount],
     creditCardLimit: [this.applicationData.creditCardLimit],
-    canProceed: [true, Validators.requiredTrue]
+    canProceed: [false, Validators.requiredTrue]
   });
   loanDetailsForm = formBuilder.group({
       realEstateAddress: [this.applicationData.realEstateAddress, Validators.required],
@@ -99,7 +100,10 @@ export class ApplicationDialogComponent implements OnInit {
   personalDetailsForm = formBuilder.group({
     firstName: [this.applicationData.firstName, Validators.required],
     lastName: [this.applicationData.lastName, Validators.required],
-    personalNumber: [this.applicationData.personalNumber, Validators.required],
+    personalNumber: [this.applicationData.personalNumber, [
+      Validators.required, this.personalNumberValidator()
+    ],
+    ],
     email: [this.applicationData.email,
       [
         Validators.required,
@@ -113,6 +117,78 @@ export class ApplicationDialogComponent implements OnInit {
     ],
     address: [this.applicationData.address, Validators.required]
   });
+  coApplicantDetailsForm = formBuilder.group({
+    firstName: [this.applicationData.firstName, Validators.required],
+    lastName: [this.applicationData.lastName, Validators.required],
+    email: [this.applicationData.email,
+      [
+        Validators.required,
+        Validators.email,
+        Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")],
+    ],
+    phoneNumber: [this.applicationData.phoneNumber,
+      [
+        Validators.required,
+        Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
+    ],
+  });
+
+  private personalNumberValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+
+      const regex = /^([3-6])(\d{2})(\d{2})(\d{2})(\d{4})$/;
+      const matches = value.match(regex);
+
+      if (!matches) {
+        return {invalidPersonalNumber: true};
+      }
+
+      const yearString = matches[2];
+      const monthString = matches[3];
+      const dayString = matches[4];
+
+      let yearPrefix = '19';
+      if (matches[1] === '5' || matches[1] === '6') {
+        yearPrefix = '20';
+      }
+      const year = parseInt(yearPrefix + yearString, 10);
+      const month = parseInt(monthString, 10) - 1;
+      const day = parseInt(dayString, 10);
+
+
+      const birthDate = new Date(year, month, day);
+      if (birthDate.getDate() !== day || birthDate.getMonth() !== month) {
+        return {invalidPersonalNumber: true};
+      }
+      const ageDiff = Date.now() - birthDate.getTime();
+      const ageDate = new Date(ageDiff);
+
+      const age = ageDate.getUTCFullYear() - 1970;
+
+      console.log('age', age);
+      if (matches[1] === '5' || matches[1] === '6') {
+        if (age < 0) {
+          return {invalidPersonalNumber: true};
+        }
+        if (age < 18) {
+          return {invalidAge: true};
+        }
+      }
+      const ageAtLoanTermEnd = age + +this.loanTerm.value;
+      if (ageAtLoanTermEnd > 65) {
+        this.showAgeWarning = true;
+        this.ageAtLoanTermEnd = ageAtLoanTermEnd;
+      }else{
+        this.showAgeWarning = false;
+        this.ageAtLoanTermEnd = null;
+      }
+      return null;
+    };
+  }
 
   constructor(private euriborValuesService: EuriborValuesService,
               private apiService: ApiService,
@@ -135,10 +211,12 @@ export class ApplicationDialogComponent implements OnInit {
 
     this.obligations.valueChanges.subscribe((value: boolean) => {
       this.updateObligationsValidations(value);
+      this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
     });
 
     combineLatest([this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges]).subscribe(([mortgageLoans, consumerLoans, leasingAmount, creditCardLimit]) => {
       this.updateMonthlyObligations(mortgageLoans, consumerLoans, leasingAmount, creditCardLimit);
+      this.updateAvailableMonthlyPayment();
     });
 
     this.realEstatePrice.valueChanges
@@ -160,8 +238,7 @@ export class ApplicationDialogComponent implements OnInit {
     combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges]).subscribe(([realEstatePrice, downPayment]) => {
       this.updateLoanAmount();
     });
-
-    this.loanDetailsForm.valueChanges.subscribe((value) => {
+    combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges, this.loanTerm.valueChanges, this.euribor.valueChanges, this.paymentScheduleType.valueChanges]).subscribe(([realEstatePrice, downPayment, loanTerm, euribor, paymentScheduleType]) => {
       this.updateSufficientMonthlyPayment();
     });
   }
@@ -308,36 +385,11 @@ export class ApplicationDialogComponent implements OnInit {
     this.loanAmount = loanAmount;
   }
 
-
   updateTotalHouseHoldIncome(income, coApplicantsIncome) {
     const totalHouseHoldIncome = +income + +coApplicantsIncome;
     this.totalHouseHoldIncome = totalHouseHoldIncome;
   }
 
-  updateAvailableMonthlyPayment() {
-    const income = this.getTotalIncome();
-    const monthlyCapacity = income * this.maxMonthlyObligationsPercentage;
-    if (monthlyCapacity > 0) {
-      const monthlyObligations = this.totalMonthlyObligations;
-      if (monthlyObligations > monthlyCapacity) {
-        this.availableMonthlyPayment = 0;
-        this.canProceedToLoanDetails.setValue(false);
-        this.isSufficientMonthlyPayment = false;
-      } else {
-        this.availableMonthlyPayment = monthlyCapacity - monthlyObligations;
-        this.canProceedToLoanDetails.setValue(true);
-        this.updateSufficientMonthlyPayment();
-      }
-    } else {
-      this.availableMonthlyPayment = null;
-      this.canProceedToLoanDetails.setValue(false);
-      this.isSufficientMonthlyPayment = false;
-    }
-  }
-
-  getTotalIncome() {
-    return this.applicants.value > 1 ? this.totalHouseHoldIncome : this.income.value;
-  }
 
   updateMonthlyObligations(mortgageLoans, consumerLoans, leasingAmount, creditCardLimit) {
     const mortgageMonthly =
@@ -350,12 +402,37 @@ export class ApplicationDialogComponent implements OnInit {
 
     const monthlyObligations = +mortgageMonthly + +consumerMonthly + +leasingMonthly + +creditCardMonthly;
     this.totalMonthlyObligations = monthlyObligations;
-    this.updateAvailableMonthlyPayment();
   }
 
-  onSubmitApplyClick()
-    :
-    void {
+  updateAvailableMonthlyPayment() {
+    const income = this.getTotalIncome();
+    const monthlyCapacity = income * this.maxMonthlyObligationsPercentage;
+    if (monthlyCapacity > 0) {
+      const monthlyObligations = this.totalMonthlyObligations;
+      if (monthlyObligations > monthlyCapacity) {
+        this.availableMonthlyPayment = 0;
+      } else {
+        this.availableMonthlyPayment = monthlyCapacity - monthlyObligations;
+      }
+    } else {
+      this.availableMonthlyPayment = null;
+    }
+    this.updateCanProceedToLoanDetails();
+  }
+
+  updateCanProceedToLoanDetails() {
+    if (this.availableMonthlyPayment > 0) {
+      this.canProceedToLoanDetails.setValue(true);
+    } else {
+      this.canProceedToLoanDetails.setValue(false);
+    }
+  }
+
+  getTotalIncome() {
+    return this.applicants.value > 1 ? this.totalHouseHoldIncome : this.income.value;
+  }
+
+  onSubmitApplyClick(): void {
     //form validation and post to backend
     this.saveLoanDetails();
     console.log(this.applicationData)
@@ -369,12 +446,8 @@ export class ApplicationDialogComponent implements OnInit {
     })
   }
 
-  saveLoanDetails()
-    :
-    void {
-    const loanDataKeys
-      :
-      string[] = ["realEstateAddress", "realEstatePrice", "downPayment", "loanTerm",
+  saveLoanDetails(): void {
+    const loanDataKeys: string[] = ["realEstateAddress", "realEstatePrice", "downPayment", "loanTerm",
       "paymentScheduleType", "euribor"];
     const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "coApplicantsIncome", "obligations", "mortgageLoans", "consumerLoans",
       "leasingAmount", "creditCardLimit", "monthlyPayment"];
@@ -449,28 +522,46 @@ export class ApplicationDialogComponent implements OnInit {
     return this.loanDetailsForm.get('euribor');
   }
 
+  get personalNumber() {
+    return this.personalDetailsForm.get('personalNumber');
+  }
+
+
+  get personalEmail() {
+    return this.personalDetailsForm.get('email');
+  }
+
+  get personalPhoneNumber() {
+    return this.personalDetailsForm.get('phoneNumber');
+  }
+  get coApplicantEmail() {
+    return this.coApplicantDetailsForm.get('email');
+  }
+
+  get coApplicantPhoneNumber() {
+    return this.coApplicantDetailsForm.get('phoneNumber');
+  }
   updateSufficientMonthlyPayment() {
+    console.log('call sufficient');
     let totalMortgagePayment = 0;
     const loanTermInMonths = this.loanTerm.value * 12;
     const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
-    let isSufficientMonthlyPayment = usersTotalCapacity >= totalMortgagePayment;
-    if (this.loanDetailsForm.valid) {
-      const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
-      let loanAmount: number = this.loanAmount;
-      if (this.paymentScheduleType.value == 'annuity') {
-        totalMortgagePayment = this.calculateTotalAnnuityMortgageAmount(loanAmount, monthlyInterestRate, loanTermInMonths);
-      } else if (this.paymentScheduleType.value == 'linear') {
-        totalMortgagePayment = this.calculateTotalLinearMortgageAmount(loanAmount, loanTermInMonths, monthlyInterestRate);
-      }
-      if (isSufficientMonthlyPayment) {
-        console.log('call sufficient');
-        this.canProceedToPersonalDetails.setValue(true);
-      } else {
-        this.canProceedToPersonalDetails.setValue(false);
-      }
+
+    const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
+    let loanAmount: number = this.loanAmount;
+    if (this.paymentScheduleType.value == 'annuity') {
+      totalMortgagePayment = this.calculateTotalAnnuityMortgageAmount(loanAmount, monthlyInterestRate, loanTermInMonths);
+    } else if (this.paymentScheduleType.value == 'linear') {
+      totalMortgagePayment = this.calculateTotalLinearMortgageAmount(loanAmount, loanTermInMonths, monthlyInterestRate);
     }
+    let isSufficientMonthlyPayment = usersTotalCapacity >= totalMortgagePayment;
     this.isSufficientMonthlyPayment = isSufficientMonthlyPayment;
-console.log('call sufficient');
+    if (isSufficientMonthlyPayment) {
+
+      this.canProceedToPersonalDetails.setValue(true);
+    } else {
+      this.canProceedToPersonalDetails.setValue(false);
+    }
   }
 
   get canProceedToPersonalDetails() {

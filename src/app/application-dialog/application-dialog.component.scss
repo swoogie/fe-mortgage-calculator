@@ -62,11 +62,18 @@ mat-radio-group {
   margin: 20px 0px;
   min-width: 250px;
   max-width: 350px;
+  border-radius: 3px;
 }
 
 .info-node-warning{
   color: #d79200;
   background-color: #fff3d5;
   border: 1px solid #fadc64;
+  padding: 5px;
+}
+.info-node-reminder{
+  color: #183916;
+  background-color: #cbf1c3;
+  border: 1px solid #225220;
   padding: 5px;
 }
