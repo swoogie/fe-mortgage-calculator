@@ -135,7 +135,7 @@
     <button mat-flat-button color="primary" type="submit">Calculate</button>
     <button
       mat-flat-button
-      *ngIf="true || annuityTotal || linearTotal"
+      *ngIf=" annuityTotal || linearTotal"
       (click)="openDialog()"
     >
       Apply
