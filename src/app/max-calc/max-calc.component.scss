@@ -111,7 +111,7 @@
   .container {
     grid-template-columns: 1fr;
     gap: 0;
-    padding: 80px 20px 0px 20px;
+    padding: 100px 20px 0px 20px;
     height: 100%;
     .input-field {
       grid-column: 1;
@@ -119,30 +119,33 @@
     }
     .right-container-card {
       grid-column: 1;
-      grid-row: 6;
+      // grid-row: 6;
       margin: 40px auto 0px auto;
       width: 70%;
+      height: 100%;
       max-height: 100%;
-      overflow-y: auto;
+      // overflow-y: auto;
     }
     .calc-button {
       margin: 40px;
       grid-column: 1;
-      grid-row: 7;
+      // grid-row: 7;
     }
   }
 }
 
 @media screen and (max-width:680px) {
   .container {
-    padding: 10% 0;
+    padding: 90px 10px 0px 10px;
+    height: unset;
   }
 
 }
 
 @media screen and (max-width:500px) {
   .container {
-    padding: 90px 10px 0px 10px;
+    padding: 90px 10px 60px 10px;
+    height: unset;
     // padding-bottom: 0%;
 
     .left-container {
