@@ -109,7 +109,7 @@
       [value]="loanTerm.value"
       (blur)="overwriteIfLess()"
     />
-    <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+    <mat-error *ngIf="loanTerm.hasError('pattern')">
       Please enter a number
     </mat-error>
   </mat-form-field>
@@ -120,7 +120,7 @@
       [value]="loanTerm.value"
       (blur)="overwriteIfLess()"
     />
-    <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+    <mat-error *ngIf="loanTerm.hasError('pattern')">
       Please enter a number
     </mat-error>
   </mat-form-field>
