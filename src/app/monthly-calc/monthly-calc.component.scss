@@ -7,7 +7,7 @@
 .container {
   padding: 0 10%;
   display: grid;
-  grid-template-columns: 1fr 1.7fr;
+  grid-template-columns: 1fr 1.3fr;
   text-align: center;
   justify-content: center;
   align-items: center;
@@ -28,7 +28,7 @@
 
   .right-container-card {
     background-color: white;
-    height: 70vh;
+    // height: 70vh;
     width: auto;
     border-radius: 10px;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
@@ -61,10 +61,36 @@
       margin-top: 0;
       color: #000;
     }
+
+  }
+
+  .obligation-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+    margin-top: 20px;
+  }
+
+  .title-container {
+    display: flex;
+    gap: 10px;
+  }
+
+  .page-title {
+    margin-bottom: 30px;
+    display: flex;
+    place-items: center;
+    font-size: 16px;
+  }
+
+  .clipy {
+    width: 36px;
+    height: 36px;
+    margin-left: 10px;
   }
 
   .btn-calculate {
-    margin-right: 10px;
+    margin-right: 5px;
   }
 
   .obligationContainer {
@@ -75,17 +101,12 @@
   }
 }
 
-@media screen and (max-width: 900px) {
-  .container {
-    grid-template-columns: 1fr 1.5fr;
-  }
-}
 
 @media screen and (max-width: 900px) {
   .container {
     grid-template-columns: 1fr;
     gap: 0;
-    padding-top: 10%;
+    padding-top: 120px;
     padding-bottom: 10%;
     height: unset;
 
@@ -98,18 +119,36 @@
       margin: 0 auto;
       width: 70%;
     }
+
+    .page-title {
+      margin-right: auto;
+      margin-left: auto;
+    }
   }
+}
+
+@media screen and (max-width: 768px) {
+  .tooltip {
+    display: none;
+  }
+
 }
 
 @media screen and (max-width:680px) {
   .container {
-    padding: 10% 0;
+    padding-left: 0;
+    padding-right: 0;
+
+    .obligation-container {
+      grid-template-columns: 1fr;
+    }
   }
 }
 
 @media screen and (max-width:500px) {
   .container {
-    padding: 20% 5%;
+    padding-left: 5%;
+    padding-right: 5%;
 
     .left-container {
       width: 90%;
@@ -123,9 +162,5 @@
       font-size: 15px;
     }
 
-    //  .mat-icon {
-    //   font-size: 18px;
-    //   align-items: center;
-    //  }
   }
 }
