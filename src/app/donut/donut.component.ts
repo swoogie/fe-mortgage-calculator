@@ -17,9 +17,10 @@ const COLORS = ['#c5cae9', '#FFCB6F', '#7986cb', '#4FA57F', '#FE8A7F'];
   styleUrls: ['./donut.component.scss'],
 })
 export class DonutComponent implements OnInit, OnChanges {
-  @Input() mainLabel: string;
   @Input() data: number[];
   @Input() labels: string[];
+  @Input() maxData: any[];
+  middleLabel = ['Monthly payments', 'Interest/Principal'];
   donut: any = {};
 
   constructor() {
@@ -35,6 +36,7 @@ export class DonutComponent implements OnInit, OnChanges {
   }
 
   setupChart() {
+    const data = this.data ? this.data : this.maxData;
     this.donut = new Chart({
       chart: {
         type: 'pie',
@@ -67,6 +69,7 @@ export class DonutComponent implements OnInit, OnChanges {
                 return (
                   this.point.name +
                   ': ' +
+                  '<b>' +
                   Highcharts.numberFormat(this.point.percentage, 1) +
                   ' %'
                 );
@@ -90,7 +93,7 @@ export class DonutComponent implements OnInit, OnChanges {
         y: -30,
       },
       subtitle: {
-        text: 'montlhy payments',
+        text: data === this.data ? this.middleLabel[0] : this.middleLabel[1],
         verticalAlign: 'middle',
         floating: false,
         y: -10,
@@ -107,7 +110,7 @@ export class DonutComponent implements OnInit, OnChanges {
         {
           type: 'pie',
           colorByPoint: true,
-          data: this.data.map((item, i) => {
+          data: data.map((item, i) => {
             return { name: this.labels[i], y: item, color: this.getColor(i) };
           }),
         },
