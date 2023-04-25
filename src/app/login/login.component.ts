@@ -9,7 +9,7 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserAuthService } from '../services/user-auth.service';
-import jwtDecode, * as jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 import { Role } from '../interfaces/role';
 
 const fb = new FormBuilder();
@@ -53,11 +53,12 @@ export class LoginComponent implements OnInit {
     const password = this.loginForm.get('password').value;
 
     this.userAuthService.login(email, password).subscribe(
-      (response) => {
+      (response: any) => {
+        console.log(response);
         // If the authentication succeeds, extract the token and decode it to get the role
-        const token = response.token;
+        const token = response.access_token;
         const decodedToken: any = jwtDecode(token);
-
+        console.log(decodedToken);
         // Redirect the user to the appropriate page based on their role
         if (decodedToken.role === 'user') {
           this.router.navigate(['/user-page']);
@@ -66,6 +67,7 @@ export class LoginComponent implements OnInit {
         }
       },
       (error) => {
+        console.log(error);
         // If the authentication fails, show an error message to the user
         this.snackBar.open('Invalid email or password', 'Dismiss', {
           duration: 5000,
