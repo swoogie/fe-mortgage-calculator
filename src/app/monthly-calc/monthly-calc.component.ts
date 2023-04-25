@@ -7,6 +7,11 @@ import { BehaviorSubject } from 'rxjs';
 
 const fb = new FormBuilder().nonNullable;
 
+interface ChartData {
+  value: number;
+  label: string;
+}
+
 @Component({
   selector: 'app-monthly-calc',
   templateUrl: './monthly-calc.component.html',
@@ -27,12 +32,12 @@ export class MonthlyCalcComponent implements OnInit {
     { label: 'Credit card limit', controlName: 'creditCardLimit' },
     { label: 'Monthly max payment', controlName: 'monthlyPaymentDisplay' },
   ];
+  chartLabels: string[] = this.chartFields.map((field) => field.label);
   monthlyPaymentResult: number = 0;
   calculateBtnPushed: boolean = false;
   formSubmitted = false;
   isDisabled: boolean = true;
   chartData: number[] = [];
-  chartLabels: string[] = this.chartFields.map((field) => field.label);
   mortgageMonthly: number;
   totalDisplay: string = '';
 
@@ -54,9 +59,7 @@ export class MonthlyCalcComponent implements OnInit {
   constructor(public dialog: MatDialog) {
     this.monthlyForm.valueChanges.subscribe((value) => {
       // console.log('form changed', value);
-      // Math.round(this.monthlyPaymentResult),
     });
-    // this.chartLabels.unshift('Monthly max payment');
   }
 
   ngOnInit() {
@@ -159,9 +162,6 @@ export class MonthlyCalcComponent implements OnInit {
         Math.round(this.monthlyPaymentResult),
       ];
 
-      this.chartData = [
-        { value: , label:  }
-      ].filter((item) => !!item.value);
       this.totalDisplay = Math.round(this.monthlyPaymentResult).toString();
       this.calculateBtnPushed = true;
     }

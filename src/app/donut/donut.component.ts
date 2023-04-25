@@ -7,13 +7,9 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Chart } from 'angular-highcharts';
+import * as Highcharts from 'highcharts';
 
 const COLORS = ['#c5cae9', '#FFCB6F', '#7986cb', '#4FA57F', '#FE8A7F'];
-
-export interface DonutChartDataItem {
-  value: number;
-  label: string;
-}
 
 @Component({
   selector: 'app-donut',
@@ -21,16 +17,19 @@ export interface DonutChartDataItem {
   styleUrls: ['./donut.component.scss'],
 })
 export class DonutComponent implements OnInit, OnChanges {
-  @Input() data: DonutChartDataItem[] = [];
   @Input() mainLabel: string;
+  @Input() data: number[];
+  @Input() labels: string[];
   donut: any = {};
 
   constructor() {
     this.donut = {};
   }
+
   ngOnChanges(changes: SimpleChanges) {
     this.setupChart();
   }
+
   ngOnInit() {
     this.setupChart();
   }
@@ -63,8 +62,17 @@ export class DonutComponent implements OnInit, OnChanges {
             connectorColor: '#000000',
             connectorShape: 'straight',
             crookDistance: 20,
-            format:
-              '<span style="color: #2A272A; font-weight="100""><b>{point.name}:</br><span style="color: #BFA5A6;">{point.percentage:.1f}%',
+            formatter: function () {
+              if (this.y > 0) {
+                return (
+                  this.point.name +
+                  ': ' +
+                  Highcharts.numberFormat(this.point.percentage, 1) +
+                  ' %'
+                );
+              }
+              return null;
+            },
             style: {
               fontSize: '10px',
               fontWeight: '150',
@@ -78,15 +86,11 @@ export class DonutComponent implements OnInit, OnChanges {
       title: {
         verticalAlign: 'middle',
         floating: false,
-        // text: `${this.data.reduce((a, b) => {
-        //   a += b;
-        //   return a;
-        // }, 0)} `,
-        text: this.mainLabel,
+        text: 'Total',
         y: -30,
       },
       subtitle: {
-        text: 'Total',
+        text: 'montlhy payments',
         verticalAlign: 'middle',
         floating: false,
         y: -10,
@@ -104,7 +108,7 @@ export class DonutComponent implements OnInit, OnChanges {
           type: 'pie',
           colorByPoint: true,
           data: this.data.map((item, i) => {
-            return { name: item.label, y: item.value, color: this.getColor(i) };
+            return { name: this.labels[i], y: item, color: this.getColor(i) };
           }),
         },
       ],
@@ -114,6 +118,28 @@ export class DonutComponent implements OnInit, OnChanges {
     return COLORS[i % 5];
   }
 }
-// if ((this.total = [] || null)) {
-//   return { name: this.labels[i], y: item, color: '#FE8A7F' };
+
+//             formatter: function(){
+//               if(this.percentage > 0 || this.percentage == 0){
+// return  '<span style="color: #2A272A; font-weight="100""><b>{point.name}:</br><span style="color: #BFA5A6;">{point.percentage:.1f}%',
+//               }
+//             }
+// format:
+//   '<span style="color: #2A272A; font-weight="100""><b>{point.name}:</br><span style="color: #BFA5A6;">{point.percentage:.1f}%',
+
+// dataLabels: {
+//   // Other properties...
+//   formatter: function () {
+//     if (this.y > 0) {
+//       return (
+//         '<span class="data-label-name">' +
+//         this.point.name +
+//         '</span>: ' +
+//         Highcharts.numberFormat(this.point.percentage, 1) +
+//         ' %'
+//       );
+//     }
+//     return null;
+//   },
+
 // }
