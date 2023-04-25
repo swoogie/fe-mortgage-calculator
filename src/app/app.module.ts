@@ -27,6 +27,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
 import { DonutComponent } from './donut/donut.component';
 import { ChartModule } from 'angular-highcharts';
+<<<<<<< HEAD
 import { MatMenuModule } from '@angular/material/menu';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { UserpageComponent } from './userpage/userpage.component';
@@ -35,6 +36,13 @@ import { UserGuard } from './guard/user.guard';
 import { AdminGuard } from './guard/admin.guard';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-constants.component';
+=======
+import { ApplicationDashComponent } from './application-dash/application-dash.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+
+>>>>>>> cac7f43 (admin application dash)
 
 @NgModule({
   declarations: [
@@ -47,9 +55,13 @@ import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-con
     LoginComponent,
     ApplicationDialogComponent,
     DonutComponent,
+<<<<<<< HEAD
     UserpageComponent,
     AdminpageComponent,
     AdminpageConstantsComponent,
+=======
+    ApplicationDashComponent,
+>>>>>>> cac7f43 (admin application dash)
   ],
   imports: [
     BrowserModule,
@@ -74,6 +86,9 @@ import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-con
     MatStepperModule,
     ChartModule,
     MatGridListModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
   ],
   providers: [
     MatSnackBarModule,
