@@ -74,6 +74,15 @@
         <ng-container *ngFor="let field of fields">
           <mat-form-field class="input-wrap">
             <mat-label>{{ field.label }}</mat-label>
+            <button
+              matPrefix
+              mat-icon-button
+              matTooltip="{{ field.info }}"
+              (click)="clickMe($event, field.info)"
+              matTooltipPosition="below"
+            >
+              <mat-icon class="info-btn">info</mat-icon>
+            </button>
             <input
               matInput
               formControlName="{{ field.controlName }}"
