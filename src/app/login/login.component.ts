@@ -59,7 +59,11 @@ export class LoginComponent implements OnInit {
         const token = response.access_token;
         const decodedToken: any = jwtDecode(token);
         console.log(decodedToken);
-        // Redirect the user to the appropriate page based on their role
+        if (this.userAuthService.isLoggedIn()) {
+          console.log('check passed redirecting...');
+          this.router.navigate(['/user-page']);
+        }
+
         if (decodedToken.role === 'user') {
           this.router.navigate(['/user-page']);
         } else if (decodedToken.role === 'admin') {

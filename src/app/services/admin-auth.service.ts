@@ -4,31 +4,28 @@ import { Router } from '@angular/router';
 import { Observable, of, tap } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminAuthService {
+  private adminApiUrl = 'http://localhost:4200/api/auth/admin';
 
-  private adminApiUrl = "http://localhost:4200/api/auth/admin"
-  
-  constructor(private httpClient : HttpClient){
+  constructor(private httpClient: HttpClient) {}
 
-  }
-
- login(email: string, password: string): Observable<{token: string}> {
-    return this.httpClient.post<{token: string}>(`${this.adminApiUrl}/login`, {email, password})
+  login(email: string, password: string): Observable<{ token: string }> {
+    return this.httpClient
+      .post<{ token: string }>(`${this.adminApiUrl}/login`, { email, password })
       .pipe(
-        tap(res => {
-          localStorage.setItem('adminToken', res.token);
+        tap((res: any) => {
+          localStorage.setItem('adminToken', res.access_token);
         })
       );
   }
-  
+
   isLoggedIn(): boolean {
     return !!localStorage.getItem('adminToken');
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem('adminToken');
   }
-
 }
