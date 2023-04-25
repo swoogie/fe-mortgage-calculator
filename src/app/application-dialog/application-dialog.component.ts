@@ -7,7 +7,7 @@ import {AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators}
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
-import {combineLatest, debounceTime, merge} from "rxjs";
+import {combineLatest, debounceTime} from "rxjs";
 import {StepperSelectionEvent} from "@angular/cdk/stepper";
 
 const formBuilder = new FormBuilder().nonNullable;
@@ -200,19 +200,22 @@ export class ApplicationDialogComponent implements OnInit {
   ) {
     this.applicants.valueChanges.subscribe((value: number) => {
       this.updateCoApplicantsIncomeValidations(value);
-    });
-
-    combineLatest([this.applicants.valueChanges, this.amountOfKids.valueChanges, this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(() => {
       this.updateSufficientHouseholdIncome();
     });
 
-    this.income.valueChanges.subscribe((value: number) => {
-      this.updateAvailableMonthlyPayment();
-      this.updateTotalHouseHoldIncome(value, this.coApplicantsIncome.value);
+    this.amountOfKids.valueChanges.subscribe(() => {
+      this.updateSufficientHouseholdIncome();
     });
 
-    combineLatest([this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(([income, coApplicantsIncome]) => {
-      this.updateTotalHouseHoldIncome(income, coApplicantsIncome);
+    this.income.valueChanges.subscribe((income: number) => {
+      this.updateAvailableMonthlyPayment();
+      this.updateSufficientHouseholdIncome();
+      this.updateTotalHouseHoldIncome(income, this.coApplicantsIncome.value);
+    });
+
+    this.coApplicantsIncome.valueChanges.subscribe((coApplicantsIncome) => {
+      this.updateTotalHouseHoldIncome(this.income.value, coApplicantsIncome);
+      this.updateSufficientHouseholdIncome();
       this.updateAvailableMonthlyPayment();
     });
 
@@ -221,10 +224,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
     });
 
-    merge(this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges).subscribe(() => {
-      this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
-      this.updateAvailableMonthlyPayment();
-    });
+a
 
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(50))
@@ -236,16 +236,20 @@ export class ApplicationDialogComponent implements OnInit {
 
     this.downPayment.valueChanges.subscribe((downPaymentValue) => {
       this.updateDownPayment();
+      this.updateLoanAmount();
+      this.updateSufficientMonthlyPayment();
     });
 
     this.loanTerm.valueChanges.subscribe((loanTermValue) => {
       this.updateLoanTerm(loanTermValue);
+      this.updateSufficientMonthlyPayment();
     });
 
-    combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges]).subscribe(([realEstatePrice, downPayment]) => {
-      this.updateLoanAmount();
+    this.euribor.valueChanges.subscribe((euriborValue) => {
+      this.updateSufficientMonthlyPayment();
     });
-    combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges, this.loanTerm.valueChanges, this.euribor.valueChanges, this.paymentScheduleType.valueChanges]).subscribe(([realEstatePrice, downPayment, loanTerm, euribor, paymentScheduleType]) => {
+
+    this.paymentScheduleType.valueChanges.subscribe(() => {
       this.updateSufficientMonthlyPayment();
     });
   }
@@ -320,6 +324,7 @@ export class ApplicationDialogComponent implements OnInit {
     this.updateTotalHouseHoldIncome(this.income.value, this.coApplicantsIncome.value);
     this.updateAvailableMonthlyPayment()
     this.updateLoanAmount();
+    this.updateSufficientMonthlyPayment();
   }
 
   getConstants() {
@@ -351,7 +356,10 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.required,
         Validators.pattern('[0-9]*'),
         Validators.min(this.minLoanTerm),
-        Validators.max(this.maxLoanTerm)])
+        Validators.max(this.maxLoanTerm)]);
+
+      this.updateSufficientMonthlyPayment();
+
     });
   }
 
@@ -449,6 +457,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.availableMonthlyPayment = null;
     }
     this.updateCanProceedToLoanDetails();
+    this.updateSufficientMonthlyPayment();
   }
 
   updateCanProceedToLoanDetails() {
@@ -603,24 +612,26 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateSufficientMonthlyPayment() {
-    let totalMortgagePayment = 0;
-    const loanTermInMonths = this.loanTerm.value * 12;
-    const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
+    if (this.interestRateMargin != null && this.loanAmount != null && this.loanTerm.value != null && this.euribor.value != null && this.paymentScheduleType.value != null) {
+      let totalMortgagePayment = 0;
+      const loanTermInMonths = this.loanTerm.value * 12;
+      const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
 
-    const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
-    let loanAmount: number = this.loanAmount;
-    if (this.paymentScheduleType.value == 'annuity') {
-      totalMortgagePayment = this.calculateTotalAnnuityMortgageAmount(loanAmount, monthlyInterestRate, loanTermInMonths);
-    } else if (this.paymentScheduleType.value == 'linear') {
-      totalMortgagePayment = this.calculateTotalLinearMortgageAmount(loanAmount, loanTermInMonths, monthlyInterestRate);
-    }
-    let isSufficientMonthlyPayment = usersTotalCapacity >= totalMortgagePayment;
-    this.isSufficientMonthlyPayment = isSufficientMonthlyPayment;
-    if (isSufficientMonthlyPayment) {
+      const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
+      let loanAmount: number = this.loanAmount;
+      if (this.paymentScheduleType.value == 'annuity') {
+        totalMortgagePayment = this.calculateTotalAnnuityMortgageAmount(loanAmount, monthlyInterestRate, loanTermInMonths);
+      } else if (this.paymentScheduleType.value == 'linear') {
+        totalMortgagePayment = this.calculateTotalLinearMortgageAmount(loanAmount, loanTermInMonths, monthlyInterestRate);
+      }
+      let isSufficientMonthlyPayment = usersTotalCapacity >= totalMortgagePayment;
+      this.isSufficientMonthlyPayment = isSufficientMonthlyPayment;
+      if (isSufficientMonthlyPayment) {
 
-      this.canProceedToPersonalDetails.setValue(true);
-    } else {
-      this.canProceedToPersonalDetails.setValue(false);
+        this.canProceedToPersonalDetails.setValue(true);
+      } else {
+        this.canProceedToPersonalDetails.setValue(false);
+      }
     }
   }
 
