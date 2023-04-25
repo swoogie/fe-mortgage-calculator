@@ -5,7 +5,6 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
-  ViewChild,
 } from '@angular/core';
 import { Chart } from 'angular-highcharts';
 import * as Highcharts from 'highcharts';
@@ -18,17 +17,19 @@ const COLORS = ['#c5cae9', '#FFCB6F', '#7986cb', '#4FA57F', '#FE8A7F'];
   styleUrls: ['./donut.component.scss'],
 })
 export class DonutComponent implements OnInit, OnChanges {
+  @Input() mainLabel: string;
   @Input() data: number[];
   @Input() labels: string[];
-  @Input() total: number[];
   donut: any = {};
 
   constructor() {
     this.donut = {};
   }
+
   ngOnChanges(changes: SimpleChanges) {
     this.setupChart();
   }
+
   ngOnInit() {
     this.setupChart();
   }
@@ -36,10 +37,10 @@ export class DonutComponent implements OnInit, OnChanges {
   setupChart() {
     this.donut = new Chart({
       chart: {
-        // plotBackgroundColor: '#FE8A7F',
         type: 'pie',
         plotShadow: false,
         plotBorderWidth: null,
+        plotBackgroundColor: '#F6F8FF',
       },
       tooltip: {
         // enabled: false,
@@ -54,7 +55,6 @@ export class DonutComponent implements OnInit, OnChanges {
           size: '70%',
           borderColor: '#000000',
           slicedOffset: 0,
-
           dataLabels: {
             enabled: true,
             alignTo: 'connectors',
@@ -62,8 +62,17 @@ export class DonutComponent implements OnInit, OnChanges {
             connectorColor: '#000000',
             connectorShape: 'straight',
             crookDistance: 20,
-            format:
-              '<span style="color: #2A272A; font-weight="100""><b>{point.name}:</br><span style="color: #BFA5A6;">{point.percentage:.1f}%',
+            formatter: function () {
+              if (this.y > 0) {
+                return (
+                  this.point.name +
+                  ': ' +
+                  Highcharts.numberFormat(this.point.percentage, 1) +
+                  ' %'
+                );
+              }
+              return null;
+            },
             style: {
               fontSize: '10px',
               fontWeight: '150',
@@ -77,22 +86,18 @@ export class DonutComponent implements OnInit, OnChanges {
       title: {
         verticalAlign: 'middle',
         floating: false,
-        // text: `${this.data.reduce((a, b) => {
-        //   a += b;
-        //   return a;
-        // }, 0)} `,
-        text: `${this.total}`,
+        text: 'Total',
         y: -30,
       },
       subtitle: {
-        text: 'Total',
+        text: 'montlhy payments',
         verticalAlign: 'middle',
         floating: false,
         y: -10,
       },
       legend: {
         enabled: true,
-        layout: 'vertical',
+        layout: 'horizontal',
         itemStyle: {
           fontSize: '12px',
           fontWeight: 'normal',

@@ -91,16 +91,22 @@
         </ng-container>
       </div>
     </div>
-    <div class="right-container-card">
-      <div class="btn-wrap">
-        <app-donut
-          [data]="chartData"
-          [labels]="chartLabels"
-          [total]="totaldisplay"
-          class="donut"
-        ></app-donut>
-        <div>
-          <div class="result-display-warp">
+
+  </div>
+  <div class="right-container-card">
+    <div class="btn-wrap">
+      <app-donut
+        [data]="chartData"
+        [labels]="chartLabels"
+        [mainLabel]="totalDisplay"
+      ></app-donut>
+      <div>
+        <div class="result-display-warp">
+          <mat-label>Monthly Payment</mat-label>
+          <mat-form-field class="input-wrap funkyText">
+            <input matInput formControlName="monthlyPaymentDisplay" />
+            <div *ngIf="showInsufficientMessage">Insufficient Income</div>
+
             <div *ngIf="!showInsufficientMessage">
               <p class="monthly-payment-text">
                 Monthly Payment: {{ monthlyPaymentResult | currency : "EUR" }}
