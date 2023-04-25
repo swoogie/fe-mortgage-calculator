@@ -47,6 +47,7 @@ onSubmit() {
       console.log(response);
        // If the authentication succeeds, extract the token and decode it to get the role
        const token = response.token;
+       console.log(jwtDecode);
        const decodedToken: any = jwtDecode(token);
        
        // Redirect the user to the appropriate page based on their role
