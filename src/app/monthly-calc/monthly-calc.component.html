@@ -92,19 +92,16 @@
       </div>
     </div>
 
-  </div>
-  <div class="right-container-card">
-    <div class="btn-wrap">
-      <app-donut
-        [data]="chartData"
-        [labels]="chartLabels"
-        [mainLabel]="totalDisplay"
-      ></app-donut>
-      <div>
-        <div class="result-display-warp">
-          <mat-label>Monthly Payment</mat-label>
-          <mat-form-field class="input-wrap funkyText">
-            <input matInput formControlName="monthlyPaymentDisplay" />
+    <div class="right-container-card">
+      <div class="btn-wrap">
+        <app-donut
+          [data]="chartData"
+          [labels]="chartLabels"
+          [mainLabel]="totalDisplay"
+        ></app-donut>
+        <div>
+          <div class="result-display-warp">
+            <mat-label>Monthly Payment</mat-label>
             <div *ngIf="showInsufficientMessage">Insufficient Income</div>
 
             <div *ngIf="!showInsufficientMessage">
