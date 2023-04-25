@@ -118,28 +118,3 @@ export class DonutComponent implements OnInit, OnChanges {
     return COLORS[i % 5];
   }
 }
-
-//             formatter: function(){
-//               if(this.percentage > 0 || this.percentage == 0){
-// return  '<span style="color: #2A272A; font-weight="100""><b>{point.name}:</br><span style="color: #BFA5A6;">{point.percentage:.1f}%',
-//               }
-//             }
-// format:
-//   '<span style="color: #2A272A; font-weight="100""><b>{point.name}:</br><span style="color: #BFA5A6;">{point.percentage:.1f}%',
-
-// dataLabels: {
-//   // Other properties...
-//   formatter: function () {
-//     if (this.y > 0) {
-//       return (
-//         '<span class="data-label-name">' +
-//         this.point.name +
-//         '</span>: ' +
-//         Highcharts.numberFormat(this.point.percentage, 1) +
-//         ' %'
-//       );
-//     }
-//     return null;
-//   },
-
-// }
