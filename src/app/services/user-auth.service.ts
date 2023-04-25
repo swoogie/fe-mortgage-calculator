@@ -8,7 +8,10 @@ import decode from 'jwt-decode';
   providedIn: 'root'
 })
 export class UserAuthService {
-  private userApiUrl = "https://be-mortgage-calculator.onrender.com//api/v1/auth/**";
+  private userApiUrl = "https://be-mortgage-calculator.onrender.com/api/v1/auth/authenticate";
+
+  private adminApiUrl = "https://be-mortgage-calculator.onrender.com/api/v1/auth/admin"
+  
 
   public getToken(): string{
     return localStorage.getItem('token');
@@ -23,18 +26,16 @@ export class UserAuthService {
   }
   
   requestHeader = new HttpHeaders(
-    { "No-Auth":"True"}
+    { "Content-Type" : "application/json"}
   )
   constructor(private httpClient : HttpClient){
     
   }
 
-
   login(email: string, password: string): Observable<Role> {
-    return this.httpClient.post<Role>(`${this.userApiUrl}/login`, { email, password }, { headers:this.requestHeader});
+    return this.httpClient.post<Role>(`${this.userApiUrl}`, { email, password }, { headers:this.requestHeader});
+    
   }
-
-  
 
   logout(): void {
     localStorage.removeItem('userToken');
