@@ -9,7 +9,7 @@ import decode from 'jwt-decode';
 })
 export class UserAuthService {
   private userApiUrl =
-    'https://be-mortgage-calculator.onrender.com/api/v1/auth/authenticate';
+    'https://be-mortgage-calculator.onrender.com/api/v1/auth';
 
   private adminApiUrl =
     'https://be-mortgage-calculator.onrender.com/api/v1/auth/admin';
@@ -32,7 +32,7 @@ export class UserAuthService {
   login(email: string, password: string): Observable<Role> {
     return this.httpClient
       .post<Role>(
-        `${this.userApiUrl}`,
+        `${this.userApiUrl}/authenticate`,
         { email, password },
         { headers: this.requestHeader }
       )
@@ -44,6 +44,19 @@ export class UserAuthService {
       );
   }
 
+  register(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string
+  ) {
+    return this.httpClient.post(
+      `${this.userApiUrl}/register`,
+      { firstName, lastName, email, password },
+      { headers: this.requestHeader }
+    );
+  }
+
   logout(): void {
     localStorage.removeItem('userToken');
   }
@@ -51,11 +64,4 @@ export class UserAuthService {
   isLoggedIn(): boolean {
     return !!localStorage.getItem('userToken');
   }
-
-  // encoded jwt token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFkbWluIiwiZW1haWwiOiJleGFtcGxlQGV4YW1wbGUuY29tIiwicGFzc3dvcmQiOiJwYXNzd29yZCJ9.EqvUhXjW5ai-nRb735GKYoH5GndU15OHUSJ7LEpgKb0
-  // {
-  //   "token": "admin",
-  //   "email": "example@example.com",
-  //   "password": "password"
-  // }
 }
