@@ -1,21 +1,23 @@
 import {Euribor} from "./euribor";
 
 export interface ApplicationData {
+  applicants: number;
+  amountOfKids: number;
+  income?: number;
+  coApplicantsIncome: number;
+  obligations: boolean;
+  mortgageLoans: number;
+  consumerLoans: number;
+  leasingAmount: number;
+  creditCardLimit: number;
+  monthlyPayment: number;
+  realEstateAddress: string;
   realEstatePrice: number;
   downPayment: number;
   loanAmount: number;
   loanTerm: number;
   paymentScheduleType: string;
-  applicants?: number;
-  amountOfKids?: number;
-  income?: number;
-  obligations: boolean;
-  mortgageLoans?: number;
-  consumerLoans?: number;
-  leasingAmount?: number;
-  creditCardLimit?: number;
-  monthlyPayment?: number;
-  euribor?: Euribor;
+  euribor: Euribor;
   firstName: string;
   lastName: string;
   personalNumber: number;

@@ -1,140 +1,195 @@
-<div class="container">
-  <form [formGroup]="maxCalcForm" (ngSubmit)="calculateMax()">
-    <div class="cal-div">
-      <mat-form-field class="input-wrap">
-        <mat-label>Real Estate Price €</mat-label>
-        <input
-          matInput
-          formControlName="realEstatePrice"
-          id="realEstatePrice"
-          (blur)="overwriteIfLess()"
-        />
-        <mat-error
-          *ngIf="
-            realEstatePrice &&
-            (realEstatePrice.hasError('required') ||
-              realEstatePrice.hasError('pattern'))
-          "
-        >
-          Please enter a number
-        </mat-error>
-        <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('max')">
-          Max is {{ maxRealEstatePrice }}
-        </mat-error>
-        <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('min')">
-          Min is {{ minRealEstatePrice }}
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field class="input-wrap">
-        <mat-label>Loan amount €</mat-label>
-        <input
-          matInput
-          formControlName="loanAmount"
-          [value]="loanAmount.value"
-          (blur)="overwriteIfLess()"
-        />
-        <mat-error
-          *ngIf="
-            loanAmount &&
-            (loanAmount.hasError('pattern') || loanAmount.hasError('required'))
-          "
-        >
-          Please enter a number
-        </mat-error>
-      </mat-form-field>
-      <mat-slider
-        class="slider-margin"
-        [max]="maxLoanAmount"
-        [min]="minLoanAmount"
-        [step]="500"
-      >
-        <input
-          matSliderThumb
-          formControlName="loanAmount"
-          [value]="loanAmount.value"
-        />
-      </mat-slider>
-
-      <mat-form-field class="input-wrap">
-        <mat-label>Loan term years</mat-label>
-        <input
-          matInput
-          formControlName="loanTerm"
-          [value]="loanTerm.value"
-          (blur)="overwriteIfLess()"
-        />
-        <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
-          Please enter a number
-        </mat-error>
-      </mat-form-field>
-      <mat-slider class="slider-margin" [max]="maxLoanTerm" [min]="minLoanTerm">
-        <input
-          matSliderThumb
-          formControlName="loanTerm"
-          [value]="loanTerm.value"
-        />
-      </mat-slider>
-
-      <mat-form-field class="input-wrap">
-        <mat-label>Euribor</mat-label>
-        <mat-select formControlName="euribor">
-          <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
-            >{{ euribor.timeInMonths }} Months -
-            {{ euribor.interestRate }}%</mat-option
-          >
-        </mat-select>
-      </mat-form-field>
-      <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
-        Please enter a number
-      </mat-error>
-
-      <div class="obligationContainer">
-        <mat-label class="block">Payment Schedule Type</mat-label>
-        <mat-icon
-          matSuffix
-          [matTooltip]="
-            'Annuity - identical monthly installments;
-             Linear - identical monthly principle, interest is calculated on outstanding principle'
-          "
-          [matTooltipPosition]="'right'"
-          fontIcon="help_outline"
-        ></mat-icon>
-      </div>
-      <mat-radio-group
-        aria-label="Payment schedule options"
-        formControlName="paymentScheduleType"
-        color="primary"
-      >
-        <mat-radio-button value="annuity">Annuity</mat-radio-button>
-        <mat-radio-button value="linear">Linear</mat-radio-button>
-      </mat-radio-group>
-
-      <mat-form-field class="input-wrap">
-        <mat-label>Down payment</mat-label>
-        <input matInput formControlName="downpayment" id="downpayment" />
-      </mat-form-field>
-      <mat-form-field class="input-wrap">
-        <mat-label>Interest Rate</mat-label>
-        <input matInput formControlName="interestRate" />
-      </mat-form-field>
-      <button
-        class="btn-calculate"
-        mat-flat-button
-        color="primary"
-        type="submit"
-      >
-        Calculate
-      </button>
-      <button mat-flat-button (click)="openDialog()">Apply</button>
+<form [formGroup]="maxCalcForm" (ngSubmit)="calculateMax()" class="container">
+  <h3 class="page-title">
+    Maximum Payment Calculator<img
+      class="clippy"
+      src="../../assets/images/clippy.png"
+      alt="clippy"
+    />
+  </h3>
+  <mat-form-field class="input-field">
+    <mat-label>Real Estate Price €</mat-label>
+    <input
+      matInput
+      formControlName="realEstatePrice"
+      id="realEstatePrice"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error
+      *ngIf="
+        realEstatePrice &&
+        (realEstatePrice.hasError('required') ||
+          realEstatePrice.hasError('pattern'))
+      "
+    >
+      Please enter a number
+    </mat-error>
+    <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('max')">
+      Max is {{ maxRealEstatePrice }}
+    </mat-error>
+    <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('min')">
+      Min is {{ minRealEstatePrice }}
+    </mat-error>
+  </mat-form-field>
+  <div *ngIf="helloSlider" class="slider-container">
+    <div class="slider-label">
+      <p>0</p>
+      <p>Loan amount €</p>
+      <p>{{ maxLoanAmount }}</p>
     </div>
-  </form>
+    <mat-slider
+      class="slider"
+      [max]="maxLoanAmount"
+      [min]="minLoanAmount"
+      [step]="500"
+    >
+      <input
+        matSliderThumb
+        formControlName="loanAmount"
+        [value]="loanAmount.value"
+      />
+    </mat-slider>
+  </div>
+
+  <mat-form-field *ngIf="helloSlider" class="slider-input-field">
+    <input
+      matInput
+      formControlName="loanAmount"
+      [value]="loanAmount.value"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error
+      *ngIf="
+        loanAmount &&
+        (loanAmount.hasError('pattern') || loanAmount.hasError('required'))
+      "
+    >
+      Please enter a number
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="!helloSlider" class="input-field">
+    <mat-label>Loan Amount €</mat-label>
+    <input
+      matInput
+      formControlName="loanAmount"
+      [value]="loanAmount.value"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error
+      *ngIf="
+        loanAmount &&
+        (loanAmount.hasError('pattern') || loanAmount.hasError('required'))
+      "
+    >
+      Please enter a number
+    </mat-error>
+  </mat-form-field>
+
+  <div *ngIf="helloSlider" class="slider-container">
+    <div class="slider-label">
+      <mat-label>1</mat-label>
+      <mat-label>Loan term years</mat-label>
+      <mat-label>30</mat-label>
+    </div>
+
+    <mat-slider class="slider" [max]="maxLoanTerm" [min]="minLoanTerm">
+      <input
+        matSliderThumb
+        formControlName="loanTerm"
+        [value]="loanTerm.value"
+      />
+    </mat-slider>
+  </div>
+
+  <mat-form-field *ngIf="!helloSlider" class="input-field">
+    <mat-label>Loan Term</mat-label>
+    <input
+      matInput
+      formControlName="loanTerm"
+      [value]="loanTerm.value"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+      Please enter a number
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field *ngIf="helloSlider" class="slider-input-field">
+    <input
+      matInput
+      formControlName="loanTerm"
+      [value]="loanTerm.value"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+      Please enter a number
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field class="input-field">
+    <mat-label>Euribor</mat-label>
+    <mat-select formControlName="euribor">
+      <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
+        >{{ euribor.timeInMonths }} Months -
+        {{ euribor.interestRate }}%</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+  <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+    Please enter a number
+  </mat-error>
+  <div>
+    <div class="obligationContainer">
+      <mat-label class="block">Payment Schedule Type</mat-label>
+      <mat-icon
+        matSuffix
+        [matTooltip]="
+          'Annuity - identical monthly installments;
+               Linear - identical monthly principle, interest is calculated on outstanding principle'
+        "
+        [matTooltipPosition]="'right'"
+        fontIcon="help_outline"
+      ></mat-icon>
+    </div>
+    <mat-radio-group
+      aria-label="Payment schedule options"
+      formControlName="paymentScheduleType"
+      color="primary"
+      class="radio-group"
+    >
+      <mat-radio-button value="annuity">Annuity</mat-radio-button>
+      <mat-radio-button value="linear">Linear</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <!-- <mat-form-field class="input-wrap input-field">
+    <mat-label>Down payment</mat-label>
+    <input matInput formControlName="downpayment" id="downpayment" />
+  </mat-form-field> -->
+  <div class="calc-button">
+    <button mat-flat-button color="primary" type="submit">Calculate</button>
+    <button mat-flat-button (click)="openDialog()">Apply</button>
+  </div>
+  <div class="right-container-card">
+    <div class="btn-wrap">
+      <!-- <app-donut
+        [data]="chartData"
+        [labels]="chartLabels"
+        [total]="totaldisplay"
+        class="donut"
+      ></app-donut> -->
+      <p class="funkyText">text placeholder</p>
+    </div>
+  </div>
   <mat-label *ngIf="linearTotal"
     >With linear payments by the end of your mortgage you'll have paid off:
-    {{ linearTotal }} € <br
-  /></mat-label>
+    {{ linearTotal }} € <br />With {{ interestFromTotal }} interest <br />
+    And {{ principalFromTotal }} principal</mat-label
+  >
 
   <mat-label *ngIf="annuityTotal"
     >With annuity payments by the end of your mortgage you'll have paid off:
-    {{ annuityTotal }} € <br
-  /></mat-label>
-</div>
+    {{ annuityTotal }} € <br />
+    With {{ interestFromTotal }} interest <br />
+    And {{ principalFromTotal }} principal</mat-label
+  >
+</form>

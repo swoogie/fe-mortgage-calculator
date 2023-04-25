@@ -1,22 +1,41 @@
 <nav class="nav">
-
+  <img src="../../assets/images/bank.png" alt="home icon" routerLink="/" class="image" />
+  <div class="full-container">
     <div class="nav-left">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/SEB_logo.svg/1200px-SEB_logo.svg.png"
-            alt="goofy ahh cat" routerLink="/" class="image" />
-        <ul class="linkContainer">
-            <li><a routerLink="/monthly-payment" routerLinkActive="active" ariaCurrentWhenActive="page">Monthly
-                    Payment</a>
-            </li>
-            <li><a routerLink="/maximum-loan" routerLinkActive="active" ariaCurrentWhenActive="page">Max
-                    Loan</a></li>
-
-        </ul>
-    </div>
-
-    <ul>
-        <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page" class="loginLink">Login</a>
+      <ul class="link-container">
+        <li><a routerLink="/monthly-payment" routerLinkActive="active" ariaCurrentWhenActive="page">Monthly
+            Payment</a>
         </li>
+        <li><a routerLink="/maximum-loan" routerLinkActive="active" ariaCurrentWhenActive="page">Max
+            Loan</a></li>
+      </ul>
+    </div>
+    <ul class="nav-right">
+      <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page" class="login-link">Login</a>
+      </li>
     </ul>
+  </div>
 
-
+  <div class="burger-menu">
+    <img *ngIf="isBurger == false" src="../../assets/images/burger.png" alt="burger icon" class="burger-icon"
+      (click)="toggleBurger()">
+    <img class="burger-icon" *ngIf="isBurger == true" src="../../assets/images/cross.png" alt="cross icon"
+      (click)="toggleBurger()">
+    <div *ngIf="isBurger == true" class="overlay-blur" (click)="burgerFalse()">
+      <div class="overlay">
+        <ul class="burger-list">
+          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+              ariaCurrentWhenActive="page" (click)="burgerFalse()">HOME</a></li>
+          <li><a routerLink="/monthly-payment" routerLinkActive="active" ariaCurrentWhenActive="page"
+              (click)="burgerFalse()">Monthly
+              Loan</a></li>
+          <li><a routerLink="/maximum-loan" routerLinkActive="active" ariaCurrentWhenActive="page"
+              (click)="burgerFalse()">Max
+              Loan</a></li>
+          <li><a routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page"
+              (click)="burgerFalse()">LOGIN</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </nav>

@@ -44,6 +44,12 @@ export class MaxcalculationsService {
     return monthlyAnnuity;
   }
 
+  getInterest(maxResult: number): number {
+    const interestRate = this.interestRate.value;
+    console.log('interest got', interestRate);
+    return parseFloat(((maxResult * interestRate) / 100).toFixed(2));
+  }
+
   get loanAmount() {
     return this.maxForm.get('loanAmount');
   }

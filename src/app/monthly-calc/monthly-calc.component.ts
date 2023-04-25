@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject } from 'rxjs';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -43,9 +42,12 @@ export class MonthlyCalcComponent implements OnInit {
 
   monthlyForm = fb.group(
     {
-      applicants: ['', Validators.required],
+      applicants: [1 as number, Validators.required],
       amountOfKids: ['', Validators.required],
-      income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
+      income: [
+        '',
+        [Validators.required, Validators.pattern('^[0-9]*(.|,)?[0-9]{1,2}$')],
+      ],
       monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
       mortgageLoans: [0, Validators.pattern('[0-9]*')],
@@ -73,6 +75,27 @@ export class MonthlyCalcComponent implements OnInit {
       }
     });
   }
+
+  transformToValid() {
+    const regex: RegExp = /^[0-9]*(\,|\.){1}[0-9]{1,2}/;
+    const checkForComma: RegExp = /^[0-9]*\,{1}[0-9]{1,2}/;
+
+    if (regex.test(this.income.value)) {
+      console.log('checkpassed');
+      console.log(this.income.value.match(regex)[0]);
+      this.income.setValue(this.income.value.match(regex)[0]);
+    }
+
+    if (checkForComma.test(this.income.value)) {
+      const commaIndex = this.income.value.indexOf(',');
+      this.income.setValue(
+        this.income.value.substring(0, commaIndex) +
+          '.' +
+          this.income.value.substring(commaIndex + 1)
+      );
+    }
+  }
+
   onSubmit() {
     if (this.monthlyForm.valid) {
       // submit form data
@@ -163,6 +186,7 @@ export class MonthlyCalcComponent implements OnInit {
       ];
 
       this.totalDisplay = Math.round(this.monthlyPaymentResult).toString();
+
       this.calculateBtnPushed = true;
     }
   }
