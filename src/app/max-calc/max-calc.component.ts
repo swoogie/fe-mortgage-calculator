@@ -281,6 +281,7 @@ export class MaxCalcComponent {
         paymentScheduleType: this.paymentScheduleType.value,
       },
       minWidth: '400px',
+      width: `${Math.round(window.innerWidth - 200)}px`
     });
   }
 

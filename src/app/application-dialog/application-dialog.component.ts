@@ -7,7 +7,7 @@ import {AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators}
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
-import {combineLatest, debounceTime} from "rxjs";
+import { combineLatest, debounceTime, merge } from "rxjs";
 import {StepperSelectionEvent} from "@angular/cdk/stepper";
 
 const formBuilder = new FormBuilder().nonNullable;
@@ -224,8 +224,6 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
     });
 
-a
-
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(50))
       .subscribe((realEstatePriceValue) => {
@@ -237,21 +235,30 @@ a
     this.downPayment.valueChanges.subscribe((downPaymentValue) => {
       this.updateDownPayment();
       this.updateLoanAmount();
-      this.updateSufficientMonthlyPayment();
     });
+
+
+    //example 1
+    merge(
+      this.loanTerm.valueChanges,
+      this.euribor.valueChanges,
+      this.paymentScheduleType.valueChanges,
+      this.downPayment.valueChanges,
+    )
+      .subscribe(() => {
+          this.updateSufficientMonthlyPayment();
+      });
+
+    //example 2
+    // this.loanDetailsForm.valueChanges
+    //   .subscribe(() => {
+    //     this.updateSufficientMonthlyPayment();
+    //   });
 
     this.loanTerm.valueChanges.subscribe((loanTermValue) => {
       this.updateLoanTerm(loanTermValue);
-      this.updateSufficientMonthlyPayment();
     });
 
-    this.euribor.valueChanges.subscribe((euriborValue) => {
-      this.updateSufficientMonthlyPayment();
-    });
-
-    this.paymentScheduleType.valueChanges.subscribe(() => {
-      this.updateSufficientMonthlyPayment();
-    });
   }
 
   private updateRealEstatePriceValue(realEstatePriceValue: number) {

@@ -189,6 +189,7 @@ export class MonthlyCalcComponent implements OnInit {
         creditCardLimit: this.creditCardLimit.value,
       },
       minWidth: '400px',
+      width: `${Math.round(window.innerWidth - 200)}px`
     });
   }
 }
