@@ -1,16 +1,16 @@
 <form [formGroup]="adminConstants" class="container">
     <h1>Admin page</h1>
     <ul class="constantTable">
-        <li *ngFor="let constant of constants">
-            <h2>{{ constant.name }}:</h2>
-            <p class="desc">{{constant.desc}}</p>
+        <li *ngFor="let cardItem of cardItems">
+            <h2>{{ cardItem.name }}:</h2>
+            <p class="desc">{{cardItem.desc}}</p>
             <div class="grid">
                 <div class="card">
-                    Current value: {{constant.current}}
+                    Current value: {{cardItem.current}}
                 </div>
                 <div class="card">
                     Change to:
-                    <input matInput formControlName="{{ constant.formControlName }}" />
+                    <input matInput formControlName="{{ cardItem.formControlName }}" />
                 </div>
             </div>
         </li>
