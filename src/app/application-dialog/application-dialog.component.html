@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Application for a Mortgage Loan</h1>
 <div mat-dialog-content>
   <mat-vertical-stepper [linear]="isLinear" (selectionChange)="setIndex($event)">
-      <mat-step *ngIf="false" [stepControl]="personalDetailsForm">
+      <mat-step  [stepControl]="personalDetailsForm">
       <form [formGroup]="personalDetailsForm">
         <ng-template matStepLabel>Personal Details</ng-template>
         <div class="form-field-wrapper">

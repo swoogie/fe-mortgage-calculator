@@ -47,8 +47,8 @@ export class ApplicationDialogComponent implements OnInit {
   totalMonthlyObligations: number = 0;
   availableMonthlyPayment: number = null;
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
-  phoneNumberHintMessage: string = "Valid phone number formats: +3706XXXXXXX, 86XXXXXXX +3705XXXXXXX or 85XXXXXXX"
-  personalNumberHintMessage: string = "Valid personal number formats: 3YYMMDDXXXX, 4YYMMDDXXXX, 5YYMMDDXXXX, 6YYMMDDXXXX"
+  phoneNumberHintMessage: string = "Valid phone number formats: +3706XXXXXXX, 86XXXXXXX +3705XXXXXXX or 85XXXXXXX";
+  personalNumberHintMessage: string = "Valid personal number formats: 3YYMMDDXXXX, 4YYMMDDXXXX, 5YYMMDDXXXX, 6YYMMDDXXXX";
 
   obligationFields = [
     {label: 'Mortgage Loans', controlName: 'mortgageLoans'},
@@ -79,7 +79,7 @@ export class ApplicationDialogComponent implements OnInit {
     consumerLoans: [this.applicationData.consumerLoans],
     leasingAmount: [this.applicationData.leasingAmount],
     creditCardLimit: [this.applicationData.creditCardLimit],
-    canProceed: [false, Validators.requiredTrue]
+    canProceed: [true, Validators.requiredTrue]
   }, {
     updateOn: 'change'
   });
@@ -228,7 +228,7 @@ export class ApplicationDialogComponent implements OnInit {
               private http: HttpClient
   ) {
 
-    const sufficientIncomeFormControls = [this.applicants, this.amountOfKids, this.income, this.coApplicantsIncome];
+    const sufficientIncomeFormControls = [this.applicants, this.amountOfKids, this.income, this.coApplicantsIncome]
     sufficientIncomeFormControls.forEach(control => {
       control.valueChanges.subscribe(() => {
         this.updateSufficientHouseholdIncome();
@@ -237,11 +237,15 @@ export class ApplicationDialogComponent implements OnInit {
 
     this.personalEmail.valueChanges.subscribe((email) => {
       this.apiService.checkEmail(email).subscribe(
-        (response: any) => {
+        (response
+           :
+           any
+        ) => {
           // Handle successful response (JSON object)
           this.isEmailAvailable = response.available;
           this.emailNotAvailableMessage = response.message;
-        },
+        }
+        ,
         (error) => {
           // Handle error response
           if (error.status === 409) {
@@ -466,17 +470,24 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateSufficientHouseholdIncome() {
+    this.isSufficientHouseholdIncome = true;
     let minHouseholdIncome = 0;
     if (this.applicants.value == 1) {
+      if (!this.income.value) {
+        return;
+      }
       minHouseholdIncome = 600;
     } else if (this.applicants.value == 2) {
+      if (!this.income.value || !this.coApplicantsIncome.value) {
+        return;
+      }
       minHouseholdIncome = 1000;
     }
 
     minHouseholdIncome = minHouseholdIncome + +this.amountOfKids.value * 300;
     this.minHouseholdIncome = minHouseholdIncome;
     const totalIncome = +this.income.value + +this.coApplicantsIncome.value;
-    if (this.income.value != null && totalIncome < minHouseholdIncome) {
+    if (totalIncome < minHouseholdIncome) {
       this.isSufficientHouseholdIncome = false;
     } else {
       this.isSufficientHouseholdIncome = true;
@@ -498,7 +509,7 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateAvailableMonthlyPayment() {
-    const income = this.getTotalIncome();
+    const income = +this.income.value + +this.coApplicantsIncome.value;
     const monthlyCapacity = income * this.maxMonthlyObligationsPercentage;
     if (monthlyCapacity > 0) {
       const monthlyObligations = this.totalMonthlyObligations;
@@ -506,17 +517,20 @@ export class ApplicationDialogComponent implements OnInit {
         this.availableMonthlyPayment = 0;
       } else {
         this.availableMonthlyPayment = monthlyCapacity - monthlyObligations;
+
       }
     } else {
-      this.availableMonthlyPayment = null;
+      this.availableMonthlyPayment = 0;
     }
     this.updateCanProceedToLoanDetails();
   }
 
   updateCanProceedToLoanDetails() {
     if (this.availableMonthlyPayment > 0 && this.isSufficientHouseholdIncome == true) {
+      console.log("can proceed to loan details");
       this.canProceedToLoanDetails.setValue(true);
     } else {
+      console.log("cannnot proceed to loan details");
       this.canProceedToLoanDetails.setValue(false);
     }
   }
@@ -547,7 +561,7 @@ export class ApplicationDialogComponent implements OnInit {
       error: (err) => {
         console.log(err);
       }
-    })
+    });
   }
 
   saveLoanDetails(): void {
