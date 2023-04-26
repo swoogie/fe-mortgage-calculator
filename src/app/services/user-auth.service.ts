@@ -9,6 +9,8 @@ import decode from 'jwt-decode';
 })
 export class UserAuthService {
   private loggedIn = new BehaviorSubject<boolean>(this.checkIfLoggedIn());
+  private userEmail = new BehaviorSubject<string>('');
+  currentUserEmail = this.userEmail.asObservable();
   currentlyLoggedIn = this.loggedIn.asObservable();
 
   private userApiUrl =
@@ -22,10 +24,7 @@ export class UserAuthService {
   }
 
   public isAuthenticated(): boolean {
-    //get the token
     const token = this.getToken();
-    //return a boolean reflecting whether or not the token is expired
-    // return tokenNotExpired(null,token);
     return !!token;
   }
 
@@ -64,6 +63,10 @@ export class UserAuthService {
   logout(): void {
     localStorage.removeItem('userToken');
     this.changeLoggedIn(this.checkIfLoggedIn());
+  }
+
+  setEmail(email) {
+    this.userEmail.next(email);
   }
 
   changeLoggedIn(isLoggedIn: boolean) {

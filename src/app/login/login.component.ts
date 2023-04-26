@@ -72,6 +72,8 @@ export class LoginComponent implements OnInit {
           const token = response.access_token;
           const decodedToken: any = jwtDecode(token);
           if (this.userAuthService.checkIfLoggedIn()) {
+            this.userAuthService.setEmail(decodedToken.sub);
+            this.userAuthService.currentUserEmail.subscribe(console.log);
             console.log('check passed redirecting...');
             this.router.navigate(['/user-page']);
           }
