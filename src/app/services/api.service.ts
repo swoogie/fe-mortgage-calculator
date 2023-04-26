@@ -24,4 +24,8 @@ export class ApiService {
   postApplication(applicationData: ApplicationData): Observable<any> {
     return this.http.post(`${this.apiUrl}/applications`, applicationData)
   }
+
+  checkEmail(email:string):Observable<any>{
+    return this.http.get(`${this.apiUrl}/users/check-email?email=${email}`);
+  }
 }
