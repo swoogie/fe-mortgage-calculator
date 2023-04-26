@@ -5,33 +5,26 @@ import { MonthlyCalcComponent } from './monthly-calc/monthly-calc.component';
 import { MaxCalcComponent } from './max-calc/max-calc.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { LoginComponent } from './login/login.component';
-<<<<<<< HEAD
 import { AdminpageComponent } from './adminpage/adminpage.component';
 import { UserpageComponent } from './userpage/userpage.component';
 import { UserGuard } from './guard/user.guard';
 import { AdminGuard } from './guard/admin.guard';
 import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-constants.component';
-=======
 import { ApplicationDashComponent } from './application-dash/application-dash.component';
->>>>>>> cac7f43 (admin application dash)
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'maximum-loan', component: MaxCalcComponent },
   { path: 'monthly-payment', component: MonthlyCalcComponent },
-<<<<<<< HEAD
   {
     path: 'admin-page',
     component: AdminpageComponent,
     canActivate: [AdminGuard],
   },
   { path: 'user-page', component: UserpageComponent, canActivate: [UserGuard] },
-  //Test path for constant update page:
-  {path: 'test', component: AdminpageConstantsComponent},
-=======
+  { path: 'test', component: AdminpageConstantsComponent },
   { path: 'admin/applications', component: ApplicationDashComponent },
->>>>>>> cac7f43 (admin application dash)
   { path: '**', component: PagenotfoundComponent },
 ];
 
