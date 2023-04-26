@@ -74,6 +74,12 @@ export class LoginComponent implements OnInit {
           if (this.userAuthService.checkIfLoggedIn()) {
             console.log('check passed redirecting...');
             this.router.navigate(['/user-page']);
+
+            this.snackBar.open('Logged in! ✅', 'Dismiss', {
+              duration: 5000,
+              horizontalPosition: 'center',
+              verticalPosition: 'bottom',
+            });
           }
 
           if (decodedToken.role === 'user') {

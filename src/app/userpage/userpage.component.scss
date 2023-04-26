@@ -1,0 +1,23 @@
+.userpage {
+    padding-top: 100px;
+    columns: 1;
+    display: flex;
+    place-items: center;
+    font-size: 16px;
+    max-width: fit-content;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+.userpage_title{
+    padding-top: 100px;
+    text-align: center;
+
+.logout-button{
+    position: absolute; // position the button absolutely
+  left: 50%; // move the button to the center horizontally
+  bottom: 0; // position the button at the bottom of the page
+  transform: translateX(-50%); // center the button horizontally
+}
+}
+

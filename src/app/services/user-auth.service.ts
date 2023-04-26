@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Role } from '../interfaces/role';
 import decode from 'jwt-decode';
+import { RouteConfigLoadEnd, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +31,7 @@ export class UserAuthService {
   }
 
   requestHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private router: Router) {}
 
   login(email: string, password: string): Observable<Role> {
     return this.httpClient
