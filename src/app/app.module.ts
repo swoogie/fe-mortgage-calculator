@@ -27,7 +27,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
 import { DonutComponent } from './donut/donut.component';
 import { ChartModule } from 'angular-highcharts';
-
+import { MatMenuModule } from '@angular/material/menu';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { UserpageComponent } from './userpage/userpage.component';
 import { AdminpageComponent } from './adminpage/adminpage.component';
@@ -67,6 +67,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     MatRadioModule,
     MatCardModule,
     HttpClientModule,
+    MatMenuModule,
     MatDialogModule,
     MatStepperModule,
     ChartModule,

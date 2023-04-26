@@ -10,7 +10,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserAuthService } from '../services/user-auth.service';
 import jwtDecode from 'jwt-decode';
-import { Role } from '../interfaces/role';
 
 const fb = new FormBuilder();
 
@@ -72,7 +71,7 @@ export class LoginComponent implements OnInit {
         (response: any) => {
           const token = response.access_token;
           const decodedToken: any = jwtDecode(token);
-          if (this.userAuthService.isLoggedIn()) {
+          if (this.userAuthService.checkIfLoggedIn()) {
             console.log('check passed redirecting...');
             this.router.navigate(['/user-page']);
           }
@@ -107,10 +106,10 @@ export class LoginComponent implements OnInit {
         .subscribe((response: any) => {
           console.log('registered', response);
           this.snackBar.open(
-            'Register successful, you can now login 👍',
+            'Register successful, you can now login ✅',
             'Dismiss',
             {
-              duration: 5000,
+              duration: 10000,
               horizontalPosition: 'center',
               verticalPosition: 'bottom',
             }

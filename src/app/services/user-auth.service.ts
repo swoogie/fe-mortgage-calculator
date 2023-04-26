@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Role } from '../interfaces/role';
 import decode from 'jwt-decode';
 
@@ -8,6 +8,9 @@ import decode from 'jwt-decode';
   providedIn: 'root',
 })
 export class UserAuthService {
+  private loggedIn = new BehaviorSubject<boolean>(this.checkIfLoggedIn());
+  currentlyLoggedIn = this.loggedIn.asObservable();
+
   private userApiUrl =
     'https://be-mortgage-calculator.onrender.com/api/v1/auth';
 
@@ -39,6 +42,7 @@ export class UserAuthService {
       .pipe(
         tap((res: any) => {
           localStorage.setItem('userToken', res.access_token);
+          this.changeLoggedIn(this.checkIfLoggedIn());
           console.log(localStorage.getItem('userToken'));
         })
       );
@@ -59,9 +63,14 @@ export class UserAuthService {
 
   logout(): void {
     localStorage.removeItem('userToken');
+    this.changeLoggedIn(this.checkIfLoggedIn());
   }
 
-  isLoggedIn(): boolean {
+  changeLoggedIn(isLoggedIn: boolean) {
+    this.loggedIn.next(isLoggedIn);
+  }
+
+  checkIfLoggedIn(): boolean {
     return !!localStorage.getItem('userToken');
   }
 }
