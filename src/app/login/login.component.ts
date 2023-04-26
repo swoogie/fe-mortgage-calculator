@@ -75,6 +75,13 @@ export class LoginComponent implements OnInit {
           if (this.userAuthService.isLoggedIn()) {
             console.log('check passed redirecting...');
             this.router.navigate(['/user-page']);
+
+            this.snackBar.open('User succesfully', 'Dismiss', {
+              duration: 9000,
+              horizontalPosition: 'center',
+              verticalPosition: 'bottom',
+            });
+
           }
 
           if (decodedToken.role === 'user') {
@@ -107,10 +114,10 @@ export class LoginComponent implements OnInit {
         .subscribe((response: any) => {
           console.log('registered', response);
           this.snackBar.open(
-            'Register successful, you can now login 👍',
+            'Register successful, you can now login 👍✔',
             'Dismiss',
             {
-              duration: 5000,
+              duration: 10000,
               horizontalPosition: 'center',
               verticalPosition: 'bottom',
             }
