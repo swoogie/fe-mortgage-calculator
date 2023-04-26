@@ -25,7 +25,7 @@ export class UserAuthService {
   private adminApiUrl =
     'https://be-mortgage-calculator.onrender.com/api/v1/auth/admin';
 
-    private loggedIn = false; 
+  private loggedIn = false;
 
   public getToken(): string {
     return localStorage.getItem('token');
@@ -37,7 +37,7 @@ export class UserAuthService {
   }
 
   requestHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
-  constructor(private httpClient: HttpClient, private router : Router) {}
+  constructor(private httpClient: HttpClient, private router: Router) {}
 
   login(email: string, password: string): Observable<Role> {
     return this.httpClient.post<Role>(
@@ -90,7 +90,6 @@ export class UserAuthService {
 
   checkIfUserLoggedIn() {
     return !!localStorage.getItem('userToken');
-    
   }
 
   checkIfAdminLoggedIn() {
