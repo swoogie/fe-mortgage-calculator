@@ -7,7 +7,6 @@ import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { LoginComponent } from './login/login.component';
 import { AdminpageComponent } from './adminpage/adminpage.component';
 import { UserpageComponent } from './userpage/userpage.component';
-import { AdminComponent } from './admin/admin.component';
 import { UserGuard } from './guard/user.guard';
 import { AdminGuard } from './guard/admin.guard';
 
@@ -24,7 +23,6 @@ const routes: Routes = [
   },
   // { path: 'user-page', component: UserpageComponent},
   { path: 'user-page', component: UserpageComponent, canActivate: [UserGuard] },
-  { path: 'admin', component: AdminComponent },
   { path: '**', component: PagenotfoundComponent },
 ];
 

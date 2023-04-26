@@ -13,7 +13,7 @@ export class UserGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    if (this.userAuthService.isLoggedIn()) {
+    if (this.userAuthService.checkIfLoggedIn()) {
       // this.router.navigate(['/user-page']);
       console.log('howdy feller am logged in 🤠');
       return true;
