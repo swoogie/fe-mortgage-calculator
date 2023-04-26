@@ -28,6 +28,7 @@ export class MaxCalcComponent {
   constants: Constants;
   euriborValues: Euribor[] = this.euriborValuesService.getEuriborValues();
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
+  chartData: number[] = [];
 
   fields = [
     { label: 'Principal', controlName: 'mortgageLoans' },
@@ -37,6 +38,7 @@ export class MaxCalcComponent {
     { label: 'Principal', controlName: 'mortgageLoans' },
     { label: 'Interest', controlName: 'consumerLoans' },
   ];
+  chartLabels: string[] = this.chartFields.map((field) => field.label);
 
   maxCalcForm = fb.group(
     {
@@ -201,6 +203,7 @@ export class MaxCalcComponent {
           this.principalFromTotal = parseFloat(
             (this.linearTotal - this.interestFromTotal).toFixed(2)
           );
+          this.chartData = [this.principalFromTotal, this.interestFromTotal];
         }
         if (this.maxCalcForm && this.paymentScheduleType.value == 'annuity') {
           this.annuityTotal = this.calcService.calculateAnnuityTotal(
@@ -211,6 +214,7 @@ export class MaxCalcComponent {
             (this.annuityTotal - this.interestFromTotal).toFixed(2)
           );
         }
+        this.chartData = [this.principalFromTotal, this.interestFromTotal];
       });
   }
 

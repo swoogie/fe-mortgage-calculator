@@ -50,10 +50,10 @@ export class MonthlyCalcComponent implements OnInit {
       ],
       monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
-      mortgageLoans: [0, Validators.pattern('[0-9]*')],
-      consumerLoans: [0, Validators.pattern('[0-9]*')],
-      leasingAmount: [0, Validators.pattern('[0-9]*')],
-      creditCardLimit: [0, Validators.pattern('[0-9]*')],
+      mortgageLoans: ['', Validators.pattern('[0-9]*')],
+      consumerLoans: ['', Validators.pattern('[0-9]*')],
+      leasingAmount: ['', Validators.pattern('[0-9]*')],
+      creditCardLimit: ['', Validators.pattern('[0-9]*')],
     },
     { updateOn: 'change' }
   );
