@@ -2,19 +2,24 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Role } from '../interfaces/role';
-import decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserAuthService {
-  private loggedIn = new BehaviorSubject<boolean>(this.checkIfLoggedIn());
+  private adminLoggedIn = new BehaviorSubject<boolean>(
+    this.checkIfAdminLoggedIn()
+  );
+  private userLoggedIn = new BehaviorSubject<boolean>(
+    this.checkIfUserLoggedIn()
+  );
   private userEmail = new BehaviorSubject<string>('');
   currentUserEmail = this.userEmail.asObservable();
-  currentlyLoggedIn = this.loggedIn.asObservable();
+  currentlyAdmin = this.adminLoggedIn.asObservable();
+  currentlyUser = this.userLoggedIn.asObservable();
 
-  private userApiUrl =
-    'https://be-mortgage-calculator.onrender.com/api/v1/auth';
+  private userApiUrl = 'https://be-mortgage-calculator.onrender.com/api/v1';
 
   private adminApiUrl =
     'https://be-mortgage-calculator.onrender.com/api/v1/auth/admin';
@@ -32,19 +37,11 @@ export class UserAuthService {
   constructor(private httpClient: HttpClient) {}
 
   login(email: string, password: string): Observable<Role> {
-    return this.httpClient
-      .post<Role>(
-        `${this.userApiUrl}/authenticate`,
-        { email, password },
-        { headers: this.requestHeader }
-      )
-      .pipe(
-        tap((res: any) => {
-          localStorage.setItem('userToken', res.access_token);
-          this.changeLoggedIn(this.checkIfLoggedIn());
-          console.log(localStorage.getItem('userToken'));
-        })
-      );
+    return this.httpClient.post<Role>(
+      `${this.userApiUrl}/auth/authenticate`,
+      { email, password },
+      { headers: this.requestHeader }
+    );
   }
 
   register(
@@ -54,26 +51,45 @@ export class UserAuthService {
     password: string
   ) {
     return this.httpClient.post(
-      `${this.userApiUrl}/register`,
+      `${this.userApiUrl}/auth/register`,
       { firstName, lastName, email, password },
       { headers: this.requestHeader }
     );
   }
+  userRole;
+  getUserRole(email) {
+    return this.httpClient.get(
+      `${this.userApiUrl}/users/get-role?email=${email}`
+    );
+  }
 
   logout(): void {
-    localStorage.removeItem('userToken');
-    this.changeLoggedIn(this.checkIfLoggedIn());
+    if (this.checkIfAdminLoggedIn) {
+      localStorage.removeItem('adminToken');
+      this.loginState();
+    }
+    if (this.checkIfUserLoggedIn) {
+      localStorage.removeItem('userToken');
+      this.loginState();
+    }
   }
 
   setEmail(email) {
     this.userEmail.next(email);
   }
 
-  changeLoggedIn(isLoggedIn: boolean) {
-    this.loggedIn.next(isLoggedIn);
+  loginState() {
+    this.adminLoggedIn.next(this.checkIfAdminLoggedIn());
+    this.userLoggedIn.next(this.checkIfUserLoggedIn());
+    console.log('sending admin', this.checkIfAdminLoggedIn());
+    console.log('sending user', this.checkIfUserLoggedIn());
   }
 
-  checkIfLoggedIn(): boolean {
+  checkIfUserLoggedIn() {
     return !!localStorage.getItem('userToken');
+  }
+
+  checkIfAdminLoggedIn() {
+    return !!localStorage.getItem('adminToken');
   }
 }
