@@ -77,6 +77,8 @@ export class ApplicationDialogComponent implements OnInit {
     leasingAmount: [this.applicationData.leasingAmount],
     creditCardLimit: [this.applicationData.creditCardLimit],
     canProceed: [false, Validators.requiredTrue]
+  },{
+    updateOn:'change'
   });
   loanDetailsForm = formBuilder.group({
       realEstateAddress: [this.applicationData.realEstateAddress, Validators.required],
@@ -454,7 +456,6 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateSufficientHouseholdIncome() {
-    console.log("updateSufficientHouseholdIncome")
     let minHouseholdIncome = 0;
     if (this.applicants.value == 1) {
       minHouseholdIncome = 600;
@@ -462,10 +463,10 @@ export class ApplicationDialogComponent implements OnInit {
       minHouseholdIncome = 1000;
     }
 
-    minHouseholdIncome = minHouseholdIncome + this.amountOfKids.value * 300;
+    minHouseholdIncome = minHouseholdIncome + +this.amountOfKids.value * 300;
     this.minHouseholdIncome = minHouseholdIncome;
-    const totalIncome = this.income.value+this.coApplicantsIncome.value;
-    if ( totalIncome < minHouseholdIncome) {
+    const totalIncome = +this.income.value+ +this.coApplicantsIncome.value;
+    if (this.income.value!=null && totalIncome < minHouseholdIncome) {
       this.isSufficientHouseholdIncome = false;
     } else {
       this.isSufficientHouseholdIncome = true;
