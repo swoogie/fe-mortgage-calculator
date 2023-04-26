@@ -47,6 +47,9 @@ export class ApplicationDialogComponent implements OnInit {
   totalMonthlyObligations: number = 0;
   availableMonthlyPayment: number = null;
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
+  phoneNumberHintMessage: string = "Valid phone number formats: +3706XXXXXXX, 86XXXXXXX +3705XXXXXXX or 85XXXXXXX"
+  personalNumberHintMessage: string = "Valid personal number formats: 3YYMMDDXXXX, 4YYMMDDXXXX, 5YYMMDDXXXX, 6YYMMDDXXXX"
+
   obligationFields = [
     {label: 'Mortgage Loans', controlName: 'mortgageLoans'},
     {label: 'Consumer Loans', controlName: 'consumerLoans'},
@@ -77,8 +80,8 @@ export class ApplicationDialogComponent implements OnInit {
     leasingAmount: [this.applicationData.leasingAmount],
     creditCardLimit: [this.applicationData.creditCardLimit],
     canProceed: [false, Validators.requiredTrue]
-  },{
-    updateOn:'change'
+  }, {
+    updateOn: 'change'
   });
   loanDetailsForm = formBuilder.group({
       realEstateAddress: [this.applicationData.realEstateAddress, Validators.required],
@@ -225,9 +228,9 @@ export class ApplicationDialogComponent implements OnInit {
               private http: HttpClient
   ) {
 
-    const sufficientIncomeFormControls = [this.applicants,this.amountOfKids,this.income,this.coApplicantsIncome];
+    const sufficientIncomeFormControls = [this.applicants, this.amountOfKids, this.income, this.coApplicantsIncome];
     sufficientIncomeFormControls.forEach(control => {
-      control.valueChanges.subscribe(()=>{
+      control.valueChanges.subscribe(() => {
         this.updateSufficientHouseholdIncome();
       });
     });
@@ -256,7 +259,6 @@ export class ApplicationDialogComponent implements OnInit {
     });
 
 
-
     this.income.valueChanges.subscribe((value: number) => {
       this.updateAvailableMonthlyPayment();
     });
@@ -271,9 +273,17 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
     });
 
-    merge(this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges).subscribe(() => {
-      this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
-      this.updateAvailableMonthlyPayment();
+    this.obligationFields.forEach(formControl => {
+      const control = this.incomeDetailsForm.get(formControl.controlName)
+      control.valueChanges.subscribe((value) => {
+        const stringValue = String(value);
+        if (value > 0 && stringValue.startsWith('0')) {
+          control.setValue(stringValue.substring(1));
+        }
+
+        this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
+        this.updateAvailableMonthlyPayment();
+      });
     });
 
     this.realEstatePrice.valueChanges
@@ -465,8 +475,8 @@ export class ApplicationDialogComponent implements OnInit {
 
     minHouseholdIncome = minHouseholdIncome + +this.amountOfKids.value * 300;
     this.minHouseholdIncome = minHouseholdIncome;
-    const totalIncome = +this.income.value+ +this.coApplicantsIncome.value;
-    if (this.income.value!=null && totalIncome < minHouseholdIncome) {
+    const totalIncome = +this.income.value + +this.coApplicantsIncome.value;
+    if (this.income.value != null && totalIncome < minHouseholdIncome) {
       this.isSufficientHouseholdIncome = false;
     } else {
       this.isSufficientHouseholdIncome = true;

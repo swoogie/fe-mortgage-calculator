@@ -1,8 +1,7 @@
 <h1 mat-dialog-title>Application for a Mortgage Loan</h1>
 <div mat-dialog-content>
   <mat-vertical-stepper [linear]="isLinear" (selectionChange)="setIndex($event)">
-    <ng-container *ngIf="false" >
-      <mat-step [stepControl]="personalDetailsForm">
+      <mat-step *ngIf="false" [stepControl]="personalDetailsForm">
       <form [formGroup]="personalDetailsForm">
         <ng-template matStepLabel>Personal Details</ng-template>
         <div class="form-field-wrapper">
@@ -39,6 +38,8 @@
               You are too young to apply for a loan
             </mat-error>
           </mat-form-field>
+          <div class="info-node info-node-warning" *ngIf="personalNumber && personalNumber.hasError('invalidPersonalNumber')">
+            {{personalNumberHintMessage}}</div>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
@@ -48,6 +49,8 @@
               Please enter a valid phone number
             </mat-error>
           </mat-form-field>
+          <div class="info-node info-node-warning" *ngIf="personalPhoneNumber && personalPhoneNumber.hasError('pattern')">
+            {{phoneNumberHintMessage}}</div>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field>
@@ -57,7 +60,6 @@
         </div>
       </form>
     </mat-step>
-    </ng-container>
     <mat-step step [stepControl]="incomeDetailsForm">
       <form [formGroup]="incomeDetailsForm">
         <ng-template matStepLabel>Income information</ng-template>
@@ -144,9 +146,6 @@
               </mat-form-field>
             </div>
           </ng-container>
-        </div>
-        <div *ngIf="availableMonthlyPayment!=null" class="info-node">
-          Monthly payment for a loan: {{availableMonthlyPayment | currency: 'EUR'}}
         </div>
         <div *ngIf="obligations.value == true && availableMonthlyPayment==0" class="info-node info-node-warning">
           Your total monthly obligations cannot exceed {{maxMonthlyObligationsPercentage | percent}} from your monthly
@@ -289,6 +288,8 @@
               Please enter a valid phone number
             </mat-error>
           </mat-form-field>
+          <div class="info-node info-node-warning" *ngIf="coApplicantPhoneNumber && coApplicantPhoneNumber.hasError('pattern')">
+            {{phoneNumberHintMessage}}</div>
         </div>
       </form>
     </mat-step>
