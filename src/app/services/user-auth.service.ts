@@ -18,19 +18,6 @@ export class UserAuthService {
   private adminApiUrl =
     'https://be-mortgage-calculator.onrender.com/api/v1/auth/admin';
 
-<<<<<<< HEAD
-=======
-    public loggedIn = false; 
-    public userEmail$ = new BehaviorSubject<string>('');
-
-    setUserEmail (email: string ){
-      this.userEmail$.next(email);
-    }
-    getUserEmail(){
-      return this.userEmail$.asObservable();
-    }
-
->>>>>>> 9cc9d27 (monthly button bug fixed)
   public getToken(): string {
     return localStorage.getItem('token');
   }
