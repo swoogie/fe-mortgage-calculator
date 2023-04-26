@@ -26,7 +26,7 @@
         </li>
       </ul>
     </div>
-    <ul class="nav-right" *ngIf="!isLoggedIn">
+    <ul class="nav-right" *ngIf="!userLoggedIn && !adminLoggedIn">
       <li>
         <a
           routerLink="/login"
@@ -37,7 +37,7 @@
         >
       </li>
     </ul>
-    <div class="nav-right" *ngIf="isLoggedIn">
+    <div class="nav-right" *ngIf="userLoggedIn">
       <ul>
         <li>
           <a
@@ -46,6 +46,26 @@
             routerLinkActive="active"
             class="login-link"
             >My profile</a
+          >
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <a ariaCurrentWhenActive="page" (click)="logout()" class="login-link"
+            >Logout</a
+          >
+        </li>
+      </ul>
+    </div>
+    <div class="nav-right" *ngIf="adminLoggedIn">
+      <ul>
+        <li>
+          <a
+            ariaCurrentWhenActive="page"
+            routerLink="/admin-page"
+            routerLinkActive="active"
+            class="login-link"
+            >Admin Dash</a
           >
         </li>
       </ul>
@@ -105,7 +125,7 @@
               >Max Loan</a
             >
           </li>
-          <li *ngIf="!isLoggedIn">
+          <li *ngIf="!userLoggedIn && !adminLoggedIn">
             <a
               routerLink="/login"
               routerLinkActive="active"
@@ -114,7 +134,7 @@
               >LOGIN</a
             >
           </li>
-          <li *ngIf="isLoggedIn">
+          <li *ngIf="userLoggedIn">
             <a
               routerLink="/user-page"
               routerLinkActive="active"
@@ -123,7 +143,16 @@
               >My profile</a
             >
           </li>
-          <li *ngIf="isLoggedIn">
+          <li *ngIf="adminLoggedIn">
+            <a
+              routerLink="/user-page"
+              routerLinkActive="active"
+              ariaCurrentWhenActive="page"
+              (click)="burgerFalse(); logout()"
+              >My profile</a
+            >
+          </li>
+          <li *ngIf="userLoggedIn || adminLoggedIn">
             <a ariaCurrentWhenActive="page" (click)="burgerFalse(); logout()"
               >Logout</a
             >

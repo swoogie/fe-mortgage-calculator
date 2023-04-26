@@ -15,13 +15,11 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'maximum-loan', component: MaxCalcComponent },
   { path: 'monthly-payment', component: MonthlyCalcComponent },
-  // { path: 'admin-page', component: AdminpageComponent},
   {
     path: 'admin-page',
     component: AdminpageComponent,
     canActivate: [AdminGuard],
   },
-  // { path: 'user-page', component: UserpageComponent},
   { path: 'user-page', component: UserpageComponent, canActivate: [UserGuard] },
   { path: '**', component: PagenotfoundComponent },
 ];

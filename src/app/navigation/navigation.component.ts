@@ -10,15 +10,32 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class NavigationComponent implements OnInit {
   isBurger = false;
-  isLoggedIn = false;
+  userLoggedIn = false;
+  adminLoggedIn = false;
   constructor(
     private userAuthService: UserAuthService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {}
   ngOnInit(): void {
-    this.userAuthService.currentlyLoggedIn.subscribe((isLoggedIn) => {
-      this.isLoggedIn = isLoggedIn;
+    this.userAuthService.currentlyUser.subscribe((res) => {
+      if (res) {
+        console.log('user' + res);
+        this.userLoggedIn = true;
+        this.adminLoggedIn = false;
+      } else {
+        this.userLoggedIn = false;
+      }
+    });
+
+    this.userAuthService.currentlyAdmin.subscribe((res) => {
+      if (res) {
+        console.log('admin:' + res);
+        this.userLoggedIn = false;
+        this.adminLoggedIn = true;
+      } else {
+        this.adminLoggedIn = false;
+      }
     });
   }
 
