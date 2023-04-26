@@ -14,10 +14,12 @@
     text-align: center;
 
 .logout-button{
-    position: absolute; // position the button absolutely
-  left: 50%; // move the button to the center horizontally
-  bottom: 0; // position the button at the bottom of the page
-  transform: translateX(-50%); // center the button horizontally
+    position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  padding-top: 100px;
 }
 }
 

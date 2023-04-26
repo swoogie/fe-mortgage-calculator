@@ -67,12 +67,15 @@ export class LoginComponent implements OnInit {
       const email = this.loginForm.get('email').value;
       const password = this.loginForm.get('password').value;
 
+      const userEmail = this.loginForm.get('email').value;
+
       this.userAuthService.login(email, password).subscribe(
         (response: any) => {
           const token = response.access_token;
           const decodedToken: any = jwtDecode(token);
           if (this.userAuthService.checkIfLoggedIn()) {
             console.log('check passed redirecting...');
+
             this.router.navigate(['/user-page']);
 
             this.snackBar.open('Logged in! ✅', 'Dismiss', {

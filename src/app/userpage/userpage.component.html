@@ -1,13 +1,13 @@
-<h3 class = "userpage_title"> USER PAGE DETAILS </h3>
+<h3 class = "userpage_title"> USER PAGE DETAILS {{ userEmail }}</h3>
 <div class ="userpage">
    
 </div>
 
-<footer>
-    <button class ="logout_button" mat-flat-button color="primary" (click)="Logout()">
+<mat-card class ="logout-button">
+    <button  mat-flat-button color="primary" (click)="Logout()">
         Logout
       </button>
-</footer>
+</mat-card>
 
 
 

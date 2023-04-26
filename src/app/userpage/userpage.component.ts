@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserAuthService } from '../services/user-auth.service';
 
 @Component({
@@ -6,7 +6,8 @@ import { UserAuthService } from '../services/user-auth.service';
   templateUrl: './userpage.component.html',
   styleUrls: ['./userpage.component.scss']
 })
-export class UserpageComponent {
+export class UserpageComponent implements OnInit{
+  userEmail : string; 
 
   constructor(private user_authService : UserAuthService ){
 
@@ -14,6 +15,12 @@ export class UserpageComponent {
 
   Logout(): void {
       this.user_authService.logout();
+  }
+
+  ngOnInit(){
+    this.user_authService.getUserEmail().subscribe(email => {
+      this.userEmail= email; 
+    })
   }
 
 }

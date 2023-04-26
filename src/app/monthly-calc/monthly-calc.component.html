@@ -64,12 +64,7 @@
         <mat-radio-button [value]="false" checked>No</mat-radio-button>
         <mat-radio-button [value]="true">Yes</mat-radio-button>
       </mat-radio-group>
-      <div class="btn-calculate">
-        <button mat-flat-button color="primary" (click)="monthlyPayment()">
-          Calculate
-        </button>
-        <button mat-flat-button (click)="openDialog()">Apply</button>
-      </div>
+      
       <div class="obligation-container" *ngIf="obligation.value == true">
         <ng-container *ngFor="let field of fields">
           <mat-form-field class="input-wrap">
@@ -91,6 +86,14 @@
         </ng-container>
       </div>
     </div>
+    
+    <div class="btn-calculate">
+      <button mat-flat-button color="primary" (click)="monthlyPayment()">
+        Calculate
+      </button>
+      <button mat-flat-button (click)="openDialog()">Apply</button>
+    </div>
+
 
     <div class="right-container-card">
       <div class="btn-wrap">
