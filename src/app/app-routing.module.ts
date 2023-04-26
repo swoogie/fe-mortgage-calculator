@@ -9,6 +9,7 @@ import { AdminpageComponent } from './adminpage/adminpage.component';
 import { UserpageComponent } from './userpage/userpage.component';
 import { UserGuard } from './guard/user.guard';
 import { AdminGuard } from './guard/admin.guard';
+import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-constants.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -23,6 +24,8 @@ const routes: Routes = [
   },
   // { path: 'user-page', component: UserpageComponent},
   { path: 'user-page', component: UserpageComponent, canActivate: [UserGuard] },
+  //Test path for constant update page:
+  {path: 'test', component: AdminpageConstantsComponent},
   { path: '**', component: PagenotfoundComponent },
 ];
 

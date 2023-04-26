@@ -1,0 +1,21 @@
+<form [formGroup]="adminConstants" class="container" (ngSubmit)="onSubmit()">
+    <h1>Admin page</h1>
+    <ul class="constantTable">
+        <li *ngFor="let cardItem of cardItems">
+            <h2>{{ cardItem.name }}:</h2>
+            <p class="desc">{{cardItem.desc}}</p>
+            <div class="grid">
+                <div class="card">
+                    Current value: {{cardItem.current}}
+                </div>
+                <div class="card">
+                    <p>Change to:</p>
+                    <input matInput formControlName="{{ cardItem.formControlName }}" type="number" />
+                </div>
+            </div>
+        </li>
+    </ul>
+    <button mat-raised-button type="submit" color="primary" class="updateButton">
+        Update all fields
+    </button>
+</form>

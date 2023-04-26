@@ -34,6 +34,7 @@ import { AdminpageComponent } from './adminpage/adminpage.component';
 import { UserGuard } from './guard/user.guard';
 import { AdminGuard } from './guard/admin.guard';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-constants.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     DonutComponent,
     UserpageComponent,
     AdminpageComponent,
+    AdminpageConstantsComponent,
   ],
   imports: [
     BrowserModule,
