@@ -271,7 +271,7 @@ export class ApplicationDialogComponent implements OnInit {
     if (obligationsValue === true) {
       this.obligationFields.forEach((field) => {
         this.incomeDetailsForm.get(field.controlName).setValidators([Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')]);
-        this.incomeDetailsForm.get(field.controlName).setValue(0);
+        this.incomeDetailsForm.get(field.controlName).setValue(null);
       });
     } else if (obligationsValue === false) {
       this.updateAvailableMonthlyPayment();
