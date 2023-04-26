@@ -1,0 +1,19 @@
+<form [formGroup]="adminConstants" class="container">
+    <h1>Admin page</h1>
+    <ul class="constantTable">
+        <li *ngFor="let constant of constants">
+            <h2>{{ constant.name }}:</h2>
+            <p class="desc">{{constant.desc}}</p>
+            <div class="grid">
+                <div class="card">
+                    Current value: {{constant.current}}
+                </div>
+                <div class="card">
+                    Change to:
+                    <input matInput formControlName="{{ constant.formControlName }}" />
+                </div>
+            </div>
+        </li>
+    </ul>
+
+</form>

@@ -1,0 +1,49 @@
+.container {
+    padding-top: 90px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 90px;
+    h1 {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    .constantTable {
+        padding-inline-start: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        padding: 0 50px;
+        gap: 10px;
+        h2 {
+            font-weight: 400;
+            margin: 0;
+            font-size: 24px;
+        }
+         li {
+            list-style: none;  
+            border: 1px solid black;
+            background-color: white;
+            color: black;
+            text-transform: uppercase;
+            padding: 3% 5%;
+            display: flex;
+            flex-direction: column;
+            
+         }
+        .desc {
+            display: block;
+            margin: 0;
+            text-transform: none;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+            text-transform: none;
+            .card {
+                padding: 20px;
+                border: 1px solid black;
+            }
+        }
+        }
+}
