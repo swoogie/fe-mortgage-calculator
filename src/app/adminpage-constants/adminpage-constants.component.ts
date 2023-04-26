@@ -35,7 +35,6 @@ export class AdminpageConstantsComponent {
   )
   ngOnInit() {
     this.api.getConstants().subscribe((constants) => {
-      console.log(constants);
       this.constants = constants
       this.cardItems = [{
         name: "Maximum loan term", 
@@ -83,7 +82,6 @@ export class AdminpageConstantsComponent {
     });
   }
   onSubmit() {
-    console.log(this.adminConstants.value);
     let submittedObj = this.adminConstants.value;
     let sendObj = {};
     for (const key in submittedObj) {
@@ -98,14 +96,14 @@ export class AdminpageConstantsComponent {
 
     console.log("this is the send obj: ", sendObj);
     if (Object.keys(sendObj).length != 0) {
-    //   this.api.putConstant(sendObj).subscribe({
-    //   next: (success) => {
-    //     console.log(success);
-    //   },
-    //   error: (err) => {
-    //     console.log(err);
-    //   }
-    // })
+      this.api.putConstants(sendObj).subscribe({
+      next: (success) => {
+        console.log(success);
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
     }
   }
 }
