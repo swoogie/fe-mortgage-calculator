@@ -3,12 +3,14 @@ import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {ApiService} from "../services/api.service";
 import {Constants} from "../interfaces/constants";
 import {ApplicationData} from "../interfaces/application-data";
-import {AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
-import {combineLatest, debounceTime, merge} from "rxjs";
+import {debounceTime, merge} from "rxjs";
 import {StepperSelectionEvent} from "@angular/cdk/stepper";
+import {catchError, map} from 'rxjs/operators';
+import {HttpClient} from "@angular/common/http"; // import map operator
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -55,7 +57,10 @@ export class ApplicationDialogComponent implements OnInit {
   isLinear = true;
   attemptedToProceed = false;
   showAgeWarning: boolean = false;
+  userAge: number;
   ageAtLoanTermEnd: number;
+  isEmailAvailable: boolean;
+  emailNotAvailableMessage: string;
   incomeDetailsForm = formBuilder.group({
     applicants: [this.applicationData.applicants, Validators.required],
     amountOfKids: [this.applicationData.amountOfKids, Validators.required],
@@ -112,6 +117,7 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.required,
         Validators.email,
         Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")],
+      this.emailAvailabilityValidator()
     ],
     phoneNumber: [this.applicationData.phoneNumber,
       [
@@ -119,7 +125,7 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
     ],
     address: [this.applicationData.address, Validators.required]
-  });
+  }, {updateOn: 'blur'});
   coApplicantDetailsForm = formBuilder.group({
     firstName: [this.applicationData.firstName, Validators.required],
     lastName: [this.applicationData.lastName, Validators.required],
@@ -128,6 +134,7 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.required,
         Validators.email,
         Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")],
+      this.emailAvailabilityValidator()
     ],
     phoneNumber: [this.applicationData.phoneNumber,
       [
@@ -135,6 +142,28 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
     ],
   });
+
+  emailAvailabilityValidator() {
+    return (control: FormControl) => {
+      const email = control.value;
+      return this.apiService.checkEmail(email).pipe(
+        map((response: any) => {
+          this.isEmailAvailable = true;
+          return response.available ? null : {emailNotAvailable: true};
+        }),
+        catchError((error) => {
+          if (error.status === 409) {
+            this.isEmailAvailable = false;
+            this.emailNotAvailableMessage = error.error;
+            return [{emailNotAvailable: true}];
+          } else {
+            console.error('An unexpected error occurred:', error);
+            return [];
+          }
+        })
+      );
+    };
+  }
 
   private personalNumberValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -171,7 +200,7 @@ export class ApplicationDialogComponent implements OnInit {
       const ageDate = new Date(ageDiff);
 
       const age = ageDate.getUTCFullYear() - 1970;
-
+      this.userAge = age;
       if (matches[1] === '5' || matches[1] === '6') {
         if (age < 0) {
           return {invalidPersonalNumber: true};
@@ -180,38 +209,58 @@ export class ApplicationDialogComponent implements OnInit {
           return {invalidAge: true};
         }
       }
-      const ageAtLoanTermEnd = age + +this.loanTerm.value;
-      if (ageAtLoanTermEnd > 65) {
-        this.showAgeWarning = true;
-        this.ageAtLoanTermEnd = ageAtLoanTermEnd;
-      } else {
-        this.showAgeWarning = false;
-        this.ageAtLoanTermEnd = null;
-      }
+      this.updateShowAgeWarning(age, +this.loanTerm.value);
       return null;
     };
   }
+
 
   constructor(private euriborValuesService: EuriborValuesService,
               private apiService: ApiService,
               @Inject(MAT_DIALOG_DATA)
               public applicationData: ApplicationData,
               private _snackBar: MatSnackBar,
+              private http: HttpClient
   ) {
+
+    const sufficientIncomeFormControls = [this.applicants,this.amountOfKids,this.income,this.coApplicantsIncome];
+    sufficientIncomeFormControls.forEach(control => {
+      control.valueChanges.subscribe(()=>{
+        this.updateSufficientHouseholdIncome();
+      });
+    });
+
+    this.personalEmail.valueChanges.subscribe((email) => {
+      this.apiService.checkEmail(email).subscribe(
+        (response: any) => {
+          // Handle successful response (JSON object)
+          this.isEmailAvailable = response.available;
+          this.emailNotAvailableMessage = response.message;
+        },
+        (error) => {
+          // Handle error response
+          if (error.status === 409) {
+            this.isEmailAvailable = false;
+            this.emailNotAvailableMessage = error.error.message;
+          } else {
+            console.error('An unexpected error occurred:', error);
+          }
+        }
+      );
+    });
+
     this.applicants.valueChanges.subscribe((value: number) => {
       this.updateCoApplicantsIncomeValidations(value);
     });
 
-    combineLatest([this.applicants.valueChanges, this.amountOfKids.valueChanges, this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(() => {
-      this.updateSufficientHouseholdIncome();
-    });
+
 
     this.income.valueChanges.subscribe((value: number) => {
       this.updateAvailableMonthlyPayment();
     });
 
-    combineLatest([this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(([income, coApplicantsIncome]) => {
-      this.updateTotalHouseHoldIncome(income, coApplicantsIncome);
+    merge([this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(() => {
+      this.updateTotalHouseHoldIncome(this.income.value, this.coApplicantsIncome.value);
       this.updateAvailableMonthlyPayment();
     });
 
@@ -239,15 +288,17 @@ export class ApplicationDialogComponent implements OnInit {
 
     this.loanTerm.valueChanges.subscribe((loanTermValue) => {
       this.updateLoanTerm(loanTermValue);
+      this.updateShowAgeWarning(this.userAge, loanTermValue);
     });
 
-    combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges]).subscribe(([realEstatePrice, downPayment]) => {
+    merge([this.realEstatePrice.valueChanges, this.downPayment.valueChanges]).subscribe(() => {
       this.updateLoanAmount();
     });
-    combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges, this.loanTerm.valueChanges, this.euribor.valueChanges, this.paymentScheduleType.valueChanges]).subscribe(([realEstatePrice, downPayment, loanTerm, euribor, paymentScheduleType]) => {
+    merge([this.realEstatePrice.valueChanges, this.downPayment.valueChanges, this.loanTerm.valueChanges, this.euribor.valueChanges, this.paymentScheduleType.valueChanges]).subscribe(() => {
       this.updateSufficientMonthlyPayment();
     });
   }
+
 
   private updateRealEstatePriceValue(realEstatePriceValue: number) {
     if (realEstatePriceValue > this.maxRealEstatePrice) {
@@ -403,6 +454,7 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateSufficientHouseholdIncome() {
+    console.log("updateSufficientHouseholdIncome")
     let minHouseholdIncome = 0;
     if (this.applicants.value == 1) {
       minHouseholdIncome = 600;
@@ -412,7 +464,8 @@ export class ApplicationDialogComponent implements OnInit {
 
     minHouseholdIncome = minHouseholdIncome + this.amountOfKids.value * 300;
     this.minHouseholdIncome = minHouseholdIncome;
-    if (this.totalHouseHoldIncome < minHouseholdIncome) {
+    const totalIncome = this.income.value+this.coApplicantsIncome.value;
+    if ( totalIncome < minHouseholdIncome) {
       this.isSufficientHouseholdIncome = false;
     } else {
       this.isSufficientHouseholdIncome = true;
@@ -454,6 +507,17 @@ export class ApplicationDialogComponent implements OnInit {
       this.canProceedToLoanDetails.setValue(true);
     } else {
       this.canProceedToLoanDetails.setValue(false);
+    }
+  }
+
+  updateShowAgeWarning(age: number, loanTerm: number) {
+    const ageAtLoanTermEnd = age + +this.loanTerm.value;
+    this.ageAtLoanTermEnd = ageAtLoanTermEnd;
+
+    if (ageAtLoanTermEnd > 65) {
+      this.showAgeWarning = true;
+    } else {
+      this.showAgeWarning = false;
     }
   }
 
@@ -601,24 +665,26 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateSufficientMonthlyPayment() {
-    let totalMortgagePayment = 0;
-    const loanTermInMonths = this.loanTerm.value * 12;
-    const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
+    if (this.interestRateMargin != null) {
+      let totalMortgagePayment = 0;
+      const loanTermInMonths = this.loanTerm.value * 12;
+      const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
 
-    const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
-    let loanAmount: number = this.loanAmount;
-    if (this.paymentScheduleType.value == 'annuity') {
-      totalMortgagePayment = this.calculateTotalAnnuityMortgageAmount(loanAmount, monthlyInterestRate, loanTermInMonths);
-    } else if (this.paymentScheduleType.value == 'linear') {
-      totalMortgagePayment = this.calculateTotalLinearMortgageAmount(loanAmount, loanTermInMonths, monthlyInterestRate);
-    }
-    let isSufficientMonthlyPayment = usersTotalCapacity >= totalMortgagePayment;
-    this.isSufficientMonthlyPayment = isSufficientMonthlyPayment;
-    if (isSufficientMonthlyPayment) {
+      const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
+      let loanAmount: number = this.loanAmount;
+      if (this.paymentScheduleType.value == 'annuity') {
+        totalMortgagePayment = this.calculateTotalAnnuityMortgageAmount(loanAmount, monthlyInterestRate, loanTermInMonths);
+      } else if (this.paymentScheduleType.value == 'linear') {
+        totalMortgagePayment = this.calculateTotalLinearMortgageAmount(loanAmount, loanTermInMonths, monthlyInterestRate);
+      }
+      let isSufficientMonthlyPayment = usersTotalCapacity >= totalMortgagePayment;
+      this.isSufficientMonthlyPayment = isSufficientMonthlyPayment;
+      if (isSufficientMonthlyPayment) {
 
-      this.canProceedToPersonalDetails.setValue(true);
-    } else {
-      this.canProceedToPersonalDetails.setValue(false);
+        this.canProceedToPersonalDetails.setValue(true);
+      } else {
+        this.canProceedToPersonalDetails.setValue(false);
+      }
     }
   }
 
