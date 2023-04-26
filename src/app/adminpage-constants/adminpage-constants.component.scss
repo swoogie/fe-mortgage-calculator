@@ -3,9 +3,19 @@
     max-width: 1200px;
     margin: 0 auto;
     padding-bottom: 90px;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    align-items: center;
     h1 {
         text-align: center;
-        margin-bottom: 50px;
+        margin-bottom: 35px;
+    }
+    .updateButton{
+        max-width: fit-content;
+        justify-self: center;
+        font-size: 24px;
+        padding: 10px 20px;
     }
     .constantTable {
         padding-inline-start: 0;
@@ -13,14 +23,18 @@
         grid-template-columns: 1fr;
         padding: 0 50px;
         gap: 10px;
+        margin-bottom: 30px;
         h2 {
             font-weight: 400;
             margin: 0;
             font-size: 24px;
+            color: #2f3b4b;
         }
          li {
             list-style: none;  
-            border: 1px solid black;
+            border-radius: 5px;
+            border: 3px solid black;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, .2);
             background-color: white;
             color: black;
             text-transform: uppercase;
@@ -42,8 +56,54 @@
             text-transform: none;
             .card {
                 padding: 20px;
-                border: 1px solid black;
+                border:2px solid black;
+                display: flex;
+                justify-content: space-between;
+                p {
+                    display: inline;
+                    width: fit-content;
+                    margin: 0;
+                }
+                input {
+                    min-height: 20px;
+                }
             }
+        }
+        }
+}
+
+@media screen and (max-width: 855px) {
+    .container {
+        .constantTable {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 5px;    
+        }
+        }
+        }
+}
+@media screen and (max-width: 500px) {
+    .container {
+        .constantTable {
+            padding: 0 5%;
+            li {
+                padding: 7% 10%;
+            }
+            h2{
+                font-size: 20px;
+            }
+            .grid {
+                .card{
+                    flex-direction: column;
+                    p{
+                        font-size: 16px;
+                        margin-bottom: 5px;
+                    }
+                    input{
+                        width: 100%;
+                    }
+                }
+        }
         }
         }
 }
