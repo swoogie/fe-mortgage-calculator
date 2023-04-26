@@ -21,7 +21,6 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
-import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -29,6 +28,13 @@ import { ApplicationDialogComponent } from './application-dialog/application-dia
 import { DonutComponent } from './donut/donut.component';
 import { ChartModule } from 'angular-highcharts';
 
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { UserpageComponent } from './userpage/userpage.component';
+import { AdminpageComponent } from './adminpage/adminpage.component';
+import { AdminComponent } from './admin/admin.component';
+import { UserGuard } from './guard/user.guard';
+import { AdminGuard } from './guard/admin.guard';
+import { TokenInterceptor } from './interceptors/token.interceptor';
 
 @NgModule({
   declarations: [
@@ -41,6 +47,9 @@ import { ChartModule } from 'angular-highcharts';
     LoginComponent,
     ApplicationDialogComponent,
     DonutComponent,
+    UserpageComponent,
+    AdminpageComponent,
+    AdminComponent,
   ],
   imports: [
     BrowserModule,
@@ -65,7 +74,14 @@ import { ChartModule } from 'angular-highcharts';
     ChartModule,
     MatGridListModule,
   ],
-  providers: [MatSnackBarModule],
+  providers: [MatSnackBarModule,
+     UserGuard, 
+     AdminGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true 
+    }], 
   bootstrap: [AppComponent],
 })
 export class AppModule {}

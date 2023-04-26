@@ -1,36 +1,61 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+// import { AuthService } from '../services/auth.service';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { UserAuthService } from '../services/user-auth.service';
+import jwtDecode from 'jwt-decode';
+import { Role } from '../interfaces/role';
 
+const fb = new FormBuilder();
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  showLogin: boolean = true
-
+  registerForm: FormGroup;
+  showLogin: boolean = true;
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private userAuthService: UserAuthService,
     private router: Router,
     private snackBar: MatSnackBar
-  ) {
+  ) {}
 
+  toggleView() {
+    this.showLogin = !this.showLogin;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.loginForm = this.fb.group({
-      email: ['', [
-        Validators.required,
-        Validators.email,
-        Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
+        ],
       ],
+      password: ['', [Validators.required]],
+    });
+
+    this.registerForm = this.fb.group({
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
+        ],
       ],
       password: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
@@ -38,53 +63,62 @@ export class LoginComponent implements OnInit {
     });
   }
 
-
   onSubmit() {
-    console.log(this.loginForm.value);
+    if (this.loginForm.valid && this.showLogin) {
+      const email = this.loginForm.get('email').value;
+      const password = this.loginForm.get('password').value;
 
-    if (this.loginForm.valid) {
-      // Do login logic here
-      const email = this.loginForm.value.email;
-      const password = this.loginForm.value.password;
-      const firstName = this.loginForm.value.firstName;
-      const lastName = this.loginForm.value.lastName;
+      this.userAuthService.login(email, password).subscribe(
+        (response: any) => {
+          const token = response.access_token;
+          const decodedToken: any = jwtDecode(token);
+          if (this.userAuthService.isLoggedIn()) {
+            console.log('check passed redirecting...');
+            this.router.navigate(['/user-page']);
+          }
 
-      // Call your authentication service to authenticate the user
-      if (this.showLogin) {
-        this.authService.login(email, password).subscribe(
-          (response) => {
-            // If the authentication succeeds, redirect the user to the home page
-            this.router.navigate(['/']);
-          },
-          (error) => {
-            // If the authentication fails, show an error message to the user
-            this.snackBar.open('Invalid email or password', 'Dismiss', {
+          if (decodedToken.role === 'user') {
+            this.router.navigate(['/user-page']);
+          } else if (decodedToken.role === 'admin') {
+            this.router.navigate(['/admin-page']);
+          }
+        },
+        (error) => {
+          console.log(error);
+          this.snackBar.open('Invalid email or password', 'Dismiss', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+        }
+      );
+    } else if (this.showLogin) {
+      this.loginForm.markAllAsTouched();
+    }
+
+    if (this.registerForm.valid && !this.showLogin) {
+      const email = this.registerForm.get('email').value;
+      const password = this.registerForm.get('password').value;
+      const firstName = this.registerForm.get('firstName').value;
+      const lastName = this.registerForm.get('lastName').value;
+
+      this.userAuthService
+        .register(firstName, lastName, email, password)
+        .subscribe((response: any) => {
+          console.log('registered', response);
+          this.snackBar.open(
+            'Register successful, you can now login 👍',
+            'Dismiss',
+            {
               duration: 5000,
               horizontalPosition: 'center',
               verticalPosition: 'bottom',
-            });
-          }
-        );
-      } else {
-        // this.authService.register(firstName, lastName, email, password).subscribe(
-        //   (response) => {
-        //     // If the authentication succeeds, redirect the user to the home page
-        //     this.router.navigate(['/']);
-        //   },
-        //   (error) => {
-        //     // If the authentication fails, show an error message to the user
-        //     this.snackBar.open('Invalid email or password', 'Dismiss', {
-        //       duration: 5000,
-        //       horizontalPosition: 'center',
-        //       verticalPosition: 'bottom',
-        //     });
-        //   }
-        // );
-      }
-
+            }
+          );
+          this.toggleView();
+        });
+    } else if (!this.showLogin) {
+      this.registerForm.markAllAsTouched();
     }
-  }
-  toggleView() {
-    this.showLogin = !this.showLogin
   }
 }
