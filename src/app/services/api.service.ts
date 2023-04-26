@@ -17,6 +17,9 @@ export class ApiService {
   getConstants(): Observable<Constants> {
     return this.http.get<Constants>(`${this.apiUrl}/constants`);
   }
+  putConstants(newConstants: Constants): Observable<any>{
+    return this.http.put(`${this.apiUrl}/constants`, newConstants)
+  }
 
   postApplication(applicationData: ApplicationData): Observable<any> {
     return this.http.post(`${this.apiUrl}/applications`, applicationData)

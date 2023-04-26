@@ -23,7 +23,7 @@ export class AdminpageConstantsComponent {
       loanAmountPercentage: [''],
       maxKids: [''],
       maxMonthlyObligationsPercentage: [''],
-      maxApplicants: [''],
+      maxNumOfApplicants: [''],
       // maxRealEstatePrice: [''],
       // minRealEstatePrice: [''],
       // minLoan: [''],
@@ -76,14 +76,37 @@ export class AdminpageConstantsComponent {
       {
         name: "Maximum number of applicants", 
         desc: "The maximum amount of applicants allowed when applying for a loan.",
-        formControlName: "maxApplicants",
+        formControlName: "maxNumOfApplicants",
         current: this.constants.maxNumOfApplicants,
       },
     ]
     });
   }
   onSubmit() {
-    console.log(this.adminConstants.value)
+    console.log(this.adminConstants.value);
+    let submittedObj = this.adminConstants.value;
+    let sendObj = {};
+    for (const key in submittedObj) {
+      if (submittedObj[key] != ''){
+        let value = Number(submittedObj[key]);
+        if (!isNaN(value)) {
+          sendObj[key] = value;
+        }
+      }
+
+    }
+
+    console.log("this is the send obj: ", sendObj);
+    if (Object.keys(sendObj).length != 0) {
+    //   this.api.putConstant(sendObj).subscribe({
+    //   next: (success) => {
+    //     console.log(success);
+    //   },
+    //   error: (err) => {
+    //     console.log(err);
+    //   }
+    // })
+    }
   }
 }
 
