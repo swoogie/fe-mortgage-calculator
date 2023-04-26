@@ -170,7 +170,12 @@
     <button mat-flat-button (click)="openDialog()">Apply</button>
   </div>
   <div class="right-container-card">
-    <app-donut [maxData]="chartData" [labels]="chartLabels"> </app-donut>
+    <app-donut
+      [maxData]="chartData"
+      [labels]="chartLabels"
+      [middleLabel]="['Interest/Principal']"
+    >
+    </app-donut>
   </div>
   <mat-label *ngIf="linearTotal"
     >With linear payments by the end of your mortgage you'll have paid off:

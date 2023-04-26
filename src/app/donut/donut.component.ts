@@ -20,7 +20,8 @@ export class DonutComponent implements OnInit, OnChanges {
   @Input() data: number[];
   @Input() labels: string[];
   @Input() maxData: any[];
-  middleLabel = ['Monthly payments', 'Interest/Principal'];
+  @Input() middleLabel: string[];
+
   donut: any = {};
 
   constructor() {
@@ -93,7 +94,7 @@ export class DonutComponent implements OnInit, OnChanges {
         y: -30,
       },
       subtitle: {
-        text: data === this.data ? this.middleLabel[0] : this.middleLabel[1],
+        text: this.middleLabel ? this.middleLabel[0] : '',
         verticalAlign: 'middle',
         floating: false,
         y: -10,
@@ -111,7 +112,11 @@ export class DonutComponent implements OnInit, OnChanges {
           type: 'pie',
           colorByPoint: true,
           data: data.map((item, i) => {
-            return { name: this.labels[i], y: item, color: this.getColor(i) };
+            return {
+              name: this.labels[i],
+              y: item,
+              color: this.getColor(i),
+            };
           }),
         },
       ],
