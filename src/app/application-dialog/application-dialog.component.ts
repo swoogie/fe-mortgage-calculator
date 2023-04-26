@@ -527,10 +527,8 @@ export class ApplicationDialogComponent implements OnInit {
 
   updateCanProceedToLoanDetails() {
     if (this.availableMonthlyPayment > 0 && this.isSufficientHouseholdIncome == true) {
-      console.log("can proceed to loan details");
       this.canProceedToLoanDetails.setValue(true);
     } else {
-      console.log("cannnot proceed to loan details");
       this.canProceedToLoanDetails.setValue(false);
     }
   }
