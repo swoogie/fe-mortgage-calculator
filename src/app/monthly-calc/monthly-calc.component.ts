@@ -236,10 +236,19 @@ export class MonthlyCalcComponent implements OnInit {
       minWidth: '400px',
     });
   }
-  clickMe(event: Event, info: string) {
-    this._snackBar.open(info, null, {
-      duration: 1000,
-    });
+  clickMe(event: Event) {
+    this._snackBar.open(
+      'Please provide outstanding loan amounts. Your monthly payment is being calculated taking in account such parameters - \
+    Mortgage loan 25years/5.5%/annuity;  \
+    Consumer loan 5years/10%/annuity;  \
+    Leasing amount 5years/7%/annuity;  \
+    Credit card limit 3years. \
+    ',
+      null,
+      {
+        duration: 15000,
+      }
+    );
     event.stopPropagation();
   }
 }
