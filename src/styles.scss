@@ -43,3 +43,8 @@ body {
     --mdc-radio-unselected-pressed-icon-color: rgba(255, 255, 255, 0.54);
     --mat-mdc-radio-ripple-color: #FFF;
 }
+
+.cdk-overlay-backdrop {
+    background: rgb(0 0 0 / 0%);
+    backdrop-filter: blur(2640.7742px);
+}
