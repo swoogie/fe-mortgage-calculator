@@ -22,7 +22,7 @@ export class ApiService {
   }
 
   postApplication(applicationData: ApplicationData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/applications`, applicationData)
+    return this.http.post(`${this.apiUrl}/new-application`, applicationData)
   }
 
   checkEmail(email:string):Observable<any>{
