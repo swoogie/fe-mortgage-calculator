@@ -57,10 +57,7 @@ export class MonthlyCalcComponent implements OnInit {
     {
       applicants: [1 as number, Validators.required],
       amountOfKids: ['', Validators.required],
-      income: [
-        '',
-        [Validators.required, Validators.pattern('^[0-9]*(.|,)?[0-9]{1,2}$')],
-      ],
+      income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
       monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
       mortgageLoans: ['', Validators.pattern('[0-9]*')],
@@ -103,8 +100,8 @@ export class MonthlyCalcComponent implements OnInit {
       const commaIndex = this.income.value.indexOf(',');
       this.income.setValue(
         this.income.value.substring(0, commaIndex) +
-        '.' +
-        this.income.value.substring(commaIndex + 1)
+          '.' +
+          this.income.value.substring(commaIndex + 1)
       );
     }
   }

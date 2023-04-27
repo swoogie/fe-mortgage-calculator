@@ -224,6 +224,7 @@
                   <mat-label>{{ field.label }}</mat-label>
                   <input matInput formControlName="{{ field.controlName }}" />
                   <mat-error
+                    class="error-message"
                     *ngIf="
                       incomeDetailsForm.get(field.controlName) &&
                       incomeDetailsForm
