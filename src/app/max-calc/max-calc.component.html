@@ -176,33 +176,20 @@
       [middleLabel]="['Interest/Principal']"
     >
     </app-donut>
-<<<<<<< HEAD
     <p class="payment-result">
       <mat-label *ngIf="linearTotal"
-        >With linear payments by the end of your mortgage you'll have paid off:
-        {{ linearTotal }} € <br />With {{ interestFromTotal }} interest <br />
-        And {{ principalFromTotal }} principal</mat-label
+        ><div class="LPI">Linear Payment Information</div>
+        <br />
+        Total Payment over Mortgage Period : {{ linearTotal }} € <br />Total
+        Interest : {{ interestFromTotal }}€ <br />
+        Overall Principal {{ principalFromTotal }} €</mat-label
       >
       <mat-label *ngIf="annuityTotal"
-        >With annuity payments by the end of your mortgage you'll have paid off:
-        {{ annuityTotal }} € <br />
-        With {{ interestFromTotal }} interest <br />
-        And {{ principalFromTotal }} principal</mat-label
-      >
-=======
-    <p class ="payment-result">
-      <mat-label  *ngIf="linearTotal"
-    ><div class ="LPI" >Linear Payment Information</div> <br /> Total Payment over Mortgage Period :
-    {{ linearTotal }} € <br />Total Interest : {{ interestFromTotal }}€ <br />
-    Overall Principal  {{ principalFromTotal }} €</mat-label
-  >
-  <mat-label *ngIf="annuityTotal"
-    ><div class ="API">Annuity Payment Information</div> <br />Total payment over Mortgage Period :
-     {{ annuityTotal }} € <br />
-    Total Interest : {{ interestFromTotal }} € <br />
-    Overall Principal : {{ principalFromTotal }} € </mat-label
-  >
->>>>>>> 59c0025 (max calculator result css bug fixes)
+        ><div class="API">Annuity Payment Information</div>
+        <br />Total payment over Mortgage Period : {{ annuityTotal }} € <br />
+        Total Interest : {{ interestFromTotal }} € <br />
+        Overall Principal : {{ principalFromTotal }} €
+      </mat-label>
     </p>
   </div>
 </form>
