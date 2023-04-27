@@ -734,6 +734,9 @@ export class ApplicationDialogComponent implements OnInit {
     this.apiService.postApplication(this.applicationData).subscribe({
       next: () => {
         console.log('Application submitted successfully');
+        this._snackBar.open('Application submitted successfully', 'Close', {
+          duration: 5000,
+        });
       },
       error: (err) => {
         console.log(err);
