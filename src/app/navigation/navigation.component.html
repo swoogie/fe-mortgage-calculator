@@ -130,7 +130,7 @@
               routerLink="/login"
               routerLinkActive="active"
               ariaCurrentWhenActive="page"
-              (click)="burgerFalse(); logout()"
+              (click)="burgerFalse()"
               >LOGIN</a
             >
           </li>
@@ -139,17 +139,17 @@
               routerLink="/user-page"
               routerLinkActive="active"
               ariaCurrentWhenActive="page"
-              (click)="burgerFalse(); logout()"
+              (click)="burgerFalse()"
               >My profile</a
             >
           </li>
           <li *ngIf="adminLoggedIn">
             <a
-              routerLink="/user-page"
+              routerLink="/admin-page"
               routerLinkActive="active"
               ariaCurrentWhenActive="page"
-              (click)="burgerFalse(); logout()"
-              >My profile</a
+              (click)="burgerFalse()"
+              >Admin Dash</a
             >
           </li>
           <li *ngIf="userLoggedIn || adminLoggedIn">

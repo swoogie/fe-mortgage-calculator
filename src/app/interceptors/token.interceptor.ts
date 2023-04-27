@@ -15,15 +15,21 @@ export class TokenInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token = this.auth.getToken();
+    const adminToken = this.auth.getAdminToken();
+    const userToken = this.auth.getToken();
     request = request.clone({
       setHeaders: { 'Content-Type': `application/json` },
     });
 
-    console.log('interceptor request');
-    if (token) {
+    if (adminToken) {
       request = request.clone({
-        setHeaders: { Authorization: `Bearer ${token}` },
+        setHeaders: { Authorization: `Bearer ${adminToken}` },
+      });
+      console.log('interceptor req: ', request);
+    }
+    if (userToken) {
+      request = request.clone({
+        setHeaders: { Authorization: `Bearer ${userToken}` },
       });
     }
 

@@ -35,6 +35,8 @@ import { UserGuard } from './guard/user.guard';
 import { AdminGuard } from './guard/admin.guard';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-constants.component';
+import { AdminpageApplicationsComponent } from './adminpage-applications/adminpage-applications.component';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,7 @@ import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-con
     UserpageComponent,
     AdminpageComponent,
     AdminpageConstantsComponent,
+    AdminpageApplicationsComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +62,7 @@ import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-con
     MatSelectModule,
     MatTooltipModule,
     MatIconModule,
+    MatTableModule,
     MatButtonModule,
     ReactiveFormsModule,
     MatSelectModule,
