@@ -10,7 +10,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserAuthService } from '../services/user-auth.service';
 import jwtDecode from 'jwt-decode';
-import { Role } from '../interfaces/role';
 
 const fb = new FormBuilder();
 
@@ -68,37 +67,36 @@ export class LoginComponent implements OnInit {
       const email = this.loginForm.get('email').value;
       const password = this.loginForm.get('password').value;
 
-      this.userAuthService.login(email, password).subscribe(
-        (response: any) => {
-          const token = response.access_token;
+      this.userAuthService.login(email, password).subscribe({
+        next: (res: any) => {
+          const token = res.access_token;
           const decodedToken: any = jwtDecode(token);
-          if (this.userAuthService.isLoggedIn()) {
-            console.log('check passed redirecting...');
-            this.router.navigate(['/user-page']);
+          this.userAuthService.setEmail(decodedToken.sub);
 
-            this.snackBar.open('User succesfully', 'Dismiss', {
-              duration: 9000,
-              horizontalPosition: 'center',
-              verticalPosition: 'bottom',
+          this.userAuthService
+            .getUserRole(decodedToken.sub)
+            .subscribe((response) => {
+              this.userAuthService.userRole = response.toString();
+              if (this.userAuthService.userRole == 'ADMIN') {
+                localStorage.setItem('adminToken', res.access_token);
+                this.userAuthService.loginState();
+                this.router.navigate(['/admin-page']);
+              } else {
+                localStorage.setItem('userToken', res.access_token);
+                this.userAuthService.loginState();
+                this.router.navigate(['/user-page']);
+              }
             });
-
-          }
-
-          if (decodedToken.role === 'user') {
-            this.router.navigate(['/user-page']);
-          } else if (decodedToken.role === 'admin') {
-            this.router.navigate(['/admin-page']);
-          }
         },
-        (error) => {
+        error: (error) => {
           console.log(error);
           this.snackBar.open('Invalid email or password', 'Dismiss', {
             duration: 5000,
             horizontalPosition: 'center',
             verticalPosition: 'bottom',
           });
-        }
-      );
+        },
+      });
     } else if (this.showLogin) {
       this.loginForm.markAllAsTouched();
     }
@@ -114,7 +112,7 @@ export class LoginComponent implements OnInit {
         .subscribe((response: any) => {
           console.log('registered', response);
           this.snackBar.open(
-            'Register successful, you can now login 👍✔',
+            'Register successful, you can now login ✅',
             'Dismiss',
             {
               duration: 10000,

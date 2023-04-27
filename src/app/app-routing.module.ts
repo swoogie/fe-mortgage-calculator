@@ -7,24 +7,23 @@ import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { LoginComponent } from './login/login.component';
 import { AdminpageComponent } from './adminpage/adminpage.component';
 import { UserpageComponent } from './userpage/userpage.component';
-import { AdminComponent } from './admin/admin.component';
 import { UserGuard } from './guard/user.guard';
 import { AdminGuard } from './guard/admin.guard';
+import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-constants.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'maximum-loan', component: MaxCalcComponent },
   { path: 'monthly-payment', component: MonthlyCalcComponent },
-  // { path: 'admin-page', component: AdminpageComponent},
   {
     path: 'admin-page',
     component: AdminpageComponent,
     canActivate: [AdminGuard],
   },
-  // { path: 'user-page', component: UserpageComponent},
   { path: 'user-page', component: UserpageComponent, canActivate: [UserGuard] },
-  { path: 'admin', component: AdminComponent },
+  //Test path for constant update page:
+  {path: 'test', component: AdminpageConstantsComponent},
   { path: '**', component: PagenotfoundComponent },
 ];
 

@@ -67,7 +67,6 @@
       margin-top: 0;
       color: #000;
     }
-
   }
 
   .obligation-container {
@@ -75,6 +74,9 @@
     grid-template-columns: 1fr 1fr;
     column-gap: 10px;
     margin-top: 20px;
+    .info-btn {
+      color: #d6d8d6;
+    }
   }
 
   .title-container {
@@ -109,7 +111,6 @@
   }
 }
 
-
 @media screen and (max-width: 900px) {
   .container {
     grid-template-columns: 1fr;
@@ -139,10 +140,9 @@
   .tooltip {
     display: none;
   }
-
 }
 
-@media screen and (max-width:680px) {
+@media screen and (max-width: 680px) {
   .container {
     padding-left: 0;
     padding-right: 0;
@@ -153,7 +153,7 @@
   }
 }
 
-@media screen and (max-width:500px) {
+@media screen and (max-width: 500px) {
   .container {
     padding-left: 5%;
     padding-right: 5%;
@@ -169,6 +169,5 @@
     .block {
       font-size: 15px;
     }
-
   }
 }

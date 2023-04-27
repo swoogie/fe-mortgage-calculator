@@ -17,8 +17,15 @@ export class ApiService {
   getConstants(): Observable<Constants> {
     return this.http.get<Constants>(`${this.apiUrl}/constants`);
   }
+  putConstants(newConstants: any): Observable<any>{
+    return this.http.put(`${this.apiUrl}/constants`, newConstants)
+  }
 
   postApplication(applicationData: ApplicationData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/applications`, applicationData)
+    return this.http.post(`${this.apiUrl}/new-application`, applicationData)
+  }
+
+  checkEmail(email:string):Observable<any>{
+    return this.http.get(`${this.apiUrl}/users/check-email?email=${email}`);
   }
 }

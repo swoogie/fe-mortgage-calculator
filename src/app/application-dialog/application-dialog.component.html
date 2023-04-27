@@ -1,6 +1,65 @@
 <h1 mat-dialog-title>Application for a Mortgage Loan</h1>
 <div mat-dialog-content>
   <mat-vertical-stepper [linear]="isLinear" (selectionChange)="setIndex($event)">
+      <mat-step  [stepControl]="personalDetailsForm">
+      <form [formGroup]="personalDetailsForm">
+        <ng-template matStepLabel>Personal Details</ng-template>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email"/>
+            <mat-error class="error-message" *ngIf="personalEmail && personalEmail.hasError('pattern')">
+              Please enter a valid email address
+            </mat-error>
+          </mat-form-field>
+          <div class="info-node info-node-warning" *ngIf="personalEmail && personalEmail.hasError('emailNotAvailable')">
+            {{emailNotAvailableMessage}}</div>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName"/>
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName"/>
+          </mat-form-field>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Personal Number</mat-label>
+            <input matInput formControlName="personalNumber"/>
+            <mat-error class="error-message" *ngIf="personalNumber && personalNumber.hasError('invalidPersonalNumber')">
+              Please enter a valid personal number
+            </mat-error>
+            <mat-error class="error-message" *ngIf="personalNumber && personalNumber.hasError('invalidAge')">
+              You are too young to apply for a loan
+            </mat-error>
+          </mat-form-field>
+          <div class="info-node info-node-warning" *ngIf="personalNumber && personalNumber.hasError('invalidPersonalNumber')">
+            {{personalNumberHintMessage}}</div>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber"/>
+            <mat-error class="error-message" *ngIf="personalPhoneNumber && personalPhoneNumber.hasError('pattern')">
+              Please enter a valid phone number
+            </mat-error>
+          </mat-form-field>
+          <div class="info-node info-node-warning" *ngIf="personalPhoneNumber && personalPhoneNumber.hasError('pattern')">
+            {{phoneNumberHintMessage}}</div>
+        </div>
+        <div class="form-field-wrapper">
+          <mat-form-field>
+            <mat-label>Address</mat-label>
+            <input matInput formControlName="address"/>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-step>
     <mat-step step [stepControl]="incomeDetailsForm">
       <form [formGroup]="incomeDetailsForm">
         <ng-template matStepLabel>Income information</ng-template>
@@ -34,8 +93,8 @@
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Your income</mat-label>
-            <input matInput formControlName="income"/>
-            <mat-error class="error-message" *ngIf="income && income.hasError('pattern')">
+            <input matInput formControlName="monthlyIncome"/>
+            <mat-error class="error-message" *ngIf="monthlyIncome && monthlyIncome.hasError('pattern')">
               Please enter a valid number
             </mat-error>
           </mat-form-field>
@@ -87,9 +146,6 @@
               </mat-form-field>
             </div>
           </ng-container>
-        </div>
-        <div *ngIf="availableMonthlyPayment!=null" class="info-node">
-          Monthly payment for a loan: {{availableMonthlyPayment | currency: 'EUR'}}
         </div>
         <div *ngIf="obligations.value == true && availableMonthlyPayment==0" class="info-node info-node-warning">
           Your total monthly obligations cannot exceed {{maxMonthlyObligationsPercentage | percent}} from your monthly
@@ -156,6 +212,11 @@
               Please select between {{minLoanTerm}} and {{maxLoanTerm}} years
             </mat-error>
           </mat-form-field>
+          <div *ngIf="showAgeWarning == true" class="info-node info-node-reminder">
+            You will be {{ ageAtLoanTermEnd }} years old when the loan is paid off. Please evaluate if you can afford
+            the
+            monthly payments.
+          </div>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
@@ -194,63 +255,6 @@
       </form>
     </mat-step>
 
-    <mat-step step [stepControl]="personalDetailsForm">
-      <form [formGroup]="personalDetailsForm">
-        <ng-template matStepLabel>Personal Details</ng-template>
-        <div class="form-field-wrapper">
-          <mat-form-field>
-            <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstName"/>
-          </mat-form-field>
-        </div>
-        <div class="form-field-wrapper">
-          <mat-form-field>
-            <mat-label>Last Name</mat-label>
-            <input matInput formControlName="lastName"/>
-          </mat-form-field>
-        </div>
-        <div class="form-field-wrapper">
-          <mat-form-field>
-            <mat-label>Personal Number</mat-label>
-            <input matInput formControlName="personalNumber"/>
-            <mat-error class="error-message" *ngIf="personalNumber && personalNumber.hasError('invalidPersonalNumber')">
-              Please enter a valid personal number
-            </mat-error>
-            <mat-error class="error-message" *ngIf="personalNumber && personalNumber.hasError('invalidAge')">
-              You are too young to apply for a loan
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div *ngIf="showAgeWarning == true" class="info-node info-node-reminder">
-          You will be {{ ageAtLoanTermEnd }} years old when the loan is paid off. Please evaluate if you can afford the
-          monthly payments.
-        </div>
-        <div class="form-field-wrapper">
-          <mat-form-field>
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email"/>
-            <mat-error class="error-message" *ngIf="personalEmail && personalEmail.hasError('pattern')">
-              Please enter a valid email address
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="form-field-wrapper">
-          <mat-form-field>
-            <mat-label>Phone Number</mat-label>
-            <input matInput formControlName="phoneNumber"/>
-            <mat-error class="error-message" *ngIf="personalPhoneNumber && personalPhoneNumber.hasError('pattern')">
-              Please enter a valid phone number
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="form-field-wrapper">
-          <mat-form-field>
-            <mat-label>Address</mat-label>
-            <input matInput formControlName="address"/>
-          </mat-form-field>
-        </div>
-      </form>
-    </mat-step>
     <mat-step step *ngIf="applicants.value==2" [stepControl]="coApplicantDetailsForm">
       <form [formGroup]="coApplicantDetailsForm">
         <ng-template matStepLabel>Co-applicant's Details</ng-template>
@@ -284,6 +288,8 @@
               Please enter a valid phone number
             </mat-error>
           </mat-form-field>
+          <div class="info-node info-node-warning" *ngIf="coApplicantPhoneNumber && coApplicantPhoneNumber.hasError('pattern')">
+            {{phoneNumberHintMessage}}</div>
         </div>
       </form>
     </mat-step>

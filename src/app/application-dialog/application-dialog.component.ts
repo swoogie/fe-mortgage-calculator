@@ -3,12 +3,14 @@ import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {ApiService} from "../services/api.service";
 import {Constants} from "../interfaces/constants";
 import {ApplicationData} from "../interfaces/application-data";
-import {AbstractControl, FormBuilder, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Euribor} from "../interfaces/euribor";
 import {EuriborValuesService} from "../services/euribor-values-service.service";
-import {combineLatest, debounceTime, merge} from "rxjs";
+import {debounceTime, merge} from "rxjs";
 import {StepperSelectionEvent} from "@angular/cdk/stepper";
+import {catchError, map} from 'rxjs/operators';
+import {HttpClient} from "@angular/common/http"; // import map operator
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -37,7 +39,7 @@ export class ApplicationDialogComponent implements OnInit {
   interestRateMargin: number;
   minDownPaymentAmount: number = 1500;
   maxDownPaymentAmount: number = 3199000;
-  monthlyPayment: number = 0;
+  // monthlyPayment: number = 0;
   totalHouseHoldIncome: number = 0;
   minHouseholdIncome: number;
   isSufficientHouseholdIncome: boolean;
@@ -45,6 +47,9 @@ export class ApplicationDialogComponent implements OnInit {
   totalMonthlyObligations: number = 0;
   availableMonthlyPayment: number = null;
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
+  phoneNumberHintMessage: string = "Valid phone number formats: +3706XXXXXXX, 86XXXXXXX +3705XXXXXXX or 85XXXXXXX";
+  personalNumberHintMessage: string = "Valid personal number formats: 3YYMMDDXXXX, 4YYMMDDXXXX, 5YYMMDDXXXX, 6YYMMDDXXXX";
+
   obligationFields = [
     {label: 'Mortgage Loans', controlName: 'mortgageLoans'},
     {label: 'Consumer Loans', controlName: 'consumerLoans'},
@@ -55,40 +60,45 @@ export class ApplicationDialogComponent implements OnInit {
   isLinear = true;
   attemptedToProceed = false;
   showAgeWarning: boolean = false;
+  userAge: number;
   ageAtLoanTermEnd: number;
+  isEmailAvailable: boolean;
+  emailNotAvailableMessage: string;
   incomeDetailsForm = formBuilder.group({
-    applicants: [this.applicationData.applicants, Validators.required],
-    amountOfKids: [this.applicationData.amountOfKids, Validators.required],
-    income: [this.applicationData.income,
+    applicants: [this.applicationData.applicants as number, Validators.required],
+    amountOfKids: [this.applicationData.amountOfKids as number, Validators.required],
+    monthlyIncome: [this.applicationData.monthlyIncome as number,
       [
         Validators.required,
         Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')
       ],
     ],
     coApplicantsIncome: [null as number],
-    obligations: [this.applicationData.obligations, Validators.required],
-    mortgageLoans: [this.applicationData.mortgageLoans],
-    consumerLoans: [this.applicationData.consumerLoans],
-    leasingAmount: [this.applicationData.leasingAmount],
-    creditCardLimit: [this.applicationData.creditCardLimit],
-    canProceed: [false, Validators.requiredTrue]
+    obligations: [this.applicationData.obligations as boolean, Validators.required],
+    mortgageLoans: [this.applicationData.mortgageLoans as number],
+    consumerLoans: [this.applicationData.consumerLoans as number],
+    leasingAmount: [this.applicationData.leasingAmount as number],
+    creditCardLimit: [this.applicationData.creditCardLimit as number],
+    canProceed: [true, Validators.requiredTrue]
+  }, {
+    updateOn: 'change'
   });
   loanDetailsForm = formBuilder.group({
       realEstateAddress: [this.applicationData.realEstateAddress, Validators.required],
-      realEstatePrice: [this.applicationData.realEstatePrice, [
+      realEstatePrice: [this.applicationData.realEstatePrice as number, [
         Validators.required,
         Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
         Validators.max(this.maxRealEstatePrice),
         Validators.min(this.minRealEstatePrice),
       ],
       ],
-      downPayment: [this.applicationData.downPayment,
+      downPayment: [this.applicationData.downPayment as number,
         [
           Validators.required,
           Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),
         ],
       ],
-      loanTerm: [this.applicationData.loanTerm,
+      loanTerm: [this.applicationData.loanTerm as number,
         [
           Validators.required,
           Validators.pattern('[0-9]*')
@@ -112,6 +122,7 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.required,
         Validators.email,
         Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")],
+      this.emailAvailabilityValidator()
     ],
     phoneNumber: [this.applicationData.phoneNumber,
       [
@@ -119,7 +130,7 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
     ],
     address: [this.applicationData.address, Validators.required]
-  });
+  }, {updateOn: 'blur'});
   coApplicantDetailsForm = formBuilder.group({
     firstName: [this.applicationData.firstName, Validators.required],
     lastName: [this.applicationData.lastName, Validators.required],
@@ -128,6 +139,7 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.required,
         Validators.email,
         Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")],
+      this.emailAvailabilityValidator()
     ],
     phoneNumber: [this.applicationData.phoneNumber,
       [
@@ -135,6 +147,28 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
     ],
   });
+
+  emailAvailabilityValidator() {
+    return (control: FormControl) => {
+      const email = control.value;
+      return this.apiService.checkEmail(email).pipe(
+        map((response: any) => {
+          this.isEmailAvailable = true;
+          return response.available ? null : {emailNotAvailable: true};
+        }),
+        catchError((error) => {
+          if (error.status === 409) {
+            this.isEmailAvailable = false;
+            this.emailNotAvailableMessage = error.error;
+            return [{emailNotAvailable: true}];
+          } else {
+            console.error('An unexpected error occurred:', error);
+            return [];
+          }
+        })
+      );
+    };
+  }
 
   private personalNumberValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -171,7 +205,7 @@ export class ApplicationDialogComponent implements OnInit {
       const ageDate = new Date(ageDiff);
 
       const age = ageDate.getUTCFullYear() - 1970;
-
+      this.userAge = age;
       if (matches[1] === '5' || matches[1] === '6') {
         if (age < 0) {
           return {invalidPersonalNumber: true};
@@ -180,38 +214,73 @@ export class ApplicationDialogComponent implements OnInit {
           return {invalidAge: true};
         }
       }
-      const ageAtLoanTermEnd = age + +this.loanTerm.value;
-      if (ageAtLoanTermEnd > 65) {
-        this.showAgeWarning = true;
-        this.ageAtLoanTermEnd = ageAtLoanTermEnd;
-      } else {
-        this.showAgeWarning = false;
-        this.ageAtLoanTermEnd = null;
-      }
+      this.updateShowAgeWarning(age, +this.loanTerm.value);
       return null;
     };
   }
+
 
   constructor(private euriborValuesService: EuriborValuesService,
               private apiService: ApiService,
               @Inject(MAT_DIALOG_DATA)
               public applicationData: ApplicationData,
               private _snackBar: MatSnackBar,
+              private http: HttpClient
   ) {
+
+    const sufficientIncomeFormControls = [this.applicants, this.amountOfKids, this.monthlyIncome, this.coApplicantsIncome]
+    sufficientIncomeFormControls.forEach(control => {
+      control.valueChanges.subscribe(() => {
+        this.updateSufficientHouseholdIncome();
+      });
+    });
+
+    const sufficientMonthlyPaymentFormControls = [this.realEstatePrice, this.downPayment, this.loanTerm]
+    sufficientMonthlyPaymentFormControls.forEach(control => {
+      control.valueChanges.subscribe(() => {
+this.updateSufficientMonthlyPayment();
+      });
+    });
+    this.paymentScheduleType.valueChanges.subscribe(() => {
+      this.updateSufficientMonthlyPayment();
+    });
+    this.euribor.valueChanges.subscribe(() => {
+      this.updateSufficientMonthlyPayment();
+    });
+    this.personalEmail.valueChanges.subscribe((email) => {
+      this.apiService.checkEmail(email).subscribe(
+        (response
+           :
+           any
+        ) => {
+          // Handle successful response (JSON object)
+          this.isEmailAvailable = response.available;
+          this.emailNotAvailableMessage = response.message;
+        }
+        ,
+        (error) => {
+          // Handle error response
+          if (error.status === 409) {
+            this.isEmailAvailable = false;
+            this.emailNotAvailableMessage = error.error.message;
+          } else {
+            console.error('An unexpected error occurred:', error);
+          }
+        }
+      );
+    });
+
     this.applicants.valueChanges.subscribe((value: number) => {
       this.updateCoApplicantsIncomeValidations(value);
     });
 
-    combineLatest([this.applicants.valueChanges, this.amountOfKids.valueChanges, this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(() => {
-      this.updateSufficientHouseholdIncome();
-    });
 
-    this.income.valueChanges.subscribe((value: number) => {
+    this.monthlyIncome.valueChanges.subscribe((value: number) => {
       this.updateAvailableMonthlyPayment();
     });
 
-    combineLatest([this.income.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(([income, coApplicantsIncome]) => {
-      this.updateTotalHouseHoldIncome(income, coApplicantsIncome);
+    merge([this.monthlyIncome.valueChanges, this.coApplicantsIncome.valueChanges]).subscribe(() => {
+      this.updateTotalHouseHoldIncome(this.monthlyIncome.value, this.coApplicantsIncome.value);
       this.updateAvailableMonthlyPayment();
     });
 
@@ -220,9 +289,17 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
     });
 
-    merge(this.mortgageLoans.valueChanges, this.consumerLoans.valueChanges, this.leasingAmount.valueChanges, this.creditCardLimit.valueChanges).subscribe(() => {
-      this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
-      this.updateAvailableMonthlyPayment();
+    this.obligationFields.forEach(formControl => {
+      const control = this.incomeDetailsForm.get(formControl.controlName)
+      control.valueChanges.subscribe((value) => {
+        const stringValue = String(value);
+        if (value > 0 && stringValue.startsWith('0')) {
+          control.setValue(stringValue.substring(1));
+        }
+
+        this.updateMonthlyObligations(this.mortgageLoans.value, this.consumerLoans.value, this.leasingAmount.value, this.creditCardLimit.value);
+        this.updateAvailableMonthlyPayment();
+      });
     });
 
     this.realEstatePrice.valueChanges
@@ -239,15 +316,18 @@ export class ApplicationDialogComponent implements OnInit {
 
     this.loanTerm.valueChanges.subscribe((loanTermValue) => {
       this.updateLoanTerm(loanTermValue);
+      this.updateShowAgeWarning(this.userAge, loanTermValue);
     });
 
-    combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges]).subscribe(([realEstatePrice, downPayment]) => {
+    merge([this.realEstatePrice.valueChanges, this.downPayment.valueChanges]).subscribe(() => {
       this.updateLoanAmount();
     });
-    combineLatest([this.realEstatePrice.valueChanges, this.downPayment.valueChanges, this.loanTerm.valueChanges, this.euribor.valueChanges, this.paymentScheduleType.valueChanges]).subscribe(([realEstatePrice, downPayment, loanTerm, euribor, paymentScheduleType]) => {
+
+    merge([this.realEstatePrice.valueChanges, this.downPayment.valueChanges, this.loanTerm.valueChanges, this.euribor.valueChanges, this.paymentScheduleType.valueChanges]).subscribe(() => {
       this.updateSufficientMonthlyPayment();
     });
   }
+
 
   private updateRealEstatePriceValue(realEstatePriceValue: number) {
     if (realEstatePriceValue > this.maxRealEstatePrice) {
@@ -316,7 +396,7 @@ export class ApplicationDialogComponent implements OnInit {
   ngOnInit() {
     this.euriborValues = this.euriborValuesService.getEuriborValues();
     this.getConstants();
-    this.updateTotalHouseHoldIncome(this.income.value, this.coApplicantsIncome.value);
+    this.updateTotalHouseHoldIncome(this.monthlyIncome.value, this.coApplicantsIncome.value);
     this.updateAvailableMonthlyPayment()
   }
 
@@ -403,16 +483,24 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateSufficientHouseholdIncome() {
+    this.isSufficientHouseholdIncome = true;
     let minHouseholdIncome = 0;
     if (this.applicants.value == 1) {
+      if (!this.monthlyIncome.value) {
+        return;
+      }
       minHouseholdIncome = 600;
     } else if (this.applicants.value == 2) {
+      if (!this.monthlyIncome.value || !this.coApplicantsIncome.value) {
+        return;
+      }
       minHouseholdIncome = 1000;
     }
 
-    minHouseholdIncome = minHouseholdIncome + this.amountOfKids.value * 300;
+    minHouseholdIncome = minHouseholdIncome + +this.amountOfKids.value * 300;
     this.minHouseholdIncome = minHouseholdIncome;
-    if (this.totalHouseHoldIncome < minHouseholdIncome) {
+    const totalIncome = +this.monthlyIncome.value + +this.coApplicantsIncome.value;
+    if (totalIncome < minHouseholdIncome) {
       this.isSufficientHouseholdIncome = false;
     } else {
       this.isSufficientHouseholdIncome = true;
@@ -434,17 +522,18 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   updateAvailableMonthlyPayment() {
-    const income = this.getTotalIncome();
+    const income = +this.monthlyIncome.value + +this.coApplicantsIncome.value;
     const monthlyCapacity = income * this.maxMonthlyObligationsPercentage;
     if (monthlyCapacity > 0) {
       const monthlyObligations = this.totalMonthlyObligations;
       if (monthlyObligations > monthlyCapacity) {
         this.availableMonthlyPayment = 0;
       } else {
-        this.availableMonthlyPayment = monthlyCapacity - monthlyObligations;
+        this.availableMonthlyPayment = Math.round(monthlyCapacity - monthlyObligations);
+
       }
     } else {
-      this.availableMonthlyPayment = null;
+      this.availableMonthlyPayment = 0;
     }
     this.updateCanProceedToLoanDetails();
   }
@@ -452,13 +541,25 @@ export class ApplicationDialogComponent implements OnInit {
   updateCanProceedToLoanDetails() {
     if (this.availableMonthlyPayment > 0 && this.isSufficientHouseholdIncome == true) {
       this.canProceedToLoanDetails.setValue(true);
+      this.updateSufficientMonthlyPayment();
     } else {
       this.canProceedToLoanDetails.setValue(false);
     }
   }
 
+  updateShowAgeWarning(age: number, loanTerm: number) {
+    const ageAtLoanTermEnd = age + +this.loanTerm.value;
+    this.ageAtLoanTermEnd = ageAtLoanTermEnd;
+
+    if (this.loanTerm.value && ageAtLoanTermEnd > 65) {
+      this.showAgeWarning = true;
+    } else {
+      this.showAgeWarning = false;
+    }
+  }
+
   getTotalIncome() {
-    return this.applicants.value > 1 ? this.totalHouseHoldIncome : this.income.value;
+    return this.applicants.value > 1 ? this.totalHouseHoldIncome : this.monthlyIncome.value;
   }
 
   onSubmitApplyClick(): void {
@@ -466,32 +567,41 @@ export class ApplicationDialogComponent implements OnInit {
     this.saveLoanDetails();
     console.log(this.applicationData)
     this.apiService.postApplication(this.applicationData).subscribe({
-      next: (success) => {
-        console.log(success);
+      next: () => {
+        console.log("Application submitted successfully");
       },
       error: (err) => {
         console.log(err);
       }
-    })
+    });
   }
 
   saveLoanDetails(): void {
-    const loanDataKeys: string[] = ["realEstateAddress", "realEstatePrice", "downPayment", "loanTerm",
-      "paymentScheduleType", "euribor"];
-    const incomeDataKeys: string[] = ["applicants", "amountOfKids", "income", "coApplicantsIncome", "obligations", "mortgageLoans", "consumerLoans",
-      "leasingAmount", "creditCardLimit", "monthlyPayment"];
+    const loanDataKeys: string[] = ["realEstatePrice", "downPayment", "loanTerm",
+      ];
+    const incomeDataKeys: string[] = ["applicants", "amountOfKids", "monthlyIncome", "coApplicantsIncome", "obligations", "mortgageLoans", "consumerLoans",
+      "leasingAmount", "creditCardLimit"];
     const personalDataKeys: string[] = ["firstName", "lastName", "personalNumber",
       "email", "phoneNumber", "address"];
+
     loanDataKeys.forEach((key) => {
-      this.applicationData[key] = this.loanDetailsForm.value[key]
+      this.applicationData[key] = +this.loanDetailsForm.value[key]
     });
     incomeDataKeys.forEach((key) => {
-      this.applicationData[key] = this.incomeDetailsForm.value[key]
+      this.applicationData[key] = +this.incomeDetailsForm.value[key]
     });
     personalDataKeys.forEach((key) => {
       this.applicationData[key] = this.personalDetailsForm.value[key]
     });
+    this.applicationData.paymentScheduleType =  this.paymentScheduleType.value.toUpperCase();
+    this.applicationData.realEstateAddress = this.realEstateAddress.value;
     this.applicationData.loanAmount = this.loanAmount;
+    this.applicationData.interestRateMargin = this.interestRateMargin;
+    this.applicationData.euriborTerm = this.euribor.value.timeInMonths;
+    this.applicationData.interestRateEuribor = this.euribor.value.interestRate;
+    this.applicationData.totalHouseholdIncome = this.totalHouseHoldIncome;
+    this.applicationData.monthlyPayment = this.availableMonthlyPayment;
+    this.applicationData.coApplicantEmail = this.coApplicantEmail.value;
   }
 
   get realEstateAddress() {
@@ -511,8 +621,8 @@ export class ApplicationDialogComponent implements OnInit {
     return this.loanDetailsForm.get('loanTerm');
   }
 
-  get income() {
-    return this.incomeDetailsForm.get('income');
+  get monthlyIncome() {
+    return this.incomeDetailsForm.get('monthlyIncome');
   }
 
   get obligations() {
@@ -604,7 +714,9 @@ export class ApplicationDialogComponent implements OnInit {
     let totalMortgagePayment = 0;
     const loanTermInMonths = this.loanTerm.value * 12;
     const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
-
+if(!this.euribor.value){
+  return;
+}
     const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
     let loanAmount: number = this.loanAmount;
     if (this.paymentScheduleType.value == 'annuity') {
@@ -621,6 +733,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.canProceedToPersonalDetails.setValue(false);
     }
   }
+
 
   get canProceedToPersonalDetails() {
     return this.loanDetailsForm.get('canProceed');

@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -19,10 +20,22 @@ interface ChartData {
 export class MonthlyCalcComponent implements OnInit {
   optionValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   fields = [
-    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
-    { label: 'Consumer Loans', controlName: 'consumerLoans' },
-    { label: 'Leasing Amount', controlName: 'leasingAmount' },
-    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
+    {
+      label: 'Mortgage Loans',
+      controlName: 'mortgageLoans',
+    },
+    {
+      label: 'Consumer Loans',
+      controlName: 'consumerLoans',
+    },
+    {
+      label: 'Leasing Amount',
+      controlName: 'leasingAmount',
+    },
+    {
+      label: 'Credit Card Limit',
+      controlName: 'creditCardLimit',
+    },
   ];
   chartFields = [
     { label: 'Mortgage loans', controlName: 'mortgageLoans' },
@@ -50,15 +63,15 @@ export class MonthlyCalcComponent implements OnInit {
       ],
       monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
       obligation: [false as boolean, Validators.required],
-      mortgageLoans: [0, Validators.pattern('[0-9]*')],
-      consumerLoans: [0, Validators.pattern('[0-9]*')],
-      leasingAmount: [0, Validators.pattern('[0-9]*')],
-      creditCardLimit: [0, Validators.pattern('[0-9]*')],
+      mortgageLoans: ['', Validators.pattern('[0-9]*')],
+      consumerLoans: ['', Validators.pattern('[0-9]*')],
+      leasingAmount: ['', Validators.pattern('[0-9]*')],
+      creditCardLimit: ['', Validators.pattern('[0-9]*')],
     },
     { updateOn: 'change' }
   );
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private _snackBar: MatSnackBar) {
     this.monthlyForm.valueChanges.subscribe((value) => {
       // console.log('form changed', value);
     });
@@ -90,8 +103,8 @@ export class MonthlyCalcComponent implements OnInit {
       const commaIndex = this.income.value.indexOf(',');
       this.income.setValue(
         this.income.value.substring(0, commaIndex) +
-          '.' +
-          this.income.value.substring(commaIndex + 1)
+        '.' +
+        this.income.value.substring(commaIndex + 1)
       );
     }
   }
@@ -103,16 +116,6 @@ export class MonthlyCalcComponent implements OnInit {
       this.monthlyForm.markAllAsTouched(); // mark all fields as touched to trigger validation messages
     }
   }
-
-  positionOptions: TooltipPosition[] = [
-    'after',
-    'before',
-    'above',
-    'below',
-    'left',
-    'right',
-  ];
-  position = this.positionOptions[2];
 
   get applicants() {
     return this.monthlyForm.get('applicants');
@@ -210,7 +213,7 @@ export class MonthlyCalcComponent implements OnInit {
         applicants: this.applicants.value,
         amountOfKids: this.amountOfKids.value,
         obligations: this.obligation.value,
-        income: this.income.value,
+        monthlyIncome: this.income.value,
         mortgageLoans: this.mortgageLoans.value,
         consumerLoans: this.consumerLoans.value,
         leasingAmount: this.leasingAmount.value,
@@ -218,5 +221,20 @@ export class MonthlyCalcComponent implements OnInit {
       },
       minWidth: '400px',
     });
+  }
+  clickMe(event: Event) {
+    this._snackBar.open(
+      'Please provide outstanding loan amounts. Your monthly payment is being calculated taking in account such parameters - \
+    Mortgage loan 25years/5.5%/annuity;  \
+    Consumer loan 5years/10%/annuity;  \
+    Leasing amount 5years/7%/annuity;  \
+    Credit card limit 3years. \
+    ',
+      null,
+      {
+        duration: 15000,
+      }
+    );
+    event.stopPropagation();
   }
 }

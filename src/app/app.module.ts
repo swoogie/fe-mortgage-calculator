@@ -27,14 +27,14 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
 import { DonutComponent } from './donut/donut.component';
 import { ChartModule } from 'angular-highcharts';
-
+import { MatMenuModule } from '@angular/material/menu';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { UserpageComponent } from './userpage/userpage.component';
 import { AdminpageComponent } from './adminpage/adminpage.component';
-import { AdminComponent } from './admin/admin.component';
 import { UserGuard } from './guard/user.guard';
 import { AdminGuard } from './guard/admin.guard';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-constants.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +49,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     DonutComponent,
     UserpageComponent,
     AdminpageComponent,
-    AdminComponent,
+    AdminpageConstantsComponent,
   ],
   imports: [
     BrowserModule,
@@ -69,19 +69,22 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
     MatRadioModule,
     MatCardModule,
     HttpClientModule,
+    MatMenuModule,
     MatDialogModule,
     MatStepperModule,
     ChartModule,
     MatGridListModule,
   ],
-  providers: [MatSnackBarModule,
-     UserGuard, 
-     AdminGuard,
+  providers: [
+    MatSnackBarModule,
+    UserGuard,
+    AdminGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
-      multi: true 
-    }], 
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
