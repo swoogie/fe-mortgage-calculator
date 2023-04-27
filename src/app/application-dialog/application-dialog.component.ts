@@ -458,13 +458,15 @@ export class ApplicationDialogComponent implements OnInit {
     }
   }
 
+  euriborCompareFunction(option: Euribor, value: Euribor | null): boolean {
+    return option.timeInMonths === value?.timeInMonths;
+  }
+
   saveData() {
     const incomeDetails = this.incomeDetailsForm.value;
     const loanData = this.loanDetailsForm.value;
     const coApplicantsData = this.coApplicantDetailsForm.value;
     const personalDetailData = this.personalDetailsForm.value;
-    // const euriborInterest = this.loanDetailsForm.value.euribor.interestRate;
-    // const euriborTime = this.loanDetailsForm.value.euribor.timeInMonths;
     localStorage.setItem('incomeDetails', JSON.stringify(incomeDetails));
     localStorage.setItem('loanData', JSON.stringify(loanData));
     localStorage.setItem('coApplicantsData', JSON.stringify(coApplicantsData));
@@ -472,8 +474,6 @@ export class ApplicationDialogComponent implements OnInit {
       'personalDetailData',
       JSON.stringify(personalDetailData)
     );
-    // localStorage.setItem('euriborInterest', JSON.stringify(euriborInterest));
-    // localStorage.setItem('euriborTime', JSON.stringify(euriborTime));
   }
 
   loadData() {
@@ -485,8 +485,6 @@ export class ApplicationDialogComponent implements OnInit {
     const personalDetailData = JSON.parse(
       localStorage.getItem('personalDetailData')
     );
-    // const euriborTime = JSON.parse(localStorage.getItem('euriborTime'));
-    // const euriborInterest = JSON.parse(localStorage.getItem('euriborInterest'));
     if (savedData) {
       this.incomeDetailsForm.patchValue(savedData);
     }
@@ -499,25 +497,15 @@ export class ApplicationDialogComponent implements OnInit {
     if (personalDetailData) {
       this.personalDetailsForm.patchValue(personalDetailData);
     }
-    // if (euriborTime) {
-    //   this.incomeDetailsForm.patchValue(euriborTime);
-    // }
-    // if (euriborInterest) {
-    //   this.incomeDetailsForm.patchValue(euriborInterest);
-    // }
   }
 
   ngOnInit() {
     this.euriborValues = this.euriborValuesService.getEuriborValues();
     this.loadData();
-    // const some = this.loanDetailsForm.value.euribor.interestRate;
-
     this.incomeDetailsForm.valueChanges.subscribe(() => {
       this.saveData();
     });
     this.loanDetailsForm.valueChanges.subscribe(() => {
-      // const some = this.loanDetailsForm.value.euribor.interestRate;
-      // const other = this.loanDetailsForm.value.euribor.timeInMonths;
       this.saveData();
     });
     this.coApplicantDetailsForm.valueChanges.subscribe(() => {
