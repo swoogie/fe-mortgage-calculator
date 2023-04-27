@@ -23,22 +23,18 @@ export class MonthlyCalcComponent implements OnInit {
     {
       label: 'Mortgage Loans',
       controlName: 'mortgageLoans',
-      info: 'Please provide outstanding loan amount',
     },
     {
       label: 'Consumer Loans',
       controlName: 'consumerLoans',
-      info: 'Please provide outstanding loan amount',
     },
     {
       label: 'Leasing Amount',
       controlName: 'leasingAmount',
-      info: 'Please provide outstanding loan amount',
     },
     {
       label: 'Credit Card Limit',
       controlName: 'creditCardLimit',
-      info: 'Please provide full amount of credit limit',
     },
   ];
   chartFields = [
@@ -120,16 +116,6 @@ export class MonthlyCalcComponent implements OnInit {
       this.monthlyForm.markAllAsTouched(); // mark all fields as touched to trigger validation messages
     }
   }
-
-  positionOptions: TooltipPosition[] = [
-    'after',
-    'before',
-    'above',
-    'below',
-    'left',
-    'right',
-  ];
-  position = this.positionOptions[2];
 
   get applicants() {
     return this.monthlyForm.get('applicants');
