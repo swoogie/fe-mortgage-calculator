@@ -46,8 +46,10 @@ export class DonutComponent implements OnInit, OnChanges {
         plotBackgroundColor: '#F6F8FF',
       },
       tooltip: {
-        // enabled: false,
-        pointFormat: '<b>{point.percentage:.1f}%</b>',
+        formatter: function () {
+          return '<b>' + Highcharts.numberFormat(this.y, 2) + ' €</b>';
+        },
+        // pointFormat: '<b> {point.y} Euro</b>',
         shadow: false,
       },
       plotOptions: {
