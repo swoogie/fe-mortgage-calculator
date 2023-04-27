@@ -103,8 +103,8 @@ export class MonthlyCalcComponent implements OnInit {
       const commaIndex = this.income.value.indexOf(',');
       this.income.setValue(
         this.income.value.substring(0, commaIndex) +
-          '.' +
-          this.income.value.substring(commaIndex + 1)
+        '.' +
+        this.income.value.substring(commaIndex + 1)
       );
     }
   }
@@ -213,7 +213,7 @@ export class MonthlyCalcComponent implements OnInit {
         applicants: this.applicants.value,
         amountOfKids: this.amountOfKids.value,
         obligations: this.obligation.value,
-        income: this.income.value,
+        monthlyIncome: this.income.value,
         mortgageLoans: this.mortgageLoans.value,
         consumerLoans: this.consumerLoans.value,
         leasingAmount: this.leasingAmount.value,

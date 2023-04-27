@@ -93,8 +93,8 @@
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">
             <mat-label>Your income</mat-label>
-            <input matInput formControlName="income"/>
-            <mat-error class="error-message" *ngIf="income && income.hasError('pattern')">
+            <input matInput formControlName="monthlyIncome"/>
+            <mat-error class="error-message" *ngIf="monthlyIncome && monthlyIncome.hasError('pattern')">
               Please enter a valid number
             </mat-error>
           </mat-form-field>
@@ -211,12 +211,12 @@
             || loanTerm.hasError('max'))">
               Please select between {{minLoanTerm}} and {{maxLoanTerm}} years
             </mat-error>
-            <div *ngIf="showAgeWarning == true" class="info-node info-node-reminder">
-              You will be {{ ageAtLoanTermEnd }} years old when the loan is paid off. Please evaluate if you can afford
-              the
-              monthly payments.
-            </div>
           </mat-form-field>
+          <div *ngIf="showAgeWarning == true" class="info-node info-node-reminder">
+            You will be {{ ageAtLoanTermEnd }} years old when the loan is paid off. Please evaluate if you can afford
+            the
+            monthly payments.
+          </div>
         </div>
         <div class="form-field-wrapper">
           <mat-form-field class="input-wrap">

@@ -3,7 +3,7 @@ import {Euribor} from "./euribor";
 export interface ApplicationData {
   applicants: number;
   amountOfKids: number;
-  income?: number;
+  monthlyIncome: number;
   coApplicantsIncome: number;
   obligations: boolean;
   mortgageLoans: number;
@@ -24,4 +24,8 @@ export interface ApplicationData {
   email: string;
   phoneNumber: string;
   address: string;
+  interestRateMargin: number;
+  euriborTerm: number;
+  interestRateEuribor: number;
+  totalHouseholdIncome: number;
 }
