@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { Role } from '../interfaces/role';
 import jwtDecode from 'jwt-decode';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,8 @@ export class UserAuthService {
   private adminApiUrl =
     'https://be-mortgage-calculator.onrender.com/api/v1/auth/admin';
 
+    private loggedIn = false; 
+
   public getToken(): string {
     return localStorage.getItem('token');
   }
@@ -34,7 +37,7 @@ export class UserAuthService {
   }
 
   requestHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private router : Router) {}
 
   login(email: string, password: string): Observable<Role> {
     return this.httpClient.post<Role>(
@@ -87,6 +90,7 @@ export class UserAuthService {
 
   checkIfUserLoggedIn() {
     return !!localStorage.getItem('userToken');
+    
   }
 
   checkIfAdminLoggedIn() {
