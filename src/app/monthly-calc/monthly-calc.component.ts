@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -19,10 +20,26 @@ interface ChartData {
 export class MonthlyCalcComponent implements OnInit {
   optionValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   fields = [
-    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
-    { label: 'Consumer Loans', controlName: 'consumerLoans' },
-    { label: 'Leasing Amount', controlName: 'leasingAmount' },
-    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
+    {
+      label: 'Mortgage Loans',
+      controlName: 'mortgageLoans',
+      info: 'Please provide outstanding loan amount',
+    },
+    {
+      label: 'Consumer Loans',
+      controlName: 'consumerLoans',
+      info: 'Please provide outstanding loan amount',
+    },
+    {
+      label: 'Leasing Amount',
+      controlName: 'leasingAmount',
+      info: 'Please provide outstanding loan amount',
+    },
+    {
+      label: 'Credit Card Limit',
+      controlName: 'creditCardLimit',
+      info: 'Please provide full amount of credit limit',
+    },
   ];
   chartFields = [
     { label: 'Mortgage loans', controlName: 'mortgageLoans' },
@@ -58,7 +75,7 @@ export class MonthlyCalcComponent implements OnInit {
     { updateOn: 'change' }
   );
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private _snackBar: MatSnackBar) {
     this.monthlyForm.valueChanges.subscribe((value) => {
       // console.log('form changed', value);
     });
@@ -218,5 +235,20 @@ export class MonthlyCalcComponent implements OnInit {
       },
       minWidth: '400px',
     });
+  }
+  clickMe(event: Event) {
+    this._snackBar.open(
+      'Please provide outstanding loan amounts. Your monthly payment is being calculated taking in account such parameters - \
+    Mortgage loan 25years/5.5%/annuity;  \
+    Consumer loan 5years/10%/annuity;  \
+    Leasing amount 5years/7%/annuity;  \
+    Credit card limit 3years. \
+    ',
+      null,
+      {
+        duration: 15000,
+      }
+    );
+    event.stopPropagation();
   }
 }

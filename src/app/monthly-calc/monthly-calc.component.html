@@ -48,13 +48,14 @@
       </mat-form-field>
       <div class="obligationContainer">
         <mat-label class="block">Do you have any obligations?</mat-label>
-        <mat-icon
-          class="tooltip"
-          matSuffix
-          matTooltip="Represent any outstanding debts or regular payments that a party must make."
-          [matTooltipPosition]="'right'"
-          >help_outline</mat-icon
+        <button
+          matPrefix
+          mat-icon-button
+          (click)="clickMe($event)"
+          matTooltipPosition="above"
         >
+          <mat-icon class="info-btn">info</mat-icon>
+        </button>
       </div>
       <mat-radio-group
         aria-label="Select an option"
@@ -74,6 +75,7 @@
         <ng-container *ngFor="let field of fields">
           <mat-form-field class="input-wrap">
             <mat-label>{{ field.label }}</mat-label>
+
             <input
               matInput
               formControlName="{{ field.controlName }}"
