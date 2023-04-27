@@ -28,4 +28,5 @@ export interface ApplicationData {
   euriborTerm: number;
   interestRateEuribor: number;
   totalHouseholdIncome: number;
+  coApplicantEmail: string;
 }

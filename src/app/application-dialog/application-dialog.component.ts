@@ -567,8 +567,8 @@ this.updateSufficientMonthlyPayment();
     this.saveLoanDetails();
     console.log(this.applicationData)
     this.apiService.postApplication(this.applicationData).subscribe({
-      next: (success) => {
-        console.log(success);
+      next: () => {
+        console.log("Application submitted successfully");
       },
       error: (err) => {
         console.log(err);
@@ -601,6 +601,7 @@ this.updateSufficientMonthlyPayment();
     this.applicationData.interestRateEuribor = this.euribor.value.interestRate;
     this.applicationData.totalHouseholdIncome = this.totalHouseHoldIncome;
     this.applicationData.monthlyPayment = this.availableMonthlyPayment;
+    this.applicationData.coApplicantEmail = this.coApplicantEmail.value;
   }
 
   get realEstateAddress() {
@@ -710,15 +711,11 @@ this.updateSufficientMonthlyPayment();
   }
 
   updateSufficientMonthlyPayment() {
-console.log("updateSufficientMonthlyPayment");
     let totalMortgagePayment = 0;
     const loanTermInMonths = this.loanTerm.value * 12;
     const usersTotalCapacity = this.availableMonthlyPayment * loanTermInMonths;
 if(!this.euribor.value){
-  console.log("no euribor - return");
   return;
-}else{
-  console.log("euribor exists");
 }
     const monthlyInterestRate = ((this.euribor.value.interestRate / 100) + this.interestRateMargin) / 12;
     let loanAmount: number = this.loanAmount;
