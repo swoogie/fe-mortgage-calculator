@@ -24,7 +24,11 @@ const routes: Routes = [
   },
   { path: 'user-page', component: UserpageComponent, canActivate: [UserGuard] },
   { path: 'test', component: AdminpageConstantsComponent },
-  { path: 'admin/applications', component: ApplicationDashComponent },
+  {
+    path: 'admin/applications',
+    component: ApplicationDashComponent,
+    canActivate: [AdminGuard],
+  },
   { path: '**', component: PagenotfoundComponent },
 ];
 

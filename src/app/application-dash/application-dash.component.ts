@@ -1,35 +1,66 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTable } from '@angular/material/table';
 import {
-  ApplicationDashDataSource,
-  ApplicationDashItem,
-} from './application-dash-datasource';
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+
+export interface Application {
+  id: number;
+  info: string;
+  status: string;
+}
+
+const APPLICATION_DATA = [
+  {
+    id: 1,
+    info: 'application 1',
+    status: 'active',
+  },
+  {
+    id: 2,
+    info: 'application 2',
+    status: 'active',
+  },
+  {
+    id: 3,
+    info: 'application 3',
+    status: 'active',
+  },
+  {
+    id: 4,
+    info: 'application 4',
+    status: 'active',
+  },
+  {
+    id: 5,
+    info: 'application 5',
+    status: 'active',
+  },
+];
 
 @Component({
   selector: 'app-application-dash',
   templateUrl: './application-dash.component.html',
   styleUrls: ['./application-dash.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition(
+        'expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+      ),
+    ]),
+  ],
 })
-export class ApplicationDashComponent implements AfterViewInit {
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<ApplicationDashItem>;
-  dataSource: ApplicationDashDataSource;
-
-  /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
+export class ApplicationDashComponent {
+  dataSource = APPLICATION_DATA;
   displayedColumns = ['id', 'info', 'status', 'actions'];
-
-  constructor() {
-    this.dataSource = new ApplicationDashDataSource();
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.table.dataSource = this.dataSource;
-  }
+  columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
+  expandedElement: Application | null;
 
   approve() {
     throw new Error('Method not implemented.');
