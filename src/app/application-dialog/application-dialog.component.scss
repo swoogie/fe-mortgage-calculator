@@ -65,19 +65,26 @@ mat-radio-group {
   border-radius: 3px;
 }
 
-.info-node-warning{
+.info-node-warning {
   color: #d79200;
   background-color: #fff3d5;
   border: 1px solid #fadc64;
   padding: 5px;
 }
-.info-node-reminder{
+
+.info-node-reminder {
   color: #183916;
   background-color: #cbf1c3;
   border: 1px solid #225220;
   padding: 5px;
 }
-.form-submission-info th{
+
+.form-submission-info th {
   text-align: left;
-  padding:10px;
+  padding: 10px;
+}
+
+.cdk-overlay-backdrop {
+  background: rgb(0 0 0 / 0%);
+  backdrop-filter: blur(2640.7742px);
 }

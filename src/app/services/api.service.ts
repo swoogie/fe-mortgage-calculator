@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApplicationData } from '../interfaces/application-data';
@@ -13,19 +13,20 @@ export class ApiService {
   constants: Constants;
 
   constructor(private http: HttpClient) { }
+  requestHeader = new HttpHeaders({ 'Content-type': 'application/json' })
 
   getConstants(): Observable<Constants> {
     return this.http.get<Constants>(`${this.apiUrl}/constants`);
   }
-  putConstants(newConstants: any): Observable<any>{
-    return this.http.put(`${this.apiUrl}/constants`, newConstants)
+  putConstants(newConstants: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/constants`, newConstants, { headers: this.requestHeader })
   }
 
   postApplication(applicationData: ApplicationData): Observable<any> {
     return this.http.post(`${this.apiUrl}/new-application`, applicationData)
   }
 
-  checkEmail(email:string):Observable<any>{
+  checkEmail(email: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/check-email?email=${email}`);
   }
 }
