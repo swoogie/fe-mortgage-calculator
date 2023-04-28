@@ -53,7 +53,17 @@ tr.example-application-row:not(.example-expanded-row):active {
 }
 
 .example-application-description {
+  display: inline-block;
   padding: 16px;
+}
+
+.application-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+  div {
+    margin-left: 20px;
+  }
 }
 
 .example-application-description-attribution {

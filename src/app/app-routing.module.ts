@@ -28,8 +28,11 @@ const routes: Routes = [
     canActivate: [AdminGuard],
   },
   { path: 'user-page', component: UserpageComponent, canActivate: [UserGuard] },
-  //Test path for constant update page:
-  { path: 'test', component: AdminpageConstantsComponent },
+  {
+    path: 'admin/constants',
+    component: AdminpageConstantsComponent,
+    canActivate: [AdminGuard],
+  },
   { path: '**', component: PagenotfoundComponent },
 ];
 
