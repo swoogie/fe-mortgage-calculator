@@ -85,17 +85,29 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       monthlyIncome: [
         this.applicationData.monthlyIncome as number,
-        [Validators.required, Validators.pattern('^[0-9]+(.[0-9]{1,2})?$')],
+        [Validators.required, Validators.pattern('[0-9]*')],
       ],
       coApplicantsIncome: [null as number],
       obligations: [
         this.applicationData.obligations as boolean,
         Validators.required,
       ],
-      mortgageLoans: [this.applicationData.mortgageLoans as number],
-      consumerLoans: [this.applicationData.consumerLoans as number],
-      leasingAmount: [this.applicationData.leasingAmount as number],
-      creditCardLimit: [this.applicationData.creditCardLimit as number],
+      mortgageLoans: [
+        this.applicationData.mortgageLoans as number,
+        Validators.pattern('[0-9]*'),
+      ],
+      consumerLoans: [
+        this.applicationData.consumerLoans as number,
+        Validators.pattern('[0-9]*'),
+      ],
+      leasingAmount: [
+        this.applicationData.leasingAmount as number,
+        Validators.pattern('[0-9]*'),
+      ],
+      creditCardLimit: [
+        this.applicationData.creditCardLimit as number,
+        Validators.pattern('[0-9]*'),
+      ],
       canProceed: [true, Validators.requiredTrue],
     },
     {
@@ -112,14 +124,14 @@ export class ApplicationDialogComponent implements OnInit {
         this.applicationData.realEstatePrice as number,
         [
           Validators.required,
-          Validators.pattern('^[0-9]+(.[0-9]{1,2})?$'),
+          Validators.pattern('[0-9]*'),
           Validators.max(this.maxRealEstatePrice),
           Validators.min(this.minRealEstatePrice),
         ],
       ],
       downPayment: [
         this.applicationData.downPayment as number,
-        [Validators.required, Validators.pattern('^[0-9]+(.[0-9]{1,2})?$')],
+        [Validators.required, Validators.pattern('[0-9]*')],
       ],
       loanTerm: [
         this.applicationData.loanTerm as number,
@@ -407,10 +419,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.obligationFields.forEach((field) => {
         this.incomeDetailsForm
           .get(field.controlName)
-          .setValidators([
-            Validators.required,
-            Validators.pattern('^[0-9]+(.[0-9]{1,2})?$'),
-          ]);
+          .setValidators([Validators.required, Validators.pattern('[0-9]*')]);
         this.incomeDetailsForm.get(field.controlName).setValue(0);
       });
     } else if (obligationsValue === false) {
@@ -583,7 +592,7 @@ export class ApplicationDialogComponent implements OnInit {
 
       this.downPayment.setValidators([
         Validators.required,
-        Validators.pattern('^[0-9]+(.[0-9]{1,2})?$'),
+        Validators.pattern('[0-9]*'),
         Validators.min(minDownPaymentAmount),
         Validators.max(maxDownPaymentAmount),
       ]);
@@ -725,6 +734,9 @@ export class ApplicationDialogComponent implements OnInit {
     this.apiService.postApplication(this.applicationData).subscribe({
       next: () => {
         console.log('Application submitted successfully');
+        this._snackBar.open('Application submitted successfully', 'Close', {
+          duration: 5000,
+        });
       },
       error: (err) => {
         console.log(err);
