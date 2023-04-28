@@ -297,4 +297,30 @@ export class MaxCalcComponent {
       this.helloSlider = true;
     }
   }
+  clickMe(event: Event) {
+    this._snackBar.open(
+      'Annuity - identical monthly installments',
+      null,
+      {
+        duration: 7000,
+      }
+    );
+    event.stopPropagation();
+  }
+  clickMe2(event: Event) {
+    this._snackBar.open(
+      'Annuity - identical monthly installments',
+      null,
+      {
+        duration: 7000,
+      }
+    );
+    event.stopPropagation();
+  }
+  unclickMe(event: Event) {
+    this._snackBar.dismiss();
+    event.stopPropagation();
+  }
 }
+
+
