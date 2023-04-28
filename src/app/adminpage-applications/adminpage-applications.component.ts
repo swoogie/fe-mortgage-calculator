@@ -8,6 +8,7 @@ import {
 } from '@angular/animations';
 import { ApplicationService } from '../services/application.service';
 import { HttpClient } from '@angular/common/http';
+import { NumberValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-adminpage-applications',
@@ -35,13 +36,20 @@ export class AdminpageApplicationsComponent implements OnInit {
   ngOnInit(): void {
     this.applicationService.getAllApplications().subscribe({
       next: (res: any) => {
-        // res = res.slice(0, 4);
         res.forEach((appl) => {
           this.applicationData.push({
             id: appl.applicationId,
             user: appl.email,
             status: appl.applicationStatus,
-            description: `loanAmount: ${appl.loanAmount}`,
+            firstName: appl.firstName,
+            lastName: appl.lastName,
+            loanTerm: appl.loanTerm,
+            loanAmount: appl.loanAmount,
+            realEstateAddress: appl.realEstateAddress,
+            realEstatePrice: appl.realEstatePrice,
+            totalHouseholdIncome: appl.totalHouseholdIncome,
+            phoneNumber: appl.phoneNumber,
+            personalNumber: appl.personalNumber,
           });
         });
         this.dataSource = this.applicationData;
@@ -72,8 +80,16 @@ export interface Application {
   id: number;
   user: string;
   status: string;
-  description: string;
-  name?: string;
+  description?: string;
+  firstName?: string;
+  lastName?: string;
+  loanTerm?: number;
+  loanAmount?: number;
+  realEstateAddress?: string;
+  realEstatePrice?: number;
+  totalHouseholdIncome?: number;
+  phoneNumber?: number;
+  personalNumber?: number;
 }
 
 const FALLBACK_DATA: Application[] = [

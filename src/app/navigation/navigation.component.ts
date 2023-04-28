@@ -20,7 +20,6 @@ export class NavigationComponent implements OnInit {
   ngOnInit(): void {
     this.userAuthService.currentlyUser.subscribe((res) => {
       if (res) {
-        console.log('user' + res);
         this.userLoggedIn = true;
         this.adminLoggedIn = false;
       } else {
@@ -30,7 +29,6 @@ export class NavigationComponent implements OnInit {
 
     this.userAuthService.currentlyAdmin.subscribe((res) => {
       if (res) {
-        console.log('admin:' + res);
         this.userLoggedIn = false;
         this.adminLoggedIn = true;
       } else {

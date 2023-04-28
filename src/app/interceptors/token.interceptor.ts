@@ -25,7 +25,6 @@ export class TokenInterceptor implements HttpInterceptor {
       request = request.clone({
         setHeaders: { Authorization: `Bearer ${adminToken}` },
       });
-      console.log('interceptor req: ', request);
     }
     if (userToken) {
       request = request.clone({
