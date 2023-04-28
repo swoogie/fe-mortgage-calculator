@@ -1,0 +1,100 @@
+<table
+  mat-table
+  [dataSource]="dataSource"
+  multiTemplateDataRows
+  class="mat-elevation-z8"
+>
+  <ng-container
+    matColumnDef="{{ column }}"
+    *ngFor="let column of columnsToDisplay"
+  >
+    <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+    <td mat-cell *matCellDef="let application">{{ application[column] }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>actions</th>
+    <td mat-cell *matCellDef="let application">
+      <button
+        mat-flat-button
+        class="approve"
+        (click)="approve(application); $event.stopPropagation()"
+      >
+        Approve
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="postpone(application); $event.stopPropagation()"
+      >
+        Postpone
+      </button>
+      <button
+        mat-flat-button
+        color="warn"
+        (click)="reject(application); $event.stopPropagation()"
+      >
+        Reject
+      </button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="expand">
+    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+    <td mat-cell *matCellDef="let application">
+      <button
+        mat-icon-button
+        aria-label="expand row"
+        (click)="
+          expandedApplication =
+            expandedApplication === application ? null : application;
+          $event.stopPropagation()
+        "
+      >
+        <mat-icon *ngIf="expandedApplication !== application"
+          >keyboard_arrow_down</mat-icon
+        >
+        <mat-icon *ngIf="expandedApplication === application"
+          >keyboard_arrow_up</mat-icon
+        >
+      </button>
+    </td>
+  </ng-container>
+
+  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+  <ng-container matColumnDef="expandedDetail">
+    <td
+      mat-cell
+      *matCellDef="let application"
+      [attr.colspan]="columnsToDisplayWithExpand.length"
+    >
+      <div
+        class="example-application-detail"
+        [@detailExpand]="
+          application == expandedApplication ? 'expanded' : 'collapsed'
+        "
+      >
+        <div class="example-application-description">
+          {{ application.description }}
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+  <tr
+    mat-row
+    *matRowDef="let application; columns: columnsToDisplayWithExpand"
+    class="example-application-row"
+    [class.example-expanded-row]="expandedApplication === application"
+    (click)="
+      expandedApplication =
+        expandedApplication === application ? null : application
+    "
+  ></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: ['expandedDetail']"
+    class="example-detail-row"
+  ></tr>
+</table>

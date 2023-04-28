@@ -1,0 +1,66 @@
+.mat-elevation-z8{
+  padding-top: 100px;
+}
+
+table {
+  width: 100%;
+}
+
+button {
+  margin: 5px;
+  margin-left: 0px;
+}
+
+.approve {
+  --mdc-filled-button-container-color:  rgb(0, 193, 6);
+  --mdc-filled-button-label-text-color: white;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-application-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.example-application-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-application-row td {
+  border-bottom-width: 0;
+}
+
+.example-application-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.example-application-diagram {
+  min-width: 80px;
+  border: 2px solid black;
+  padding: 8px;
+  font-weight: lighter;
+  margin: 8px 0;
+  height: 104px;
+}
+
+.example-application-symbol {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: normal;
+}
+
+.example-application-description {
+  padding: 16px;
+}
+
+.example-application-description-attribution {
+  opacity: 0.5;
+}
+
+.material-icons {
+  color: black;
+}
+
