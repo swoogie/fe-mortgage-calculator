@@ -322,16 +322,15 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateAvailableMonthlyPayment();
     });
 
-    merge([
-      this.monthlyIncome.valueChanges,
-      this.coApplicantsIncome.valueChanges,
-    ]).subscribe(() => {
-      this.updateTotalHouseHoldIncome(
-        this.monthlyIncome.value,
-        this.coApplicantsIncome.value
-      );
-      this.updateAvailableMonthlyPayment();
-    });
+      this.monthlyIncome.valueChanges.subscribe(() => {
+        this.updateTotalHouseHoldIncome();
+        this.updateAvailableMonthlyPayment();
+      });
+
+      this.coApplicantsIncome.valueChanges.subscribe(() => {
+        this.updateTotalHouseHoldIncome();
+        this.updateAvailableMonthlyPayment();
+      });
 
     this.obligations.valueChanges.subscribe((value: boolean) => {
       this.updateObligationsValidations(value);
@@ -478,15 +477,17 @@ export class ApplicationDialogComponent implements OnInit {
       JSON.stringify(personalDetailData)
     );
   }
+
   clearData() {
 
     localStorage.setItem('incomeDetails', null);
     localStorage.setItem('loanData', null);
     localStorage.setItem('coApplicantsData', null);
     localStorage.setItem(
-      'personalDetailData',null
+      'personalDetailData', null
     );
   }
+
   loadData() {
     const savedData = JSON.parse(localStorage.getItem('incomeDetails'));
     const loanData = JSON.parse(localStorage.getItem('loanData'));
@@ -557,10 +558,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.saveData();
     });
     this.getConstants();
-    this.updateTotalHouseHoldIncome(
-      this.monthlyIncome.value,
-      this.coApplicantsIncome.value
-    );
+    this.updateTotalHouseHoldIncome();
     this.updateAvailableMonthlyPayment();
   }
 
@@ -656,8 +654,8 @@ export class ApplicationDialogComponent implements OnInit {
     }
   }
 
-  updateTotalHouseHoldIncome(income, coApplicantsIncome) {
-    const totalHouseHoldIncome = +income + +coApplicantsIncome;
+  updateTotalHouseHoldIncome() {
+    const totalHouseHoldIncome = +this.monthlyIncome.value + +this.coApplicantsIncome.value;
     this.totalHouseHoldIncome = totalHouseHoldIncome;
     this.updateSufficientHouseholdIncome();
   }
@@ -760,7 +758,7 @@ export class ApplicationDialogComponent implements OnInit {
     this.apiService.postApplication(this.applicationData).subscribe({
       next: () => {
         console.log('Application submitted successfully');
-        this._snackBar.open('Application submitted successfully', 'Close', {
+        this._snackBar.open('Your application has been received and processed successfully. Please check your email for further instructions on the next steps.', 'Close', {
           duration: 5000,
         });
         this.clearData();
@@ -1032,6 +1030,7 @@ export class ApplicationDialogComponent implements OnInit {
     );
     event.stopPropagation();
   }
+
   unclickMe(event: Event) {
     this._snackBar.dismiss();
     event.stopPropagation();
