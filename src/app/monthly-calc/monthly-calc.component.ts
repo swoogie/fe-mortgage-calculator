@@ -69,9 +69,7 @@ export class MonthlyCalcComponent implements OnInit {
   );
 
   constructor(public dialog: MatDialog, private _snackBar: MatSnackBar) {
-    this.monthlyForm.valueChanges.subscribe((value) => {
-      // console.log('form changed', value);
-    });
+    this.monthlyForm.valueChanges.subscribe((value) => {});
   }
 
   ngOnInit() {
@@ -91,8 +89,6 @@ export class MonthlyCalcComponent implements OnInit {
     const checkForComma: RegExp = /^[0-9]*\,{1}[0-9]{1,2}/;
 
     if (regex.test(this.income.value)) {
-      console.log('checkpassed');
-      console.log(this.income.value.match(regex)[0]);
       this.income.setValue(this.income.value.match(regex)[0]);
     }
 
@@ -100,8 +96,8 @@ export class MonthlyCalcComponent implements OnInit {
       const commaIndex = this.income.value.indexOf(',');
       this.income.setValue(
         this.income.value.substring(0, commaIndex) +
-        '.' +
-        this.income.value.substring(commaIndex + 1)
+          '.' +
+          this.income.value.substring(commaIndex + 1)
       );
     }
   }
@@ -176,7 +172,6 @@ export class MonthlyCalcComponent implements OnInit {
         totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4
       );
 
-      console.log(this.monthlyPaymentResult);
       this.chartData = [
         Math.round(Number(mortgageMonthly)),
         Math.round(Number(consumerMonthly)),

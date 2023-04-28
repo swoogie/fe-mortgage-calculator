@@ -28,26 +28,25 @@ export class MaxcalculationsService {
         principal + this.monthlyInterestRate * this.outstandingPrincipal;
       this.outstandingPrincipal -= principal;
     }
-    return parseFloat(this.linearTotal.toFixed(2));
+    return Math.round(this.linearTotal);
   }
 
   calculateAnnuityTotal(form: FormGroup): number {
     this.setForm(form);
     const monthlyAnnuity = this.calculateAnnuityMonthly();
-    return parseFloat((monthlyAnnuity * this.loanTermInMonths).toFixed(2));
+    return Math.round(monthlyAnnuity * this.loanTermInMonths);
   }
 
   calculateAnnuityMonthly(): number {
     const monthlyAnnuity =
       (this.loanAmount.value * this.monthlyInterestRate) /
-      (1 - Math.pow(1 + this.monthlyInterestRate, -this.loanTermInMonths));
+      (1 - Math.pow(1 + this.monthlyInterestRate, -1 * this.loanTermInMonths));
     return monthlyAnnuity;
   }
 
   getInterest(maxResult: number): number {
     const interestRate = this.interestRate.value;
-    console.log('interest got', interestRate);
-    return parseFloat(((maxResult * interestRate) / 100).toFixed(2));
+    return Math.round(maxResult * (interestRate / 100));
   }
 
   get loanAmount() {
