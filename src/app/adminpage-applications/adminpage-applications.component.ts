@@ -36,7 +36,6 @@ export class AdminpageApplicationsComponent implements OnInit {
   ngOnInit(): void {
     this.applicationService.getAllApplications().subscribe({
       next: (res: any) => {
-        console.log(res);
         res.forEach((appl) => {
           this.applicationData.push({
             id: appl.applicationId,
