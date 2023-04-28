@@ -75,10 +75,20 @@
         "
       >
         <div class="application-detail-grid">
-          <div>{{ application.description }}</div>
-          <div>{{ application.description }}</div>
-          <div>{{ application.description }}</div>
-          <div>{{ application.description }}</div>
+          <div *ngIf="application.description">
+            {{ application.description }}
+          </div>
+          <div>First name: {{ application.firstName }}</div>
+          <div>Last name: {{ application.lastName }}</div>
+          <div>Loan term: {{ application.loanTerm }}</div>
+          <div>Loan amount: {{ application.loanAmount }}</div>
+          <div>Real estate address: {{ application.realEstateAddress }}</div>
+          <div>Real estate price: {{ application.realEstatePrice }}</div>
+          <div>
+            Total household income: {{ application.totalHouseholdIncome }}
+          </div>
+          <div>Phone number: {{ application.phoneNumber }}</div>
+          <div>Personal number: {{ application.personalNumber }}</div>
         </div>
       </div>
     </td>
