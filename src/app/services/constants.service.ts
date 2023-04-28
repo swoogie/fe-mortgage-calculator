@@ -9,10 +9,8 @@ export class ConstantsService {
   private adminApiUrl = 'https://be-mortgage-calculator.onrender.com/api/v1';
 
   updateConstants(constants) {
-    this.http
-      .put(`${this.adminApiUrl}/admin/constants`, constants, {
-        responseType: 'text',
-      })
-      .subscribe();
+    return this.http.put(`${this.adminApiUrl}/admin/constants`, constants, {
+      responseType: 'text',
+    });
   }
 }
