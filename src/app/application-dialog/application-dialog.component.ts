@@ -1,23 +1,16 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ApiService } from '../services/api.service';
-import { Constants } from '../interfaces/constants';
-import { ApplicationData } from '../interfaces/application-data';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Euribor } from '../interfaces/euribor';
-import { EuriborValuesService } from '../services/euribor-values-service.service';
-import { debounceTime, merge } from 'rxjs';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { catchError, map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http'; // import map operator
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {ApiService} from '../services/api.service';
+import {Constants} from '../interfaces/constants';
+import {ApplicationData} from '../interfaces/application-data';
+import {AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators,} from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Euribor} from '../interfaces/euribor';
+import {EuriborValuesService} from '../services/euribor-values-service.service';
+import {debounceTime, merge} from 'rxjs';
+import {StepperSelectionEvent} from '@angular/cdk/stepper';
+import {catchError, map} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http'; // import map operator
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -31,6 +24,7 @@ export class ApplicationDialogComponent implements OnInit {
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 1000;
+  maxLoanAmount: number = 3200000;
   minLoanTerm: number;
   maxLoanTerm: number;
   loanAmountPercentage: number;
@@ -39,13 +33,10 @@ export class ApplicationDialogComponent implements OnInit {
   maxNumOfApplicants: number;
   children: number[] = [];
   applicantsOptions: number[] = [];
-  loanAmount: number;
+  downPayment: number;
   maxMonthlyObligationsPercentage: number;
   euriborValues: Euribor[];
-  maxLoanAmount: number = 2720000;
   interestRateMargin: number;
-  minDownPaymentAmount: number = 1500;
-  maxDownPaymentAmount: number = 3199000;
   // monthlyPayment: number = 0;
   totalHouseHoldIncome: number = 0;
   minHouseholdIncome: number;
@@ -60,10 +51,10 @@ export class ApplicationDialogComponent implements OnInit {
     'Valid personal number formats: 3YYMMDDXXXX, 4YYMMDDXXXX, 5YYMMDDXXXX, 6YYMMDDXXXX';
 
   obligationFields = [
-    { label: 'Mortgage Loans', controlName: 'mortgageLoans' },
-    { label: 'Consumer Loans', controlName: 'consumerLoans' },
-    { label: 'Leasing Amount', controlName: 'leasingAmount' },
-    { label: 'Credit Card Limit', controlName: 'creditCardLimit' },
+    {label: 'Mortgage Loans', controlName: 'mortgageLoans'},
+    {label: 'Consumer Loans', controlName: 'consumerLoans'},
+    {label: 'Leasing Amount', controlName: 'leasingAmount'},
+    {label: 'Credit Card Limit', controlName: 'creditCardLimit'},
   ];
   applicationDate = Date.now();
   isLinear = true;
@@ -72,7 +63,7 @@ export class ApplicationDialogComponent implements OnInit {
   userAge: number;
   ageAtLoanTermEnd: number;
   isEmailAvailable: boolean;
-  emailNotAvailableMessage: string;
+  emailNotAvailableMessage: string = "Email is already in use";
   incomeDetailsForm = formBuilder.group(
     {
       applicants: [
@@ -129,8 +120,8 @@ export class ApplicationDialogComponent implements OnInit {
           Validators.min(this.minRealEstatePrice),
         ],
       ],
-      downPayment: [
-        this.applicationData.downPayment as number,
+      loanAmount: [
+        this.applicationData.loanAmount as number,
         [Validators.required, Validators.pattern('[0-9]*')],
       ],
       loanTerm: [
@@ -144,7 +135,7 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       canProceed: [true, Validators.requiredTrue],
     },
-    { updateOn: 'blur' }
+    {updateOn: 'blur'}
   );
   personalDetailsForm = formBuilder.group(
     {
@@ -169,7 +160,7 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       address: [this.applicationData.address, Validators.required],
     },
-    { updateOn: 'blur' }
+    {updateOn: 'blur'}
   );
   coApplicantDetailsForm = formBuilder.group({
     firstName: [this.applicationData.firstName, Validators.required],
@@ -180,8 +171,9 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.required,
         Validators.email,
         Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
+        this.emailAvailabilityValidator(),
       ],
-      this.emailAvailabilityValidator(),
+      // this.emailAvailabilityValidator(),
     ],
     phoneNumber: [
       this.applicationData.phoneNumber,
@@ -195,13 +187,15 @@ export class ApplicationDialogComponent implements OnInit {
       return this.apiService.checkEmail(email).pipe(
         map((response: any) => {
           this.isEmailAvailable = true;
-          return response.available ? null : { emailNotAvailable: true };
+        //  control.updateValueAndValidity();
+          return response.available ? {emailNotAvailable: false} : {emailNotAvailable: true};
         }),
         catchError((error) => {
           if (error.status === 409) {
             this.isEmailAvailable = false;
             this.emailNotAvailableMessage = error.error;
-            return [{ emailNotAvailable: true }];
+         //   control.updateValueAndValidity();
+            return [{emailNotAvailable: true}];
           } else {
             console.error('An unexpected error occurred:', error);
             return [];
@@ -222,7 +216,7 @@ export class ApplicationDialogComponent implements OnInit {
       const matches = value.match(regex);
 
       if (!matches) {
-        return { invalidPersonalNumber: true };
+        return {invalidPersonalNumber: true};
       }
 
       const yearString = matches[2];
@@ -239,7 +233,7 @@ export class ApplicationDialogComponent implements OnInit {
 
       const birthDate = new Date(year, month, day);
       if (birthDate.getDate() !== day || birthDate.getMonth() !== month) {
-        return { invalidPersonalNumber: true };
+        return {invalidPersonalNumber: true};
       }
       const ageDiff = Date.now() - birthDate.getTime();
       const ageDate = new Date(ageDiff);
@@ -248,10 +242,10 @@ export class ApplicationDialogComponent implements OnInit {
       this.userAge = age;
       if (matches[1] === '5' || matches[1] === '6') {
         if (age < 0) {
-          return { invalidPersonalNumber: true };
+          return {invalidPersonalNumber: true};
         }
         if (age < 18) {
-          return { invalidAge: true };
+          return {invalidAge: true};
         }
       }
       this.updateShowAgeWarning(age, +this.loanTerm.value);
@@ -281,7 +275,7 @@ export class ApplicationDialogComponent implements OnInit {
 
     const sufficientMonthlyPaymentFormControls = [
       this.realEstatePrice,
-      this.downPayment,
+      this.loanAmount,
       this.loanTerm,
     ];
     sufficientMonthlyPaymentFormControls.forEach((control) => {
@@ -365,30 +359,24 @@ export class ApplicationDialogComponent implements OnInit {
       .pipe(debounceTime(50))
       .subscribe((realEstatePriceValue) => {
         this.updateRealEstatePriceValue(realEstatePriceValue);
-        this.updateDownPayment();
         this.updateLoanAmount();
+        this.updateDownPayment();
+        this.updateSufficientMonthlyPayment();
       });
 
-    this.downPayment.valueChanges.subscribe((downPaymentValue) => {
+    this.loanAmount.valueChanges.subscribe(() => {
+      this.updateLoanAmount();
       this.updateDownPayment();
+      this.updateSufficientMonthlyPayment();
     });
 
     this.loanTerm.valueChanges.subscribe((loanTermValue) => {
       this.updateLoanTerm(loanTermValue);
+      this.updateSufficientMonthlyPayment();
       this.updateShowAgeWarning(this.userAge, loanTermValue);
     });
 
     merge([
-      this.realEstatePrice.valueChanges,
-      this.downPayment.valueChanges,
-    ]).subscribe(() => {
-      this.updateLoanAmount();
-    });
-
-    merge([
-      this.realEstatePrice.valueChanges,
-      this.downPayment.valueChanges,
-      this.loanTerm.valueChanges,
       this.euribor.valueChanges,
       this.paymentScheduleType.valueChanges,
     ]).subscribe(() => {
@@ -402,14 +390,14 @@ export class ApplicationDialogComponent implements OnInit {
       this._snackBar.open(
         `Max real estate price is ${this.maxRealEstatePrice} €`,
         '',
-        { duration: 2000 }
+        {duration: 2000}
       );
     } else if (realEstatePriceValue < this.minRealEstatePrice) {
       this.realEstatePrice.setValue(this.minRealEstatePrice);
       this._snackBar.open(
         `Min real estate price is ${this.minRealEstatePrice} €`,
         '',
-        { duration: 2000 }
+        {duration: 2000}
       );
     }
   }
@@ -453,7 +441,7 @@ export class ApplicationDialogComponent implements OnInit {
           minLoanTerm % 10 == 1 ? 'year' : 'years'
         }`,
         '',
-        { duration: 2000 }
+        {duration: 2000}
       );
     } else if (loanTermValue > maxLoanTerm) {
       this.loanTerm.setValue(maxLoanTerm);
@@ -462,7 +450,7 @@ export class ApplicationDialogComponent implements OnInit {
           maxLoanTerm % 10 == 1 ? 'year' : 'years'
         }`,
         '',
-        { duration: 2000 }
+        {duration: 2000}
       );
     }
   }
@@ -509,6 +497,7 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.euriborValues = this.euriborValuesService.getEuriborValues();
     this.loadData();
     this.incomeDetailsForm.valueChanges.subscribe(() => {
@@ -550,7 +539,7 @@ export class ApplicationDialogComponent implements OnInit {
         this.applicantsOptions.push(i);
       }
 
-      this.updateDownPayment();
+      this.updateLoanAmount();
       if (this.obligations.value == true) {
         this.updateMonthlyObligations(
           this.mortgageLoans.value,
@@ -573,42 +562,36 @@ export class ApplicationDialogComponent implements OnInit {
     });
   }
 
-  updateDownPayment() {
+  updateLoanAmount() {
     const realEstatePrice = this.realEstatePrice.value;
     const isRealEstatePriceValid =
       realEstatePrice != null &&
       realEstatePrice >= this.minRealEstatePrice &&
       realEstatePrice <= this.maxRealEstatePrice;
     if (isRealEstatePriceValid) {
-      const currentValue = this.downPayment.value;
-      const minDownPaymentAmount = Math.round(
-        realEstatePrice * (1 - this.loanAmountPercentage)
-      );
-      const maxDownPaymentAmount = Math.round(
-        realEstatePrice - this.minLoanAmount
-      );
-      this.minDownPaymentAmount = minDownPaymentAmount;
-      this.maxDownPaymentAmount = maxDownPaymentAmount;
+      const currentValue = this.loanAmount.value;
+      const minLoanAmount = this.minLoanAmount;
+      const maxLoanAmount = realEstatePrice;
 
-      this.downPayment.setValidators([
+      this.loanAmount.setValidators([
         Validators.required,
         Validators.pattern('[0-9]*'),
-        Validators.min(minDownPaymentAmount),
-        Validators.max(maxDownPaymentAmount),
+        Validators.min(minLoanAmount),
+        Validators.max(maxLoanAmount),
       ]);
-      if (currentValue < minDownPaymentAmount) {
-        this.downPayment.setValue(minDownPaymentAmount);
+      if (currentValue < minLoanAmount) {
+        this.loanAmount.setValue(minLoanAmount);
         this._snackBar.open(
-          `Min Down Payment is ${minDownPaymentAmount} €`,
+          `Min Loan Amount is ${minLoanAmount} €`,
           '',
           {
             duration: 2000,
           }
         );
-      } else if (currentValue > maxDownPaymentAmount) {
-        this.downPayment.setValue(maxDownPaymentAmount);
+      } else if (currentValue > maxLoanAmount) {
+        this.loanAmount.setValue(maxLoanAmount);
         this._snackBar.open(
-          `Max Down Payment is ${maxDownPaymentAmount} €`,
+          `Max Down Payment is ${maxLoanAmount} €`,
           '',
           {
             duration: 2000,
@@ -618,11 +601,11 @@ export class ApplicationDialogComponent implements OnInit {
     }
   }
 
-  updateLoanAmount() {
-    const loanAmount = Math.round(
-      this.realEstatePrice.value - this.downPayment.value
+  updateDownPayment() {
+    const downPayment = Math.round(
+      this.realEstatePrice.value - this.loanAmount.value
     );
-    this.loanAmount = loanAmount;
+    this.downPayment = downPayment;
   }
 
   updateTotalHouseHoldIncome(income, coApplicantsIncome) {
@@ -747,7 +730,7 @@ export class ApplicationDialogComponent implements OnInit {
   saveLoanDetails(): void {
     const loanDataKeys: string[] = [
       'realEstatePrice',
-      'downPayment',
+      'loanAmount',
       'loanTerm',
     ];
     const incomeDataKeys: string[] = [
@@ -782,7 +765,7 @@ export class ApplicationDialogComponent implements OnInit {
     this.applicationData.paymentScheduleType =
       this.paymentScheduleType.value.toUpperCase();
     this.applicationData.realEstateAddress = this.realEstateAddress.value;
-    this.applicationData.loanAmount = this.loanAmount;
+    this.applicationData.downPayment = this.downPayment;
     this.applicationData.interestRateMargin = this.interestRateMargin;
     this.applicationData.euriborTerm = this.euribor.value.timeInMonths;
     this.applicationData.interestRateEuribor = this.euribor.value.interestRate;
@@ -799,8 +782,8 @@ export class ApplicationDialogComponent implements OnInit {
     return this.loanDetailsForm.get('realEstatePrice');
   }
 
-  get downPayment() {
-    return this.loanDetailsForm.get('downPayment');
+  get loanAmount() {
+    return this.loanDetailsForm.get('loanAmount');
   }
 
   get loanTerm() {
@@ -904,7 +887,7 @@ export class ApplicationDialogComponent implements OnInit {
     }
     const monthlyInterestRate =
       (this.euribor.value.interestRate / 100 + this.interestRateMargin) / 12;
-    let loanAmount: number = this.loanAmount;
+    let loanAmount: number = this.loanAmount.value;
     if (this.paymentScheduleType.value == 'annuity') {
       totalMortgagePayment = this.calculateTotalAnnuityMortgageAmount(
         loanAmount,

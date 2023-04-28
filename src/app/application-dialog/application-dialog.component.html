@@ -288,31 +288,27 @@
           </div>
           <div class="form-field-wrapper">
             <mat-form-field>
-              <mat-label>Down Payment</mat-label>
-              <input matInput formControlName="downPayment" />
+              <mat-label>Loan Amount</mat-label>
+              <input matInput formControlName="loanAmount" />
               <mat-error
                 class="error-message"
-                *ngIf="downPayment && downPayment.hasError('pattern')"
+                *ngIf="loanAmount && loanAmount.hasError('pattern')"
               >
                 Please enter a valid number
               </mat-error>
               <mat-error
                 class="error-message"
-                *ngIf="downPayment && downPayment.hasError('min')"
+                *ngIf="loanAmount && loanAmount.hasError('min')"
               >
-                Min is {{ minDownPaymentAmount }}
+                Min is {{ minLoanAmount }}
               </mat-error>
               <mat-error
                 class="error-message"
-                *ngIf="downPayment && downPayment.hasError('max')"
+                *ngIf="loanAmount && loanAmount.hasError('max')"
               >
-                Max is {{ maxDownPaymentAmount }}
+                Max is {{ maxLoanAmount }}
               </mat-error>
             </mat-form-field>
-          </div>
-          <div *ngIf="loanAmount != null" class="info-node">
-            <strong> Loan amount:</strong>
-            {{ loanAmount | currency : "EUR" : "symbol" : "1.0-0" }}
           </div>
           <div class="form-field-wrapper">
             <mat-form-field class="input-wrap">
@@ -470,7 +466,7 @@
             </tr>
             <tr>
               <th>Loan amount</th>
-              <td>{{ loanAmount | currency : "EUR" : "symbol" : "1.0-0" }}</td>
+              <td>{{ loanAmount.value | currency : "EUR" : "symbol" : "1.0-0" }}</td>
             </tr>
             <tr>
               <th>Name</th>
@@ -489,10 +485,6 @@
             <tr>
               <th>Address</th>
               <td>{{ personalAddress.value }}</td>
-            </tr>
-            <tr>
-              <th>Application date</th>
-              <td>{{ applicationDate | date }}</td>
             </tr>
           </tbody>
         </table>
