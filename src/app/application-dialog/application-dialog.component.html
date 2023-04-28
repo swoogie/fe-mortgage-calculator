@@ -19,12 +19,17 @@
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Email</mat-label>
-              <input matInput formControlName="email" />
+              <input matInput formControlName="email"/>
               <mat-error
                 class="error-message"
                 *ngIf="personalEmail && personalEmail.hasError('pattern')"
               >
                 Please enter a valid email address
+              </mat-error>
+              <mat-error
+                class="error-message"
+                *ngIf="personalEmail && personalEmail.hasError('emailNotAvailable')">
+                Email is already in use
               </mat-error>
             </mat-form-field>
             <div
@@ -39,19 +44,19 @@
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" />
+              <input matInput formControlName="firstName"/>
             </mat-form-field>
           </div>
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" />
+              <input matInput formControlName="lastName"/>
             </mat-form-field>
           </div>
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Personal Number</mat-label>
-              <input matInput formControlName="personalNumber" />
+              <input matInput formControlName="personalNumber"/>
               <mat-error
                 class="error-message"
                 *ngIf="
@@ -81,7 +86,7 @@
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Phone Number</mat-label>
-              <input matInput formControlName="phoneNumber" />
+              <input matInput formControlName="phoneNumber"/>
               <mat-error
                 class="error-message"
                 *ngIf="
@@ -103,7 +108,7 @@
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Home Address</mat-label>
-              <input matInput formControlName="address" />
+              <input matInput formControlName="address"/>
             </mat-form-field>
           </div>
         </form>
@@ -150,7 +155,7 @@
           <div class="form-field-wrapper">
             <mat-form-field class="input-wrap">
               <mat-label>Your income</mat-label>
-              <input matInput formControlName="monthlyIncome" />
+              <input matInput formControlName="monthlyIncome"/>
               <mat-error
                 class="error-message"
                 *ngIf="monthlyIncome && monthlyIncome.hasError('pattern')"
@@ -162,7 +167,7 @@
           <div *ngIf="applicants.value == 2" class="form-field-wrapper">
             <mat-form-field class="input-wrap">
               <mat-label>Co-applicant's income</mat-label>
-              <input matInput formControlName="coApplicantsIncome" />
+              <input matInput formControlName="coApplicantsIncome"/>
               <mat-error
                 class="error-message"
                 *ngIf="
@@ -197,7 +202,7 @@
                 matSuffix
                 matTooltip="Represent any outstanding debts or regular payments that a party must make."
                 [matTooltipPosition]="'right'"
-                >help_outline
+              >help_outline
               </mat-icon>
             </div>
             <mat-error
@@ -211,8 +216,8 @@
             aria-label="Select an option"
             formControlName="obligations"
           >
-            <mat-radio-button [value]="false">No </mat-radio-button>
-            <mat-radio-button [value]="true">Yes </mat-radio-button>
+            <mat-radio-button [value]="false">No</mat-radio-button>
+            <mat-radio-button [value]="true">Yes</mat-radio-button>
           </mat-radio-group>
           <div *ngIf="obligations.value == true">
             <div class="info-node">
@@ -222,7 +227,7 @@
               <div class="form-field-wrapper">
                 <mat-form-field class="input-wrap">
                   <mat-label>{{ field.label }}</mat-label>
-                  <input matInput formControlName="{{ field.controlName }}" />
+                  <input matInput formControlName="{{ field.controlName }}"/>
                   <mat-error
                     class="error-message"
                     *ngIf="
@@ -259,13 +264,13 @@
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Real Estate Address</mat-label>
-              <input matInput formControlName="realEstateAddress" />
+              <input matInput formControlName="realEstateAddress"/>
             </mat-form-field>
           </div>
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Real Estate Price</mat-label>
-              <input matInput formControlName="realEstatePrice" />
+              <input matInput formControlName="realEstatePrice"/>
               <mat-error
                 class="error-message"
                 *ngIf="realEstatePrice && realEstatePrice.hasError('pattern')"
@@ -289,7 +294,7 @@
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Loan Amount</mat-label>
-              <input matInput formControlName="loanAmount" />
+              <input matInput formControlName="loanAmount"/>
               <mat-error
                 class="error-message"
                 *ngIf="loanAmount && loanAmount.hasError('pattern')"
@@ -313,7 +318,7 @@
           <div class="form-field-wrapper">
             <mat-form-field class="input-wrap">
               <mat-label>Loan term years</mat-label>
-              <input matInput formControlName="loanTerm" />
+              <input matInput formControlName="loanTerm"/>
               <mat-error
                 class="error-message"
                 *ngIf="
@@ -345,7 +350,7 @@
                 <mat-option
                   *ngFor="let euribor of euriborValues"
                   [value]="euribor"
-                  >{{ euribor.timeInMonths }} Months
+                >{{ euribor.timeInMonths }} Months
                   <span *ngIf="euribor.interestRate !== null">
                     - {{ euribor.interestRate.toFixed(3) }}%</span
                   >
@@ -409,19 +414,19 @@
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" />
+              <input matInput formControlName="firstName"/>
             </mat-form-field>
           </div>
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" />
+              <input matInput formControlName="lastName"/>
             </mat-form-field>
           </div>
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Email</mat-label>
-              <input matInput formControlName="email" />
+              <input matInput formControlName="email"/>
               <mat-error
                 class="error-message"
                 *ngIf="coApplicantEmail && coApplicantEmail.hasError('pattern')"
@@ -433,7 +438,7 @@
           <div class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Phone Number</mat-label>
-              <input matInput formControlName="phoneNumber" />
+              <input matInput formControlName="phoneNumber"/>
               <mat-error
                 class="error-message"
                 *ngIf="
@@ -460,52 +465,52 @@
         <ng-template matStepLabel>Form Submission</ng-template>
         <table class="form-submission-info">
           <tbody>
-            <tr>
-              <th>Real Estate Address</th>
-              <td>{{ realEstateAddress.value }}</td>
-            </tr>
-            <tr>
-              <th>Loan amount</th>
-              <td>{{ loanAmount.value | currency : "EUR" : "symbol" : "1.0-0" }}</td>
-            </tr>
-            <tr>
-              <th>Name</th>
-              <td>
-                {{ personalFirstName.value }} {{ personalLastName.value }}
-              </td>
-            </tr>
-            <tr>
-              <th>Phone number</th>
-              <td>{{ personalPhoneNumber.value }}</td>
-            </tr>
-            <tr>
-              <th>E-mail</th>
-              <td>{{ personalEmail.value }}</td>
-            </tr>
-            <tr>
-              <th>Address</th>
-              <td>{{ personalAddress.value }}</td>
-            </tr>
+          <tr>
+            <th>Real Estate Address</th>
+            <td>{{ realEstateAddress.value }}</td>
+          </tr>
+          <tr>
+            <th>Loan amount</th>
+            <td>{{ loanAmount.value | currency : "EUR" : "symbol" : "1.0-0" }}</td>
+          </tr>
+          <tr>
+            <th>Name</th>
+            <td>
+              {{ personalFirstName.value }} {{ personalLastName.value }}
+            </td>
+          </tr>
+          <tr>
+            <th>Phone number</th>
+            <td>{{ personalPhoneNumber.value }}</td>
+          </tr>
+          <tr>
+            <th>E-mail</th>
+            <td>{{ personalEmail.value }}</td>
+          </tr>
+          <tr>
+            <th>Address</th>
+            <td>{{ personalAddress.value }}</td>
+          </tr>
           </tbody>
         </table>
-        <br />
+        <br/>
         <table *ngIf="applicants.value == 2" class="form-submission-info">
           <tbody>
-            <th [colSpan]="2">Co-applicant's contact details</th>
-            <tr>
-              <th>Name</th>
-              <td>
-                {{ coApplicantFirstName.value }} {{ coApplicantLastName.value }}
-              </td>
-            </tr>
-            <tr>
-              <th>Phone number</th>
-              <td>{{ coApplicantPhoneNumber.value }}</td>
-            </tr>
-            <tr>
-              <th>E-mail</th>
-              <td>{{ coApplicantEmail.value }}</td>
-            </tr>
+          <th [colSpan]="2">Co-applicant's contact details</th>
+          <tr>
+            <th>Name</th>
+            <td>
+              {{ coApplicantFirstName.value }} {{ coApplicantLastName.value }}
+            </td>
+          </tr>
+          <tr>
+            <th>Phone number</th>
+            <td>{{ coApplicantPhoneNumber.value }}</td>
+          </tr>
+          <tr>
+            <th>E-mail</th>
+            <td>{{ coApplicantEmail.value }}</td>
+          </tr>
           </tbody>
         </table>
         <div class="info-node info-node-reminder">

@@ -10,7 +10,7 @@ import {EuriborValuesService} from '../services/euribor-values-service.service';
 import {debounceTime, merge} from 'rxjs';
 import {StepperSelectionEvent} from '@angular/cdk/stepper';
 import {catchError, map} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http'; // import map operator
+import {HttpClient} from '@angular/common/http';
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -63,7 +63,7 @@ export class ApplicationDialogComponent implements OnInit {
   userAge: number;
   ageAtLoanTermEnd: number;
   isEmailAvailable: boolean;
-  emailNotAvailableMessage: string = "Email is already in use";
+  emailNotAvailableMessage: string;
   incomeDetailsForm = formBuilder.group(
     {
       applicants: [
@@ -171,9 +171,7 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.required,
         Validators.email,
         Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
-        this.emailAvailabilityValidator(),
       ],
-      // this.emailAvailabilityValidator(),
     ],
     phoneNumber: [
       this.applicationData.phoneNumber,
@@ -187,14 +185,14 @@ export class ApplicationDialogComponent implements OnInit {
       return this.apiService.checkEmail(email).pipe(
         map((response: any) => {
           this.isEmailAvailable = true;
-        //  control.updateValueAndValidity();
-          return response.available ? {emailNotAvailable: false} : {emailNotAvailable: true};
+          //  control.updateValueAndValidity();
+          return response.available ? null : {emailNotAvailable: true};
         }),
         catchError((error) => {
           if (error.status === 409) {
             this.isEmailAvailable = false;
-            this.emailNotAvailableMessage = error.error;
-         //   control.updateValueAndValidity();
+            this.emailNotAvailableMessage = error.error?.message || error.error;
+            //   control.updateValueAndValidity();
             return [{emailNotAvailable: true}];
           } else {
             console.error('An unexpected error occurred:', error);
@@ -483,21 +481,51 @@ export class ApplicationDialogComponent implements OnInit {
       localStorage.getItem('personalDetailData')
     );
     if (savedData) {
-      this.incomeDetailsForm.patchValue(savedData);
+      Object.keys(this.incomeDetailsForm.controls).forEach(key => {
+        const control = this.incomeDetailsForm.get(key);
+        if (savedData[key] !== null && control.value === null) {
+          control.patchValue(savedData[key]);
+          control.markAsTouched();
+        }
+      });
     }
+
     if (loanData) {
-      this.loanDetailsForm.patchValue(loanData);
+      Object.keys(this.loanDetailsForm.controls).forEach(key => {
+        const control = this.loanDetailsForm.get(key);
+        if (loanData[key] !== null && control.value === null) {
+          control.patchValue(loanData[key]);
+          control.markAsTouched();
+        }
+      });
     }
+
     if (coApplicantsData) {
-      this.coApplicantDetailsForm.patchValue(coApplicantsData);
+      Object.keys(this.coApplicantDetailsForm.controls).forEach(key => {
+        const control = this.coApplicantDetailsForm.get(key);
+        if (coApplicantsData[key] !== null && control.value === null) {
+          control.patchValue(coApplicantsData[key]);
+          control.markAsTouched();
+        }
+      });
     }
+
     if (personalDetailData) {
-      this.personalDetailsForm.patchValue(personalDetailData);
+      Object.keys(this.personalDetailsForm.controls).forEach(key => {
+        const control = this.personalDetailsForm.get(key);
+        if (personalDetailData[key] !== null && control.value === null) {
+          control.patchValue(personalDetailData[key]);
+          control.markAsTouched();
+        }
+      });
     }
   }
 
   ngOnInit() {
-
+    if (this.applicants.value == 2) {
+      this.applicants.setValue(2)
+      this.coApplicantsIncome.markAsTouched();
+    }
     this.euriborValues = this.euriborValuesService.getEuriborValues();
     this.loadData();
     this.incomeDetailsForm.valueChanges.subscribe(() => {
@@ -591,7 +619,7 @@ export class ApplicationDialogComponent implements OnInit {
       } else if (currentValue > maxLoanAmount) {
         this.loanAmount.setValue(maxLoanAmount);
         this._snackBar.open(
-          `Max Down Payment is ${maxLoanAmount} €`,
+          `Max Loan Amount is ${maxLoanAmount} €`,
           '',
           {
             duration: 2000,
@@ -712,6 +740,7 @@ export class ApplicationDialogComponent implements OnInit {
 
   onSubmitApplyClick(): void {
     //form validation and post to backend
+    this.updateDownPayment();
     this.saveLoanDetails();
     console.log(this.applicationData);
     this.apiService.postApplication(this.applicationData).subscribe({
