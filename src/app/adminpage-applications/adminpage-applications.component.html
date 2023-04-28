@@ -27,7 +27,7 @@
         color="primary"
         (click)="postpone(application); $event.stopPropagation()"
       >
-        Postpone
+        In progress
       </button>
       <button
         mat-flat-button
@@ -74,8 +74,11 @@
           application == expandedApplication ? 'expanded' : 'collapsed'
         "
       >
-        <div class="example-application-description">
-          {{ application.description }}
+        <div class="application-detail-grid">
+          <div>{{ application.description }}</div>
+          <div>{{ application.description }}</div>
+          <div>{{ application.description }}</div>
+          <div>{{ application.description }}</div>
         </div>
       </div>
     </td>

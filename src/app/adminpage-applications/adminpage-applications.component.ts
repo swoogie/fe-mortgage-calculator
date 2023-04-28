@@ -30,10 +30,22 @@ export class AdminpageApplicationsComponent implements OnInit {
     private http: HttpClient
   ) {}
 
-  dataSource;
+  dataSource: Application[] = [];
+  applicationData: Application[] = [];
   ngOnInit(): void {
     this.applicationService.getAllApplications().subscribe({
-      next: console.log,
+      next: (res: any) => {
+        // res = res.slice(0, 4);
+        res.forEach((appl) => {
+          this.applicationData.push({
+            id: appl.applicationId,
+            user: appl.email,
+            status: appl.applicationStatus,
+            description: `loanAmount: ${appl.loanAmount}`,
+          });
+        });
+        this.dataSource = this.applicationData;
+      },
       error: (err) => (this.dataSource = FALLBACK_DATA),
     });
   }
@@ -43,13 +55,16 @@ export class AdminpageApplicationsComponent implements OnInit {
   expandedApplication: Application | null;
 
   reject(application: any) {
-    application.status = 'rejected';
+    application.status = 'REJECTED';
+    this.applicationService.setApplicationStatus(application.id, 'REJECTED');
   }
   approve(application: any) {
-    application.status = 'approved';
+    application.status = 'APPROVED';
+    this.applicationService.setApplicationStatus(application.id, 'APPROVED');
   }
   postpone(application: any) {
-    application.status = 'postponed';
+    application.status = 'IN_PROGRESS';
+    this.applicationService.setApplicationStatus(application.id, 'IN_PROGRESS');
   }
 }
 
@@ -58,6 +73,7 @@ export interface Application {
   user: string;
   status: string;
   description: string;
+  name?: string;
 }
 
 const FALLBACK_DATA: Application[] = [
