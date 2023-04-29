@@ -15,6 +15,12 @@ export class ApiService {
   constructor(private http: HttpClient) {}
   requestHeader = new HttpHeaders({ 'Content-type': 'application/json' });
 
+  getApplicationForUser(userEmail: string): Observable<ApplicationData[]> {
+    return this.http.get<ApplicationData[]>(
+      `${this.apiUrl}/user/email/${userEmail}/applications`
+    );
+  }
+
   getConstants(): Observable<Constants> {
     return this.http.get<Constants>(`${this.apiUrl}/constants`);
   }
@@ -25,11 +31,5 @@ export class ApiService {
 
   checkEmail(email: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/check-email?email=${email}`);
-  }
-
-  getApplicationForUser(userEmail: string): Observable<ApplicationData[]> {
-    return this.http.get<ApplicationData[]>(
-      `${this.apiUrl}/user/email/${userEmail}/application`
-    );
   }
 }

@@ -16,9 +16,7 @@ export class UserpageComponent implements OnInit {
 
   constructor(
     private user_authService: UserAuthService,
-    private router: Router,
     private route: ActivatedRoute,
-    private http: HttpClient,
     private apiService: ApiService
   ) {}
 
@@ -27,13 +25,13 @@ export class UserpageComponent implements OnInit {
       this.email = email;
       console.log(email);
     });
+    this.handleApplicationDisplay();
   }
 
   handleApplicationDisplay() {
-    const userEmail: string = this.route.snapshot.paramMap.get('userEmail');
-
     this.apiService.getApplicationForUser(this.email).subscribe((data) => {
       this.applications = data;
+      console.log(data);
     });
   }
 }
