@@ -15,6 +15,10 @@
 .login-card {
   padding: 1rem;
   box-shadow: 0 6px 12px 0 rgba(0, 0, 0, .2);
+  width: 600px; 
+  height: 600px;
+  display: grid;
+  place-items: center;
 }
 
 mat-card-content {
@@ -22,11 +26,16 @@ mat-card-content {
   flex-direction: column;
   align-items: center;
 }
-
+h2 {
+  font-size: 35px;
+  margin-top: 0;
+}
 form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  width: 500px;
+  height: 350px;
+  gap: 2px;
 
   .form-field {
     margin: 1rem 0;
@@ -38,6 +47,7 @@ form {
     width: 100%;
   }
 
+
   .switch {
     color: #2f3b4b;
     font-size: 15px;
@@ -46,4 +56,14 @@ form {
       color: rgb(127, 178, 127);
     }
   }
+}
+@media screen and (max-width: 900px) {
+  form {
+    width: fit-content;
+    height: fit-content;
+  }
+  .login-card {
+      width: unset;
+      height: unset;
+    }
 }

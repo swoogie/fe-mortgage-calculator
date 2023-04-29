@@ -1,27 +1,21 @@
 <div class="container">
   <mat-card class="login-card">
-    <h2 class="login-title">{{ showLogin ? "Login" : "Register" }}</h2>
     <mat-card-content>
+      <h2 class="login-title">{{ showLogin ? "Login" : "Register" }}</h2>
       <form [formGroup]="loginForm" *ngIf="showLogin" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email"/>
-          <mat-error *ngIf="loginForm.get('email').hasError('required')"
-          >Email is required
-          </mat-error
-          >
-          <mat-error *ngIf="loginForm.get('email').hasError('email')"
-          >Invalid email address
-          </mat-error
-          >
+          <input matInput formControlName="email" />
+          <mat-error *ngIf="loginForm.get('email').hasError('required')">Email is required
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('email').hasError('email')">Invalid email address
+          </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password"/>
-          <mat-error *ngIf="loginForm.get('password').hasError('required')"
-          >Password is required
-          </mat-error
-          >
+          <input matInput type="password" formControlName="password" />
+          <mat-error *ngIf="loginForm.get('password').hasError('required')">Password is required
+          </mat-error>
         </mat-form-field>
         <p class="switch" (click)="toggleView()">
           {{
@@ -34,50 +28,35 @@
         </button>
       </form>
 
-      <form
-        [formGroup]="registerForm"
-        *ngIf="!showLogin"
-        (ngSubmit)="onSubmit()"
-      >
+      <form [formGroup]="registerForm" *ngIf="!showLogin" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
           <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName"/>
-          <mat-error *ngIf="registerForm.get('firstName').hasError('required')"
-          >First name is required
-          </mat-error
-          >
+          <input matInput formControlName="firstName" />
+          <mat-error *ngIf="registerForm.get('firstName').hasError('required')">First name is required
+          </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName"/>
-          <mat-error *ngIf="registerForm.get('lastName').hasError('required')"
-          >Last Name is required
-          </mat-error
-          >
+          <input matInput formControlName="lastName" />
+          <mat-error *ngIf="registerForm.get('lastName').hasError('required')">Last Name is required
+          </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email"/>
-          <mat-error *ngIf="registerForm.get('email').hasError('required')"
-          >Email is required
-          </mat-error
-          >
-          <mat-error *ngIf="registerForm.get('email').hasError('email')"
-          >Invalid email address
+          <input matInput formControlName="email" />
+          <mat-error *ngIf="registerForm.get('email').hasError('required')">Email is required
           </mat-error>
-          <mat-error
-            class="error-message"
-            *ngIf="registerForm.get('email').hasError('emailNotAvailable')">
+          <mat-error *ngIf="registerForm.get('email').hasError('email')">Invalid email address
+          </mat-error>
+          <mat-error class="error-message" *ngIf="registerForm.get('email').hasError('emailNotAvailable')">
             Email is already in use
           </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password"/>
-          <mat-error *ngIf="registerForm.get('password').hasError('required')"
-          >Password is required
-          </mat-error
-          >
+          <input matInput type="password" formControlName="password" />
+          <mat-error *ngIf="registerForm.get('password').hasError('required')">Password is required
+          </mat-error>
         </mat-form-field>
         <p class="switch" (click)="toggleView()">
           {{
