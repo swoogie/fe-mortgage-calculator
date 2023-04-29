@@ -5,24 +5,27 @@
       <form [formGroup]="loginForm" *ngIf="showLogin" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email" />
+          <input matInput formControlName="email"/>
           <mat-error *ngIf="loginForm.get('email').hasError('required')"
-            >Email is required</mat-error
+          >Email is required
+          </mat-error
           >
           <mat-error *ngIf="loginForm.get('email').hasError('email')"
-            >Invalid email address</mat-error
+          >Invalid email address
+          </mat-error
           >
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" />
+          <input matInput type="password" formControlName="password"/>
           <mat-error *ngIf="loginForm.get('password').hasError('required')"
-            >Password is required</mat-error
+          >Password is required
+          </mat-error
           >
         </mat-form-field>
         <p class="switch" (click)="toggleView()">
           {{
-            showLogin ? "Do not have an account?" : "Already have an account?"
+          showLogin ? "Do not have an account?" : "Already have an account?"
           }}
           <span>{{ showLogin ? "Register Here" : "Login Here" }}</span>
         </p>
@@ -38,38 +41,47 @@
       >
         <mat-form-field appearance="outline">
           <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName" />
+          <input matInput formControlName="firstName"/>
           <mat-error *ngIf="registerForm.get('firstName').hasError('required')"
-            >First name is required</mat-error
+          >First name is required
+          </mat-error
           >
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName" />
+          <input matInput formControlName="lastName"/>
           <mat-error *ngIf="registerForm.get('lastName').hasError('required')"
-            >Last Name is required</mat-error
+          >Last Name is required
+          </mat-error
           >
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email" />
+          <input matInput formControlName="email"/>
           <mat-error *ngIf="registerForm.get('email').hasError('required')"
-            >Email is required</mat-error
+          >Email is required
+          </mat-error
           >
           <mat-error *ngIf="registerForm.get('email').hasError('email')"
-            >Invalid email address</mat-error
-          >
+          >Invalid email address
+          </mat-error>
+          <mat-error
+            class="error-message"
+            *ngIf="registerForm.get('email').hasError('emailNotAvailable')">
+            Email is already in use
+          </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" />
+          <input matInput type="password" formControlName="password"/>
           <mat-error *ngIf="registerForm.get('password').hasError('required')"
-            >Password is required</mat-error
+          >Password is required
+          </mat-error
           >
         </mat-form-field>
         <p class="switch" (click)="toggleView()">
           {{
-            showLogin ? "Do not have an account?" : "Already have an account?"
+          showLogin ? "Do not have an account?" : "Already have an account?"
           }}
           <span>{{ showLogin ? "Register Here" : "Login Here" }}</span>
         </p>
