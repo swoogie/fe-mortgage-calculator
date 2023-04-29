@@ -1,11 +1,15 @@
 <h3 class="userpage_title">USER PAGE DETAILS{{ email }}</h3>
 <div class="userpage">
-  <div *ngFor="let application of applications">
-    <p>{{ application.email }}</p>
-    <p>{{ application.firstName }}</p>
-    <p>{{ application.downPayment }}</p>
-    <p>{{ application.address }}</p>
-    <p>{{ application.monthlyIncome }}</p>
-    <p>{{ application.coApplicantEmail }}</p>
-  </div>
+  <ng-container *ngFor="let application of applications">
+    {{ application.applicationStatus }}
+    {{ application.downPayment }}
+    {{ application.euriborTerm }}
+    {{ application.loanAmount }}
+    {{ application.loanTerm }}
+    {{ application.paymentScheduleType }}
+    {{ application.realEstateAddress }}
+    {{ application.realEstatePrice }}
+  </ng-container>
+
+  <div></div>
 </div>

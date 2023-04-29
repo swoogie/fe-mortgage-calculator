@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import jwtDecode from 'jwt-decode';
+import { Observable } from 'rxjs';
 import { ApplicationData } from '../interfaces/application-data';
 import { ApiService } from '../services/api.service';
 import { UserAuthService } from '../services/user-auth.service';
@@ -18,13 +20,13 @@ export class UserpageComponent implements OnInit {
     private user_authService: UserAuthService,
     private route: ActivatedRoute,
     private apiService: ApiService
-  ) {}
+  ) {
+    const decodedToken: any = jwtDecode(localStorage.getItem('userToken'));
+    const email = decodedToken.sub;
+    this.email = email;
+  }
 
   ngOnInit() {
-    this.user_authService.currentUserEmail.subscribe((email) => {
-      this.email = email;
-      console.log(email);
-    });
     this.handleApplicationDisplay();
   }
 
