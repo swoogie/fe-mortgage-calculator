@@ -17,7 +17,15 @@
       <mat-step [stepControl]="personalDetailsForm">
         <form [formGroup]="personalDetailsForm">
           <ng-template matStepLabel>Personal Details</ng-template>
-          <div class="form-field-wrapper">
+          <div *ngIf="isUserLoggedIn" class="personal-details-info">
+            <p><strong>Email: </strong>{{userEmail}}</p>
+            <p *ngIf="personalInfo.firstName"><strong>First Name: </strong>{{personalInfo.firstName}}</p>
+            <p *ngIf="personalInfo.lastName"><strong>Last Name: </strong>{{personalInfo.lastName}}</p>
+            <p *ngIf="personalInfo.personalNumber"><strong>Personal Number: </strong>{{personalInfo.personalNumber}}</p>
+            <p *ngIf="personalInfo.phoneNumber"><strong>Phone Number: </strong>{{personalInfo.phoneNumber}}</p>
+            <p *ngIf="personalInfo.address"><strong>Home Address: </strong>{{personalInfo.address}}</p>
+          </div>
+          <div *ngIf="!isUserLoggedIn" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Email</mat-label>
               <input matInput formControlName="email"/>
@@ -42,19 +50,19 @@
               {{ emailNotAvailableMessage }}
             </div>
           </div>
-          <div class="form-field-wrapper">
+          <div *ngIf="!personalInfo.firstName" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>First Name</mat-label>
               <input matInput formControlName="firstName"/>
             </mat-form-field>
           </div>
-          <div class="form-field-wrapper">
+          <div  *ngIf="!personalInfo.lastName" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Last Name</mat-label>
               <input matInput formControlName="lastName"/>
             </mat-form-field>
           </div>
-          <div class="form-field-wrapper">
+          <div *ngIf="personalInfo.personalNumber==null" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Personal Number</mat-label>
               <input matInput formControlName="personalNumber"/>
@@ -84,7 +92,7 @@
               {{ personalNumberHintMessage }}
             </div>
           </div>
-          <div class="form-field-wrapper">
+          <div *ngIf="!personalInfo.phoneNumber" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Phone Number</mat-label>
               <input matInput formControlName="phoneNumber"/>
@@ -102,12 +110,13 @@
               {{ phoneNumberHintMessage }}
             </div>
           </div>
-          <div class="form-field-wrapper">
+          <div *ngIf="!personalInfo.address" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Home Address</mat-label>
               <input matInput formControlName="address"/>
             </mat-form-field>
           </div>
+
           <button mat-flat-button color="primary" [disabled]="!personalDetailsForm.valid" (click)="stepper.next()">
             Continue
           </button>
