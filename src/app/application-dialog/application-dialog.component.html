@@ -62,7 +62,7 @@
               <input matInput formControlName="lastName"/>
             </mat-form-field>
           </div>
-          <div *ngIf="personalInfo.personalNumber==null" class="form-field-wrapper">
+          <div *ngIf="!personalInfo.personalNumber" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Personal Number</mat-label>
               <input matInput formControlName="personalNumber"/>
