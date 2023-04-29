@@ -9,15 +9,36 @@
     justify-content: center;
     align-items: center;
 }
-.userpage_title{
+.userpage_title {
     padding-top: 100px;
     text-align: center;
+    font-weight: lighter;
 
-.logout-button{
-    position: absolute; // position the button absolutely
-  left: 50%; // move the button to the center horizontally
-  bottom: 0; // position the button at the bottom of the page
-  transform: translateX(-50%); // center the button horizontally
+    .logout-button {
+        position: absolute; // position the button absolutely
+        left: 50%; // move the button to the center horizontally
+        bottom: 0; // position the button at the bottom of the page
+        transform: translateX(-50%); // center the button horizontally
+    }
 }
+.mat-mdc-card {
+    --mdc-elevated-card-container-color: #e6f4f1;
+    color: #002a3c;
+    border: #002a3c;
+    width: 16em;
+    margin-left: 3em;
+    text-align: left;
+    font-weight: lighter;
+    marg .rejected {
+        color: #e23636;
+    }
+    .in-progress {
+        color: #edb95e;
+    }
+    .approved {
+        color: #82dd55;
+    }
+    .received {
+        color: #4a90e2;
+    }
 }
-

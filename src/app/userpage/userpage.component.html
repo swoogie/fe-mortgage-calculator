@@ -1,15 +1,66 @@
-<h3 class="userpage_title">USER PAGE DETAILS{{ email }}</h3>
+<h3 class="userpage_title">Welcome, {{ email }}</h3>
 <div class="userpage">
   <ng-container *ngFor="let application of applications">
-    {{ application.applicationStatus }}
-    {{ application.downPayment }}
-    {{ application.euriborTerm }}
-    {{ application.loanAmount }}
-    {{ application.loanTerm }}
-    {{ application.paymentScheduleType }}
-    {{ application.realEstateAddress }}
-    {{ application.realEstatePrice }}
+    <mat-card>
+      <mat-card-content>
+        <p [ngClass]="statusMap[application.applicationStatus].class">
+          {{ statusMap[application.applicationStatus].text }}
+        </p>
+        <p *ngIf="application.email">Your email: {{ application.email }}</p>
+        <p *ngIf="application.address">
+          Your Home address: {{ application.address }}
+        </p>
+        <p *ngIf="application.realEstateAddress">
+          Real estate address: {{ application.realEstateAddress }}
+        </p>
+        <p *ngIf="application.realEstatePrice">
+          Real estate price:
+          {{
+            application.realEstatePrice | currency : "EUR" : "symbol" : "1.2-2"
+          }}
+        </p>
+        <p *ngIf="application.euribor">Euribor: {{ application.euribor }}</p>
+        <p *ngIf="application.downPayment">
+          Down payment:
+          {{ application.downPayment | currency : "EUR" : "symbol" : "1.2-2" }}
+        </p>
+        <p *ngIf="application.euriborTerm">
+          Euribor term: {{ application.euriborTerm }}
+        </p>
+        <p *ngIf="application.loanAmount">
+          Loan amount:
+          {{ application.loanAmount | currency : "EUR" : "symbol" : "1.2-2" }}
+        </p>
+        <p *ngIf="application.loanTerm">
+          Loan term: {{ application.loanTerm }}
+          {{ application.loanTerm === 1 ? "year" : "years" }}
+        </p>
+        <p *ngIf="application.paymentScheduleType">
+          Payment shedule type: {{ application.paymentScheduleType }}
+        </p>
+        <p *ngIf="application.amountOfKids">
+          Children: {{ application.amountOfKids }}
+        </p>
+        <p *ngIf="application.applicants">
+          Applicants: {{ application.applicants }}
+        </p>
+        <p *ngIf="application.coApplicantEmail">
+          Coaplicants email: {{ application.coApplicantEmail }}
+        </p>
+        <p *ngIf="application.coApplicantsIncome">
+          Coaplicants income:
+          {{
+            application.coApplicantsIncome
+              | currency : "EUR" : "symbol" : "1.2-2"
+          }}
+        </p>
+        <p *ngIf="application.creditCardLimit">
+          Credit Card limit:
+          {{
+            application.creditCardLimit | currency : "EUR" : "symbol" : "1.2-2"
+          }}
+        </p>
+      </mat-card-content>
+    </mat-card>
   </ng-container>
-
-  <div></div>
 </div>
