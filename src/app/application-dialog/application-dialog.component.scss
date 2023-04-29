@@ -102,3 +102,19 @@ mat-radio-group {
   justify-content: space-between;
   align-items: center;
 }
+
+.group {
+  display: flex;
+  place-items: center;
+}
+
+mat-radio-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.continue-button{
+  margin-top: 20px;
+}

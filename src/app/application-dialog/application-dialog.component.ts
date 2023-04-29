@@ -10,7 +10,6 @@ import {EuriborValuesService} from '../services/euribor-values-service.service';
 import {debounceTime, merge} from 'rxjs';
 import {StepperSelectionEvent} from '@angular/cdk/stepper';
 import {catchError, map} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -24,7 +23,7 @@ export class ApplicationDialogComponent implements OnInit {
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 1000;
-  maxLoanAmount: number = 3200000;
+  maxLoanAmount: number = 4000000;
   minLoanTerm: number;
   maxLoanTerm: number;
   loanAmountPercentage: number;
@@ -37,6 +36,7 @@ export class ApplicationDialogComponent implements OnInit {
   maxMonthlyObligationsPercentage: number;
   euriborValues: Euribor[];
   interestRateMargin: number;
+  canProceedToIncomeDetails: boolean = false;
   // monthlyPayment: number = 0;
   totalHouseHoldIncome: number = 0;
   minHouseholdIncome: number;
@@ -44,7 +44,6 @@ export class ApplicationDialogComponent implements OnInit {
   isSufficientMonthlyPayment: boolean;
   totalMonthlyObligations: number = 0;
   availableMonthlyPayment: number = null;
-  paymentScheduleTypes: string[] = ['annuity', 'linear'];
   phoneNumberHintMessage: string =
     'Valid phone number formats: +3706XXXXXXX, 86XXXXXXX +3705XXXXXXX or 85XXXXXXX';
   personalNumberHintMessage: string =
@@ -75,8 +74,10 @@ export class ApplicationDialogComponent implements OnInit {
         Validators.required,
       ],
       monthlyIncome: [
-        this.applicationData.monthlyIncome as number,
-        [Validators.required, Validators.pattern('[0-9]*')],
+        this.applicationData.monthlyIncome as number, {
+          validators: [Validators.required, Validators.pattern('[0-9]*')],
+          updateOn: 'blur'
+        },
       ],
       coApplicantsIncome: [null as number],
       obligations: [
@@ -101,9 +102,6 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       canProceed: [true, Validators.requiredTrue],
     },
-    {
-      updateOn: 'change',
-    }
   );
   loanDetailsForm = formBuilder.group(
     {
@@ -113,16 +111,21 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       realEstatePrice: [
         this.applicationData.realEstatePrice as number,
-        [
-          Validators.required,
-          Validators.pattern('[0-9]*'),
-          Validators.max(this.maxRealEstatePrice),
-          Validators.min(this.minRealEstatePrice),
-        ],
+        {
+          validators: [
+            Validators.required,
+            Validators.pattern('[0-9]*'),
+            Validators.max(this.maxRealEstatePrice),
+            Validators.min(this.minRealEstatePrice),
+          ],
+          updateOn: 'blur'
+        }
       ],
       loanAmount: [
-        this.applicationData.loanAmount as number,
-        [Validators.required, Validators.pattern('[0-9]*')],
+        this.applicationData.loanAmount as number, {
+          validators: [Validators.required, Validators.pattern('[0-9]*')],
+          updateOn: 'blur'
+        }
       ],
       loanTerm: [
         this.applicationData.loanTerm as number,
@@ -130,12 +133,9 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       euribor: [this.applicationData.euribor, [Validators.required]],
       paymentScheduleType: [
-        this.applicationData.paymentScheduleType as string,
-        [Validators.required],
-      ],
+        this.applicationData.paymentScheduleType as string, [Validators.required]],
       canProceed: [true, Validators.requiredTrue],
-    },
-    {updateOn: 'blur'}
+    }
   );
   personalDetailsForm = formBuilder.group(
     {
@@ -143,24 +143,33 @@ export class ApplicationDialogComponent implements OnInit {
       lastName: [this.applicationData.lastName, Validators.required],
       personalNumber: [
         this.applicationData.personalNumber,
-        [Validators.required, this.personalNumberValidator()],
+        {
+          validators: [Validators.required, this.personalNumberValidator()],
+          updateOn: 'blur'
+        }
       ],
       email: [
         this.applicationData.email,
-        [
-          Validators.required,
-          Validators.email,
-          Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
-        ],
-        this.emailAvailabilityValidator(),
+        {
+          validators: [
+            Validators.required,
+            Validators.email,
+            Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
+          ],
+          asyncValidators: [this.emailAvailabilityValidator()],
+          updateOn: 'blur'
+        }
+
       ],
       phoneNumber: [
         this.applicationData.phoneNumber,
-        [Validators.required, Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
+        {
+          validators: [Validators.required, Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
+          updateOn: 'blur'
+        }
       ],
       address: [this.applicationData.address, Validators.required],
     },
-    {updateOn: 'blur'}
   );
   coApplicantDetailsForm = formBuilder.group({
     firstName: [this.applicationData.firstName, Validators.required],
@@ -175,7 +184,10 @@ export class ApplicationDialogComponent implements OnInit {
     ],
     phoneNumber: [
       this.applicationData.phoneNumber,
-      [Validators.required, Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
+      {
+        validators: [Validators.required, Validators.pattern(/^(\+370|8)(5|6)\d{7}$/)],
+        updateOn: 'blur'
+      }
     ],
   });
 
@@ -192,7 +204,6 @@ export class ApplicationDialogComponent implements OnInit {
           if (error.status === 409) {
             this.isEmailAvailable = false;
             this.emailNotAvailableMessage = error.error?.message || error.error;
-            //   control.updateValueAndValidity();
             return [{emailNotAvailable: true}];
           } else {
             console.error('An unexpected error occurred:', error);
@@ -257,7 +268,6 @@ export class ApplicationDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public applicationData: ApplicationData,
     private _snackBar: MatSnackBar,
-    private http: HttpClient
   ) {
     const sufficientIncomeFormControls = [
       this.applicants,
@@ -271,22 +281,20 @@ export class ApplicationDialogComponent implements OnInit {
       });
     });
 
-    const sufficientMonthlyPaymentFormControls = [
-      this.realEstatePrice,
-      this.loanAmount,
-      this.loanTerm,
-    ];
-    sufficientMonthlyPaymentFormControls.forEach((control) => {
-      control.valueChanges.subscribe(() => {
-        this.updateSufficientMonthlyPayment();
-      });
-    });
     this.paymentScheduleType.valueChanges.subscribe(() => {
       this.updateSufficientMonthlyPayment();
     });
     this.euribor.valueChanges.subscribe(() => {
       this.updateSufficientMonthlyPayment();
     });
+    this.personalDetailsForm.valueChanges.subscribe(() => {
+      if (this.personalDetailsForm.valid) {
+        this.canProceedToIncomeDetails = true;
+      } else {
+        this.canProceedToIncomeDetails = false;
+      }
+    });
+
     this.personalEmail.valueChanges.subscribe((email) => {
       this.apiService.checkEmail(email).subscribe(
         (response: any) => {
@@ -314,16 +322,15 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateAvailableMonthlyPayment();
     });
 
-    merge([
-      this.monthlyIncome.valueChanges,
-      this.coApplicantsIncome.valueChanges,
-    ]).subscribe(() => {
-      this.updateTotalHouseHoldIncome(
-        this.monthlyIncome.value,
-        this.coApplicantsIncome.value
-      );
-      this.updateAvailableMonthlyPayment();
-    });
+      this.monthlyIncome.valueChanges.subscribe(() => {
+        this.updateTotalHouseHoldIncome();
+        this.updateAvailableMonthlyPayment();
+      });
+
+      this.coApplicantsIncome.valueChanges.subscribe(() => {
+        this.updateTotalHouseHoldIncome();
+        this.updateAvailableMonthlyPayment();
+      });
 
     this.obligations.valueChanges.subscribe((value: boolean) => {
       this.updateObligationsValidations(value);
@@ -471,6 +478,16 @@ export class ApplicationDialogComponent implements OnInit {
     );
   }
 
+  clearData() {
+
+    localStorage.setItem('incomeDetails', null);
+    localStorage.setItem('loanData', null);
+    localStorage.setItem('coApplicantsData', null);
+    localStorage.setItem(
+      'personalDetailData', null
+    );
+  }
+
   loadData() {
     const savedData = JSON.parse(localStorage.getItem('incomeDetails'));
     const loanData = JSON.parse(localStorage.getItem('loanData'));
@@ -541,10 +558,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.saveData();
     });
     this.getConstants();
-    this.updateTotalHouseHoldIncome(
-      this.monthlyIncome.value,
-      this.coApplicantsIncome.value
-    );
+    this.updateTotalHouseHoldIncome();
     this.updateAvailableMonthlyPayment();
   }
 
@@ -599,7 +613,7 @@ export class ApplicationDialogComponent implements OnInit {
     if (isRealEstatePriceValid) {
       const currentValue = this.loanAmount.value;
       const minLoanAmount = this.minLoanAmount;
-      const maxLoanAmount = realEstatePrice;
+      const maxLoanAmount = this.maxLoanAmount;
 
       this.loanAmount.setValidators([
         Validators.required,
@@ -633,11 +647,15 @@ export class ApplicationDialogComponent implements OnInit {
     const downPayment = Math.round(
       this.realEstatePrice.value - this.loanAmount.value
     );
-    this.downPayment = downPayment;
+    if (downPayment < 0) {
+      this.downPayment = 0;
+    } else {
+      this.downPayment = downPayment;
+    }
   }
 
-  updateTotalHouseHoldIncome(income, coApplicantsIncome) {
-    const totalHouseHoldIncome = +income + +coApplicantsIncome;
+  updateTotalHouseHoldIncome() {
+    const totalHouseHoldIncome = +this.monthlyIncome.value + +this.coApplicantsIncome.value;
     this.totalHouseHoldIncome = totalHouseHoldIncome;
     this.updateSufficientHouseholdIncome();
   }
@@ -732,23 +750,18 @@ export class ApplicationDialogComponent implements OnInit {
     }
   }
 
-  getTotalIncome() {
-    return this.applicants.value > 1
-      ? this.totalHouseHoldIncome
-      : this.monthlyIncome.value;
-  }
-
   onSubmitApplyClick(): void {
     //form validation and post to backend
     this.updateDownPayment();
     this.saveLoanDetails();
-    console.log(this.applicationData);
+    console.log("Application sent to backend: ", this.applicationData);
     this.apiService.postApplication(this.applicationData).subscribe({
       next: () => {
         console.log('Application submitted successfully');
-        this._snackBar.open('Application submitted successfully', 'Close', {
+        this._snackBar.open('Your application has been received and processed successfully. Please check your email for further instructions on the next steps.', 'Close', {
           duration: 5000,
         });
+        this.clearData();
       },
       error: (err) => {
         console.log(err);
@@ -966,7 +979,8 @@ export class ApplicationDialogComponent implements OnInit {
     const monthlyAnnuity =
       (loanAmount * monthlyInterestRate) /
       (1 - Math.pow(1 + monthlyInterestRate, -loanTermInMonths));
-    return monthlyAnnuity * loanTermInMonths;
+    const totalAnnuity = monthlyAnnuity * loanTermInMonths;
+    return totalAnnuity;
   }
 
   selectedIndex: number = 0;
@@ -982,5 +996,43 @@ export class ApplicationDialogComponent implements OnInit {
 
   triggerClick(event) {
     this.attemptedToProceed = true;
+  }
+
+  clickMe(event: Event) {
+    this._snackBar.open(
+      'Annuity - identical monthly installments',
+      null,
+      {
+        duration: 7000,
+      }
+    );
+    event.stopPropagation();
+  }
+
+  clickMe2(event: Event) {
+    this._snackBar.open(
+      'Linear - identical monthly principle, interest is calculated on outstanding principle',
+      null,
+      {
+        duration: 7000,
+      }
+    );
+    event.stopPropagation();
+  }
+
+  clickMe3(event: Event) {
+    this._snackBar.open(
+      'Any outstanding amounts for financial obligations like existing loans, credit card debt, and other expenses.',
+      null,
+      {
+        duration: 7000,
+      }
+    );
+    event.stopPropagation();
+  }
+
+  unclickMe(event: Event) {
+    this._snackBar.dismiss();
+    event.stopPropagation();
   }
 }
