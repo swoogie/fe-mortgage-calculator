@@ -1,9 +1,10 @@
-<h3 class="userpage_title">USER PAGE DETAILS</h3>
+<h3 class="userpage_title">USER PAGE DETAILS{{ email }}</h3>
 <div class="userpage"></div>
 <div class="userpage">
   <div *ngFor="let application of applications">
     <p>{{ application.email }}</p>
     <p>{{ application.firstName }}</p>
     <p>{{ application.downPayment }}</p>
+    <h1>{{ email }}</h1>
   </div>
 </div>

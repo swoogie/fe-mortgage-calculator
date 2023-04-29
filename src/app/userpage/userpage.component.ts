@@ -27,15 +27,12 @@ export class UserpageComponent implements OnInit {
       this.email = email;
       console.log(email);
     });
-    // this.apiService.listApplications().subscribe((data) => {
-    //   this.applications = data;
-    // });
   }
 
   handleApplicationDisplay() {
-    const userId: number = +this.route.snapshot.paramMap.get('id');
+    const userEmail: string = this.route.snapshot.paramMap.get('userEmail');
 
-    this.apiService.getApplicationForUser(userId).subscribe((data) => {
+    this.apiService.getApplicationForUser(this.email).subscribe((data) => {
       this.applications = data;
     });
   }

@@ -27,28 +27,9 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/users/check-email?email=${email}`);
   }
 
-  getApplicationForUser(userId: number): Observable<ApplicationData[]> {
+  getApplicationForUser(userEmail: string): Observable<ApplicationData[]> {
     return this.http.get<ApplicationData[]>(
-      `${this.apiUrl}/users/${userId}/applications`
+      `${this.apiUrl}/user/email/${userEmail}/application`
     );
   }
-
-  // listApplications(newConstants: any): Observable<ApplicationData[]> {
-  //   return this.http.put<ApplicationData[]>(
-  //     `${this.apiUrl}/users/{userId}/applications`,
-  //     newConstants,
-  //     {
-  //       headers: this.requestHeader,
-  //     }
-  //   );
-  // }
-  // listApplications(): Observable<ApplicationData[]> {
-  //   const headers = new HttpHeaders({
-  //     Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-  //   });
-  //   return this.http.get<ApplicationData[]>(
-  //     this.apiUrl + 'users/{userId}/applications',
-  //     { headers }
-  //   );
-  // }
 }
