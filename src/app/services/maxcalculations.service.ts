@@ -1,17 +1,21 @@
-import { Injectable } from '@angular/core';
-import { FormGroup, NumberValueAccessor } from '@angular/forms';
+import {Injectable} from '@angular/core';
+import {FormGroup} from '@angular/forms';
+import {PaymentCalculationResult} from "../interfaces/payment-calculation-result";
 
 @Injectable({
   providedIn: 'root',
 })
 export class MaxcalculationsService {
-  constructor() {}
+  constructor() {
+  }
 
   maxForm: FormGroup;
   outstandingPrincipal: number;
   loanTermInMonths: number;
   monthlyInterestRate: number;
   linearTotal: number;
+  result: PaymentCalculationResult;
+
   setForm(form: FormGroup) {
     this.maxForm = form;
     this.outstandingPrincipal = this.loanAmount.value;
@@ -20,21 +24,39 @@ export class MaxcalculationsService {
     this.linearTotal = 0;
   }
 
-  calculateLinearTotal(form: FormGroup): number {
+  calculateLinearTotal(form: FormGroup): PaymentCalculationResult {
     this.setForm(form);
     const principal = this.loanAmount.value / this.loanTermInMonths;
+    let interest = 0;
+    let linearTotal = 0
+    const firstMonthPayment = principal + this.monthlyInterestRate * this.outstandingPrincipal;
     while (this.outstandingPrincipal > 0) {
-      this.linearTotal +=
-        principal + this.monthlyInterestRate * this.outstandingPrincipal;
+      interest = this.monthlyInterestRate * this.outstandingPrincipal;
+      const monthlyPayment = principal + interest
+      linearTotal += monthlyPayment;
       this.outstandingPrincipal -= principal;
     }
-    return Math.round(this.linearTotal);
+    this.result = {
+      totalPayment: Math.round(linearTotal),
+      totalInterest: Math.round(linearTotal - this.loanAmount.value),
+      totalPrincipal: Math.round(this.loanAmount.value),
+      monthlyPayment: Math.round(firstMonthPayment),
+    }
+    return this.result;
   }
 
-  calculateAnnuityTotal(form: FormGroup): number {
+  calculateAnnuityTotal(form: FormGroup): PaymentCalculationResult {
     this.setForm(form);
     const monthlyAnnuity = this.calculateAnnuityMonthly();
-    return Math.round(monthlyAnnuity * this.loanTermInMonths);
+    const totalPayment = Math.round(monthlyAnnuity * this.loanTermInMonths);
+
+    this.result = {
+      totalPayment: Math.round(monthlyAnnuity * this.loanTermInMonths),
+      totalInterest: Math.round(totalPayment - this.loanAmount.value),
+      totalPrincipal: Math.round(this.loanAmount.value),
+      monthlyPayment: Math.round(monthlyAnnuity),
+    }
+    return this.result;
   }
 
   calculateAnnuityMonthly(): number {
@@ -52,9 +74,11 @@ export class MaxcalculationsService {
   get loanAmount() {
     return this.maxForm.get('loanAmount');
   }
+
   get interestRate() {
     return this.maxForm.get('interestRate');
   }
+
   get loanTerm() {
     return this.maxForm.get('loanTerm');
   }
