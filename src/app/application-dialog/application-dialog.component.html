@@ -56,7 +56,7 @@
               <input matInput formControlName="firstName"/>
             </mat-form-field>
           </div>
-          <div  *ngIf="!personalInfo.lastName" class="form-field-wrapper">
+          <div *ngIf="!personalInfo.lastName" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Last Name</mat-label>
               <input matInput formControlName="lastName"/>
@@ -172,6 +172,12 @@
               >
                 Please enter a valid number
               </mat-error>
+              <mat-error
+                class="error-message"
+                *ngIf="monthlyIncome && monthlyIncome.hasError('max')"
+              >
+                Number is outside of valid range
+              </mat-error>
             </mat-form-field>
           </div>
           <div *ngIf="applicants.value == 2" class="form-field-wrapper">
@@ -185,6 +191,12 @@
                 "
               >
                 Please enter a valid number
+              </mat-error>
+              <mat-error
+                class="error-message"
+                *ngIf="coApplicantsIncome && coApplicantsIncome.hasError('max')"
+              >
+                Number is outside of valid range
               </mat-error>
             </mat-form-field>
           </div>
@@ -247,6 +259,15 @@
                   >
                     Please enter a valid number
                   </mat-error>
+                  <mat-error
+                    class="error-message"
+                    *ngIf="
+                  incomeDetailsForm.get(field.controlName) &&
+                      incomeDetailsForm
+                        .get(field.controlName)
+                        .hasError('max')">
+                    Number is outside of valid range
+                  </mat-error>
                 </mat-form-field>
               </div>
             </ng-container>
@@ -259,7 +280,8 @@
             {{ maxMonthlyObligationsPercentage | percent }} from your monthly
             incomes.
           </div>
-          <button mat-flat-button color="primary" [disabled]="!incomeDetailsForm.valid" (click)="stepper.next()" class="continue-button">
+          <button mat-flat-button color="primary" [disabled]="!incomeDetailsForm.valid" (click)="stepper.next()"
+                  class="continue-button">
             Continue
           </button>
         </form>
@@ -399,20 +421,20 @@
               </div>
             </mat-radio-group>
           </div>
-<!--          <div class="form-field-wrapper">-->
-<!--            <mat-radio-group-->
-<!--              aria-label="Payment schedule options"-->
-<!--              formControlName="paymentScheduleType"-->
-<!--              color="accent"-->
-<!--            >-->
-<!--              <mat-radio-button-->
-<!--                *ngFor="let type of paymentScheduleTypes"-->
-<!--                [value]="type"-->
-<!--              >-->
-<!--                {{ type | titlecase }}-->
-<!--              </mat-radio-button>-->
-<!--            </mat-radio-group>-->
-<!--          </div>-->
+          <!--          <div class="form-field-wrapper">-->
+          <!--            <mat-radio-group-->
+          <!--              aria-label="Payment schedule options"-->
+          <!--              formControlName="paymentScheduleType"-->
+          <!--              color="accent"-->
+          <!--            >-->
+          <!--              <mat-radio-button-->
+          <!--                *ngFor="let type of paymentScheduleTypes"-->
+          <!--                [value]="type"-->
+          <!--              >-->
+          <!--                {{ type | titlecase }}-->
+          <!--              </mat-radio-button>-->
+          <!--            </mat-radio-group>-->
+          <!--          </div>-->
           <div
             *ngIf="isSufficientMonthlyPayment == false"
             class="info-node info-node-warning"
