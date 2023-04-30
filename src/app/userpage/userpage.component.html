@@ -3,45 +3,13 @@
   <ng-container *ngFor="let application of applications">
     <mat-card>
       <mat-card-content>
-        <mat-horizontal-stepper linear [selectedIndex]="currentStepIndex">
-          <ng-container
-            *ngFor="
-              let status of ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'];
-              let i = index
-            "
-          >
-            <mat-step
-              [editable]="false"
-              *ngIf="
-                (status === 'RECEIVED' &&
-                  application.applicationStatus === 'RECEIVED') ||
-                (status === 'IN_PROGRESS' &&
-                  (application.applicationStatus === 'IN_PROGRESS' ||
-                    application.applicationStatus === 'APPROVED' ||
-                    application.applicationStatus === 'REJECTED')) ||
-                (status === 'APPROVED' &&
-                  (application.applicationStatus === 'APPROVED' ||
-                    application.applicationStatus === 'REJECTED')) ||
-                (status === 'REJECTED' &&
-                  application.applicationStatus === 'REJECTED')
-              "
-            >
-              <ng-template matStepLabel>
-                {{
-                  status === "RECEIVED"
-                    ? "Received"
-                    : status === "IN_PROGRESS"
-                    ? "In progress"
-                    : status === "APPROVED"
-                    ? "Approved"
-                    : status === "REJECTED"
-                    ? "Rejected"
-                    : ""
-                }}
-              </ng-template>
-            </mat-step>
-          </ng-container>
-        </mat-horizontal-stepper>
+        <p
+          [ngStyle]="{
+            color: getStatusColor(application.applicationStatus)
+          }"
+        >
+          {{ application.applicationStatus }}
+        </p>
         <p *ngIf="application.email">Your email: {{ application.email }}</p>
 
         <p *ngIf="application.realEstateAddress">
@@ -50,12 +18,12 @@
         <p *ngIf="application.realEstatePrice">
           Real estate price:
           {{
-            application.realEstatePrice | currency : "EUR" : "symbol" : "1.2-2"
+            application.realEstatePrice | currency : "EUR" : "symbol" : "1.0-0"
           }}
         </p>
         <p *ngIf="application.loanAmount">
           Loan amount:
-          {{ application.loanAmount | currency : "EUR" : "symbol" : "1.2-2" }}
+          {{ application.loanAmount | currency : "EUR" : "symbol" : "1.0-0" }}
         </p>
         <p *ngIf="application.loanTerm">
           Loan term: {{ application.loanTerm }}
@@ -64,7 +32,7 @@
 
         <p *ngIf="application.downPayment">
           Down payment:
-          {{ application.downPayment | currency : "EUR" : "symbol" : "1.2-2" }}
+          {{ application.downPayment | currency : "EUR" : "symbol" : "1.0-0" }}
         </p>
       </mat-card-content>
       <mat-accordion class="more-info-wrap">
@@ -83,7 +51,7 @@
             Credit Card limit:
             {{
               application.creditCardLimit
-                | currency : "EUR" : "symbol" : "1.2-2"
+                | currency : "EUR" : "symbol" : "1.0-0"
             }}
           </p>
           <p *ngIf="application.paymentScheduleType">
@@ -93,7 +61,7 @@
             Coaplicants income:
             {{
               application.coApplicantsIncome
-                | currency : "EUR" : "symbol" : "1.2-2"
+                | currency : "EUR" : "symbol" : "1.0-0"
             }}
           </p>
           <p *ngIf="application.amountOfKids">
