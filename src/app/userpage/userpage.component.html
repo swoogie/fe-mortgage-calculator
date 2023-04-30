@@ -3,45 +3,6 @@
   <ng-container *ngFor="let application of applications">
     <mat-card>
       <mat-card-content>
-        <!-- <mat-horizontal-stepper linear [selectedIndex]="currentStepIndex">
-          <ng-container
-            *ngFor="
-              let status of ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'];
-              let i = index
-            "
-          >
-            <mat-step
-              [editable]="false"
-              *ngIf="
-                (status === 'RECEIVED' &&
-                  application.applicationStatus === 'RECEIVED') ||
-                (status === 'IN_PROGRESS' &&
-                  (application.applicationStatus === 'IN_PROGRESS' ||
-                    application.applicationStatus === 'APPROVED' ||
-                    application.applicationStatus === 'REJECTED')) ||
-                (status === 'APPROVED' &&
-                  (application.applicationStatus === 'APPROVED' ||
-                    application.applicationStatus === 'REJECTED')) ||
-                (status === 'REJECTED' &&
-                  application.applicationStatus === 'REJECTED')
-              "
-            >
-              <ng-template matStepLabel>
-                {{
-                  status === "RECEIVED"
-                    ? "Received"
-                    : status === "IN_PROGRESS"
-                    ? "In progress"
-                    : status === "APPROVED"
-                    ? "Approved"
-                    : status === "REJECTED"
-                    ? "Rejected"
-                    : ""
-                }}
-              </ng-template>
-            </mat-step>
-          </ng-container>
-        </mat-horizontal-stepper> -->
         <p
           [ngStyle]="{
             color: getStatusColor(application.applicationStatus)
