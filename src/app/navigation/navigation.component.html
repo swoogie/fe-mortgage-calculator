@@ -156,11 +156,20 @@
           </li>
           <li *ngIf="adminLoggedIn">
             <a
-              routerLink="/admin-page"
+              routerLink="/admin/applications"
               routerLinkActive="active"
               ariaCurrentWhenActive="page"
               (click)="burgerFalse()"
-              >Admin Dash</a
+              >Applications</a
+            >
+          </li>
+          <li *ngIf="adminLoggedIn">
+            <a
+              routerLink="/admin/constants"
+              routerLinkActive="active"
+              ariaCurrentWhenActive="page"
+              (click)="burgerFalse()"
+              >Constants</a
             >
           </li>
           <li *ngIf="userLoggedIn || adminLoggedIn">
