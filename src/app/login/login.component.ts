@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 // import { AuthService } from '../services/auth.service';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
-import { UserAuthService } from '../services/user-auth.service';
+import {FormBuilder, FormControl, FormGroup, Validators,} from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Router} from '@angular/router';
+import {UserAuthService} from '../services/user-auth.service';
 import jwtDecode from 'jwt-decode';
+import {catchError, map} from "rxjs/operators";
+import {ApiService} from "../services/api.service";
 
 const fb = new FormBuilder();
 
@@ -22,13 +19,17 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   registerForm: FormGroup;
   showLogin: boolean = true;
+  isEmailAvailable: boolean;
+  emailNotAvailableMessage: string;
 
   constructor(
     private fb: FormBuilder,
     private userAuthService: UserAuthService,
     private router: Router,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    private apiService: ApiService
+  ) {
+  }
 
   toggleView() {
     this.showLogin = !this.showLogin;
@@ -48,18 +49,40 @@ export class LoginComponent implements OnInit {
     });
 
     this.registerForm = this.fb.group({
-      email: [
-        '',
-        [
+      email: ['', {
+        validators: [
           Validators.required,
           Validators.email,
           Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
         ],
+        asyncValidators: [this.emailAvailabilityValidator()],
+        updateOn: 'blur'
+      }
       ],
       password: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
     });
+  }
+
+  emailAvailabilityValidator() {
+    return (control: FormControl) => {
+      const email = control.value;
+      return this.apiService.checkEmail(email).pipe(
+        map((response: any) => {
+          this.isEmailAvailable = true;
+          return response.available ? null : {emailNotAvailable: true};
+        }),
+        catchError((error) => {
+          if (error.status === 409) {
+            return [{emailNotAvailable: true}];
+          } else {
+            console.error('An unexpected error occurred:', error);
+            return [];
+          }
+        })
+      );
+    };
   }
 
   onSubmit() {

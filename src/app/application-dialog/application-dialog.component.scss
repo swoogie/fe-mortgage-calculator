@@ -55,6 +55,13 @@ mat-radio-group {
 .mat-step-header {
   color: rgba(0, 0, 0, 0.8);
 }
+.personal-details-info p{
+  color: rgba(0, 0, 0, 0.8);
+  font-size: 16px;
+  margin: 25px 5px;
+  min-width: 250px;
+  max-width: 350px;
+}
 
 .info-node {
   color: rgba(0, 0, 0, 0.8);
@@ -101,4 +108,20 @@ mat-radio-group {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.group {
+  display: flex;
+  place-items: center;
+}
+
+mat-radio-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.continue-button{
+  margin-top: 20px;
 }

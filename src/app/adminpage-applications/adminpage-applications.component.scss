@@ -1,9 +1,13 @@
 .mat-elevation-z8{
-  padding-top: 100px;
+  padding: 30px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  margin: 0px 30px;
+  min-width: 95%;
 }
 
 table {
-  width: 100%;
+
 }
 
 button {
@@ -19,7 +23,10 @@ button {
 tr.example-detail-row {
   height: 0;
 }
-
+.filter{
+  padding-top: 100px;
+  margin-left: 30px;
+}
 tr.example-application-row:not(.example-expanded-row):hover {
   background: whitesmoke;
 }
@@ -59,7 +66,7 @@ tr.example-application-row:not(.example-expanded-row):active {
 
 .application-detail-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   column-gap: 20px;
   row-gap: 10px;
   div {
@@ -75,3 +82,14 @@ tr.example-application-row:not(.example-expanded-row):active {
   color: black;
 }
 
+.details{
+  display: flex;
+  gap: 50px;
+  width: 100%;
+}
+.details-info{
+  min-width: 330px;
+}
+.details-info th,.details-info td{
+  padding: 5px;
+}

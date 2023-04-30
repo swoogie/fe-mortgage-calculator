@@ -38,6 +38,8 @@ import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-con
 import { AdminpageApplicationsComponent } from './adminpage-applications/adminpage-applications.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
+import {MatSortModule} from "@angular/material/sort";
+
 
 @NgModule({
   declarations: [
@@ -80,6 +82,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     ChartModule,
     MatGridListModule,
     MatExpansionModule,
+    MatSortModule
   ],
   providers: [
     MatSnackBarModule,

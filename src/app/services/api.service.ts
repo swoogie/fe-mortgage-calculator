@@ -38,4 +38,11 @@ export class ApiService {
   checkEmail(email: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/check-email?email=${email}`);
   }
+
+  getPersonalInfo(email: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/auth/users?email=${email}`);
+  }
+  getPersonalNumber(email: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/auth/users/personal-number?email=${email}`);
+  }
 }

@@ -12,11 +12,20 @@
     <mat-vertical-stepper
       [linear]="isLinear"
       (selectionChange)="setIndex($event)"
+      #stepper
     >
       <mat-step [stepControl]="personalDetailsForm">
         <form [formGroup]="personalDetailsForm">
           <ng-template matStepLabel>Personal Details</ng-template>
-          <div class="form-field-wrapper">
+          <div *ngIf="isUserLoggedIn" class="personal-details-info">
+            <p><strong>Email: </strong>{{userEmail}}</p>
+            <p *ngIf="personalInfo.firstName"><strong>First Name: </strong>{{personalInfo.firstName}}</p>
+            <p *ngIf="personalInfo.lastName"><strong>Last Name: </strong>{{personalInfo.lastName}}</p>
+            <p *ngIf="personalInfo.personalNumber"><strong>Personal Number: </strong>{{personalInfo.personalNumber}}</p>
+            <p *ngIf="personalInfo.phoneNumber"><strong>Phone Number: </strong>{{personalInfo.phoneNumber}}</p>
+            <p *ngIf="personalInfo.address"><strong>Home Address: </strong>{{personalInfo.address}}</p>
+          </div>
+          <div *ngIf="!isUserLoggedIn" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Email</mat-label>
               <input matInput formControlName="email"/>
@@ -41,19 +50,19 @@
               {{ emailNotAvailableMessage }}
             </div>
           </div>
-          <div class="form-field-wrapper">
+          <div *ngIf="!personalInfo.firstName" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>First Name</mat-label>
               <input matInput formControlName="firstName"/>
             </mat-form-field>
           </div>
-          <div class="form-field-wrapper">
+          <div  *ngIf="!personalInfo.lastName" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Last Name</mat-label>
               <input matInput formControlName="lastName"/>
             </mat-form-field>
           </div>
-          <div class="form-field-wrapper">
+          <div *ngIf="!personalInfo.personalNumber" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Personal Number</mat-label>
               <input matInput formControlName="personalNumber"/>
@@ -83,35 +92,36 @@
               {{ personalNumberHintMessage }}
             </div>
           </div>
-          <div class="form-field-wrapper">
+          <div *ngIf="!personalInfo.phoneNumber" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Phone Number</mat-label>
               <input matInput formControlName="phoneNumber"/>
               <mat-error
                 class="error-message"
                 *ngIf="
-                  personalPhoneNumber && personalPhoneNumber.hasError('pattern')
-                "
-              >
+                  personalPhoneNumber && personalPhoneNumber.hasError('pattern')">
                 Please enter a valid phone number
               </mat-error>
             </mat-form-field>
             <div
               class="info-node info-node-warning"
               *ngIf="
-                personalPhoneNumber && personalPhoneNumber.hasError('pattern')
-              "
-            >
+                personalPhoneNumber && personalPhoneNumber.hasError('pattern')">
               {{ phoneNumberHintMessage }}
             </div>
           </div>
-          <div class="form-field-wrapper">
+          <div *ngIf="!personalInfo.address" class="form-field-wrapper">
             <mat-form-field>
               <mat-label>Home Address</mat-label>
               <input matInput formControlName="address"/>
             </mat-form-field>
           </div>
+
+          <button mat-flat-button color="primary" [disabled]="!personalDetailsForm.valid" (click)="stepper.next()">
+            Continue
+          </button>
         </form>
+
       </mat-step>
       <mat-step step [stepControl]="incomeDetailsForm">
         <form [formGroup]="incomeDetailsForm">
@@ -184,7 +194,7 @@
           >
             <div class="info-node">
               Total Household income:
-              {{ totalHouseHoldIncome | currency : "EUR" }}
+              {{ totalHouseHoldIncome | currency : "EUR" : "symbol" : "1.0-0" }}
             </div>
           </div>
           <div
@@ -198,12 +208,10 @@
           <div class="form-field-wrapper">
             <div>
               <mat-label class="block">Do you have any obligations?</mat-label>
-              <mat-icon
-                matSuffix
-                matTooltip="Represent any outstanding debts or regular payments that a party must make."
-                [matTooltipPosition]="'right'"
-              >help_outline
-              </mat-icon>
+              <button matPrefix mat-icon-button (click)="clickMe3($event)" matTooltipPosition="above"
+                      (mouseenter)="clickMe3($event)" (mouseleave)="unclickMe($event)">
+                <mat-icon class="info-btn">info</mat-icon>
+              </button>
             </div>
             <mat-error
               class="error-message"
@@ -251,6 +259,9 @@
             {{ maxMonthlyObligationsPercentage | percent }} from your monthly
             incomes.
           </div>
+          <button mat-flat-button color="primary" [disabled]="!incomeDetailsForm.valid" (click)="stepper.next()" class="continue-button">
+            Continue
+          </button>
         </form>
       </mat-step>
 
@@ -361,15 +372,6 @@
           <div class="form-field-wrapper">
             <div>
               <mat-label class="block">Payment Schedule Type</mat-label>
-              <mat-icon
-                matSuffix
-                [matTooltip]="
-                  'Annuity - identical monthly installments;
-               Linear - identical monthly principle, interest is calculated on outstanding principle'
-                "
-                [matTooltipPosition]="'right'"
-                fontIcon="help_outline"
-              ></mat-icon>
             </div>
             <mat-error
               class="error-message"
@@ -379,21 +381,38 @@
             >
               Please select an option
             </mat-error>
-          </div>
-          <div class="form-field-wrapper">
-            <mat-radio-group
-              aria-label="Payment schedule options"
-              formControlName="paymentScheduleType"
-              color="accent"
-            >
-              <mat-radio-button
-                *ngFor="let type of paymentScheduleTypes"
-                [value]="type"
-              >
-                {{ type | titlecase }}
-              </mat-radio-button>
+            <mat-radio-group aria-label="Payment schedule options" formControlName="paymentScheduleType" color="primary"
+                             class="radio-group">
+              <div class="group">
+                <mat-radio-button color="accent" value="annuity">Annuity</mat-radio-button>
+                <button matPrefix mat-icon-button (click)="clickMe($event)" matTooltipPosition="above"
+                        (mouseenter)="clickMe($event)" (mouseleave)="unclickMe($event)">
+                  <mat-icon class="info-btn">info</mat-icon>
+                </button>
+              </div>
+              <div class="group">
+                <mat-radio-button color="accent" value="linear">Linear</mat-radio-button>
+                <button matPrefix mat-icon-button (click)="clickMe2($event)" (mouseenter)="clickMe2($event)"
+                        (mouseleave)="unclickMe($event)" matTooltipPosition="above">
+                  <mat-icon class="info-btn">info</mat-icon>
+                </button>
+              </div>
             </mat-radio-group>
           </div>
+<!--          <div class="form-field-wrapper">-->
+<!--            <mat-radio-group-->
+<!--              aria-label="Payment schedule options"-->
+<!--              formControlName="paymentScheduleType"-->
+<!--              color="accent"-->
+<!--            >-->
+<!--              <mat-radio-button-->
+<!--                *ngFor="let type of paymentScheduleTypes"-->
+<!--                [value]="type"-->
+<!--              >-->
+<!--                {{ type | titlecase }}-->
+<!--              </mat-radio-button>-->
+<!--            </mat-radio-group>-->
+<!--          </div>-->
           <div
             *ngIf="isSufficientMonthlyPayment == false"
             class="info-node info-node-warning"
@@ -401,14 +420,16 @@
             Your total monthly income is insufficient for this loan amount.
             Please decrease your loan amount or increase loan term.
           </div>
+          <button mat-flat-button color="primary" [disabled]="!loanDetailsForm.valid" (click)="stepper.next()">
+            Continue
+          </button>
         </form>
       </mat-step>
 
       <mat-step
         step
         *ngIf="applicants.value == 2"
-        [stepControl]="coApplicantDetailsForm"
-      >
+        [stepControl]="coApplicantDetailsForm">
         <form [formGroup]="coApplicantDetailsForm">
           <ng-template matStepLabel>Co-applicant's Details</ng-template>
           <div class="form-field-wrapper">
@@ -459,6 +480,9 @@
               {{ phoneNumberHintMessage }}
             </div>
           </div>
+          <button mat-flat-button color="primary" [disabled]="!coApplicantDetailsForm.valid" (click)="stepper.next()">
+            Continue
+          </button>
         </form>
       </mat-step>
       <mat-step>
