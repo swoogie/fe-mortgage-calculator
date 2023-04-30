@@ -10,6 +10,7 @@ import {ApplicationDialogComponent} from '../application-dialog/application-dial
 import {MatDialog} from '@angular/material/dialog';
 import {EuriborValuesService} from '../services/euribor-values-service.service';
 import {EuriborApiService} from '../services/euribor-api.service';
+import {PaymentCalculationResult} from "../interfaces/payment-calculation-result";
 
 const fb = new FormBuilder().nonNullable;
 
@@ -180,6 +181,7 @@ export class MaxCalcComponent {
   annuityTotal: number;
   interestFromTotal: number;
   principalFromTotal: number;
+  monthlyPayment: number;
 
   calculateMax() {
     if (this.loanAmount.value == 0) {
@@ -201,23 +203,23 @@ export class MaxCalcComponent {
         )?.rate_pct;
         this.interestRate.setValue(this.baseInterest + ratePct);
         if (this.maxCalcForm && this.paymentScheduleType.value == 'linear') {
-          this.linearTotal = this.calcService.calculateLinearTotal(
+          const result = this.calcService.calculateLinearTotal(
             this.maxCalcForm
           );
-          this.interestFromTotal = this.getInterest(this.linearTotal);
-          this.principalFromTotal = parseFloat(
-            (this.linearTotal - this.interestFromTotal).toFixed(2)
-          );
+          this.linearTotal = result.totalPayment;
+          this.interestFromTotal = result.totalInterest;
+          this.principalFromTotal = result.totalPrincipal;
+          this.monthlyPayment = result.monthlyPayment;
           this.chartData = [this.principalFromTotal, this.interestFromTotal];
         }
         if (this.maxCalcForm && this.paymentScheduleType.value == 'annuity') {
-          this.annuityTotal = this.calcService.calculateAnnuityTotal(
+         const result = this.calcService.calculateAnnuityTotal(
             this.maxCalcForm
           );
-          this.interestFromTotal = this.getInterest(this.annuityTotal);
-          this.principalFromTotal = parseFloat(
-            (this.annuityTotal - this.interestFromTotal).toFixed(2)
-          );
+          this.annuityTotal = result.totalPayment;
+          this.interestFromTotal = result.totalInterest;
+          this.principalFromTotal = result.totalPrincipal;
+          this.monthlyPayment = result.monthlyPayment;
         }
         this.chartData = [this.principalFromTotal, this.interestFromTotal];
       });
@@ -317,7 +319,7 @@ export class MaxCalcComponent {
 
   clickMe2(event: Event) {
     this._snackBar.open(
-      'Annuity - identical monthly installments',
+      'Linear - identical monthly principle, interest is calculated on outstanding principle',
       null,
       {
         duration: 7000,
