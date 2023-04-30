@@ -3,9 +3,19 @@
   <ng-container *ngFor="let application of applications">
     <mat-card>
       <mat-card-content>
-        <p [ngClass]="statusMap[application.applicationStatus].class">
-          {{ statusMap[application.applicationStatus].text }}
-        </p>
+        <mat-horizontal-stepper linear>
+          <mat-step
+            [editable]="false"
+            [completed]="i < activeStepIndex + 1"
+            *ngFor="
+              let status of ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'];
+              let i = index
+            "
+          >
+            <ng-template matStepLabel>{{ status }}</ng-template>
+          </mat-step>
+        </mat-horizontal-stepper>
+        <p>{{ application.applicationId }}</p>
         <p *ngIf="application.email">Your email: {{ application.email }}</p>
         <p *ngIf="application.address">
           Your Home address: {{ application.address }}

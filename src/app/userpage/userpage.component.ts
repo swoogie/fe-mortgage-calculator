@@ -16,34 +16,20 @@ import { MatCardModule } from '@angular/material/card';
 export class UserpageComponent implements OnInit {
   applications: ApplicationData[];
   email: string;
-  statusMap = {
-    RECEIVED: {
-      text: 'Recieved',
-      class: 'received',
-    },
-    IN_PROGRESS: {
-      text: 'In Progress',
-      class: 'in-progress',
-    },
-    APPROVED: {
-      text: 'Approved',
-      class: 'approved',
-    },
-    REJECTED: {
-      text: 'Rejected',
-      class: 'rejected',
-    },
-  };
+  applicationStatus: string = '';
+  activeStepIndex = ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].indexOf(
+    this.applicationStatus
+  );
 
   constructor(
     private user_authService: UserAuthService,
-    private route: ActivatedRoute,
     private apiService: ApiService,
     private cdRef: ChangeDetectorRef
   ) {
     const decodedToken: any = jwtDecode(localStorage.getItem('userToken'));
     const email = decodedToken.sub;
     this.email = email;
+    console.log(this.applicationStatus);
   }
 
   ngOnInit() {
@@ -53,8 +39,10 @@ export class UserpageComponent implements OnInit {
   handleApplicationDisplay() {
     this.apiService.getApplicationForUser(this.email).subscribe((data) => {
       this.applications = data;
+      this.applicationStatus = this.applications[0].applicationStatus;
       this.cdRef.detectChanges();
       console.log(data);
+      console.log(this.applicationStatus);
     });
   }
 }
