@@ -88,30 +88,30 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       monthlyIncome: [
         this.applicationData.monthlyIncome as number, {
-          validators: [Validators.required, Validators.pattern('[0-9]*')],
+          validators: [Validators.required, Validators.pattern('[0-9]*'),Validators.max(4999999999)],
           updateOn: 'blur'
         },
       ],
       coApplicantsIncome: [null as number],
       obligations: [
         this.applicationData.obligations as boolean,
-        Validators.required,
+        [Validators.required,Validators.max(4999999999)],
       ],
       mortgageLoans: [
         this.applicationData.mortgageLoans as number,
-        Validators.pattern('[0-9]*'),
+        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
       ],
       consumerLoans: [
         this.applicationData.consumerLoans as number,
-        Validators.pattern('[0-9]*'),
+        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
       ],
       leasingAmount: [
         this.applicationData.leasingAmount as number,
-        Validators.pattern('[0-9]*'),
+        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
       ],
       creditCardLimit: [
         this.applicationData.creditCardLimit as number,
-        Validators.pattern('[0-9]*'),
+        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
       ],
       canProceed: [true, Validators.requiredTrue],
     },
@@ -416,7 +416,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.obligationFields.forEach((field) => {
         this.incomeDetailsForm
           .get(field.controlName)
-          .setValidators([Validators.required, Validators.pattern('[0-9]*')]);
+          .setValidators([Validators.required, Validators.pattern('[0-9]*'),Validators.max(9999999999)]);
         this.incomeDetailsForm.get(field.controlName).setValue(0);
       });
     } else if (obligationsValue === false) {
@@ -433,6 +433,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.coApplicantsIncome.setValidators([
         Validators.required,
         Validators.pattern('^[0-9]+(.[0-9]{1,2})?$'),
+        Validators.max(4999999999)
       ]);
     } else if (value === 1) {
       this.coApplicantsIncome.clearValidators();
@@ -811,7 +812,12 @@ export class ApplicationDialogComponent implements OnInit {
       },
       error: (err) => {
         console.log(err);
-        this._snackBar.open('We apologize for the inconvenience, there was an issue processing your application. We will contact you soon to discuss further steps.', 'Close', {
+        let errorMessage = err.error?.message || err.error;
+      //  console.log("errorMessage: ", errorMessage);
+        if(errorMessage==null){
+          errorMessage = "Internal error occurred while processing your application. Please try again later."
+        }
+        this._snackBar.open(errorMessage, 'Close', {
           duration: 6000,
         });
       },
