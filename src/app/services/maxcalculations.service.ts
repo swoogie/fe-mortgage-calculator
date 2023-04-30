@@ -46,7 +46,7 @@ export class MaxcalculationsService {
 
   getInterest(maxResult: number): number {
     const interestRate = this.interestRate.value;
-    return Math.round(maxResult * (interestRate / 100));
+    return Math.round(maxResult *  (interestRate / 100));
   }
 
   get loanAmount() {

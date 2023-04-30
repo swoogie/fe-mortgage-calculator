@@ -53,9 +53,9 @@
 
   <div *ngIf="helloSlider" class="slider-container">
     <div class="slider-label">
-      <mat-label>1</mat-label>
+      <mat-label>{{minLoanTerm}}</mat-label>
       <mat-label>Loan term years</mat-label>
-      <mat-label>30</mat-label>
+      <mat-label>{{maxLoanTerm}}</mat-label>
     </div>
 
     <mat-slider class="slider" [max]="maxLoanTerm" [min]="minLoanTerm">
