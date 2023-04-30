@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>{{ data.header }}</h2>
+<img
+  src="../../assets/images/cross-23.png"
+  alt="cross icon"
+  class="icon"
+  [mat-dialog-close]="true"
+/>
+<mat-dialog-content>
+  <div class="dialog-content">
+    <div class="dialog-message">{{ data.message }}</div>
+    <img *ngIf="data.imageUrl" [src]="data.imageUrl" class="dialog-image" />
+  </div>
+</mat-dialog-content>

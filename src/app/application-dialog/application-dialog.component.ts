@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {ApiService} from '../services/api.service';
 import {Constants} from '../interfaces/constants';
 import {ApplicationData} from '../interfaces/application-data';
@@ -12,6 +12,7 @@ import {StepperSelectionEvent} from '@angular/cdk/stepper';
 import {catchError, map} from 'rxjs/operators';
 import {UserAuthService} from "../services/user-auth.service";
 import {PersonalInfo} from "../interfaces/personal-info";
+import {ApplicationSubmitDialogComponent} from "../application-submit-dialog/application-submit-dialog.component";
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -72,7 +73,7 @@ export class ApplicationDialogComponent implements OnInit {
     lastName: null,
     phoneNumber: null,
     address: null,
-    email:null,
+    email: null,
     personalNumber: null,
   }
 
@@ -88,30 +89,30 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       monthlyIncome: [
         this.applicationData.monthlyIncome as number, {
-          validators: [Validators.required, Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+          validators: [Validators.required, Validators.pattern('[0-9]*'), Validators.max(4999999999)],
           updateOn: 'blur'
         },
       ],
       coApplicantsIncome: [null as number],
       obligations: [
         this.applicationData.obligations as boolean,
-        [Validators.required,Validators.max(4999999999)],
+        [Validators.required, Validators.max(4999999999)],
       ],
       mortgageLoans: [
         this.applicationData.mortgageLoans as number,
-        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
       ],
       consumerLoans: [
         this.applicationData.consumerLoans as number,
-        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
       ],
       leasingAmount: [
         this.applicationData.leasingAmount as number,
-        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
       ],
       creditCardLimit: [
         this.applicationData.creditCardLimit as number,
-        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
       ],
       canProceed: [true, Validators.requiredTrue],
     },
@@ -141,8 +142,8 @@ export class ApplicationDialogComponent implements OnInit {
         }
       ],
       loanTerm: [
-        this.applicationData.loanTerm as number,{
-        validators: [Validators.required, Validators.pattern('[0-9]*')],
+        this.applicationData.loanTerm as number, {
+          validators: [Validators.required, Validators.pattern('[0-9]*')],
           updateOn: 'blur'
         }
       ],
@@ -290,7 +291,8 @@ export class ApplicationDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public applicationData: ApplicationData,
     private _snackBar: MatSnackBar,
-    private userAuthService: UserAuthService
+    private userAuthService: UserAuthService,
+    private dialog: MatDialog,
   ) {
     const sufficientIncomeFormControls = [
       this.applicants,
@@ -416,7 +418,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.obligationFields.forEach((field) => {
         this.incomeDetailsForm
           .get(field.controlName)
-          .setValidators([Validators.required, Validators.pattern('[0-9]*'),Validators.max(9999999999)]);
+          .setValidators([Validators.required, Validators.pattern('[0-9]*'), Validators.max(9999999999)]);
         this.incomeDetailsForm.get(field.controlName).setValue(0);
       });
     } else if (obligationsValue === false) {
@@ -798,27 +800,73 @@ export class ApplicationDialogComponent implements OnInit {
     }
   }
 
+  // onSubmitApplyClick(): void {
+  //   //form validation and post to backend
+  //   this.updateDownPayment();
+  //   this.saveLoanDetails();
+  //   this.apiService.postApplication(this.applicationData).subscribe({
+  //     next: () => {
+  //       console.log('Application submitted successfully');
+  //       this._snackBar.open('Your application has been received and processed successfully. Please check your email for further instructions on the next steps.', 'Close', {
+  //         duration: 6000,
+  //       });
+  //       this.clearData();
+  //     },
+  //     error: (err) => {
+  //       console.log(err);
+  //       let errorMessage = err.error?.message || err.error;
+  //     //  console.log("errorMessage: ", errorMessage);
+  //       if(errorMessage==null){
+  //         errorMessage = "Internal error occurred while processing your application. Please try again later."
+  //       }
+  //       this._snackBar.open(errorMessage, 'Close', {
+  //         duration: 6000,
+  //       });
+  //     },
+  //   });
+  // }
+
   onSubmitApplyClick(): void {
     //form validation and post to backend
     this.updateDownPayment();
     this.saveLoanDetails();
     this.apiService.postApplication(this.applicationData).subscribe({
       next: () => {
-        console.log('Application submitted successfully');
-        this._snackBar.open('Your application has been received and processed successfully. Please check your email for further instructions on the next steps.', 'Close', {
-          duration: 6000,
+        const dialogRef = this.dialog.open(ApplicationSubmitDialogComponent, {
+          data: {
+            header: 'Great Success!',
+            message: 'Your application has been received and processed successfully. Please check your email for further instructions on the next steps.',
+            imageUrl: '../../assets/images/money-monkey.gif'
+          },
+          maxWidth: '600px',
+          // disableClose: false
+        });
+        // setTimeout(() => {
+        //   //dialogRef.close();
+        //   this.dialog.closeAll();
+        // }, 5000);
+        dialogRef.afterClosed().subscribe(() => {
+          this.dialog.closeAll();
         });
         this.clearData();
       },
       error: (err) => {
-        console.log(err);
         let errorMessage = err.error?.message || err.error;
-      //  console.log("errorMessage: ", errorMessage);
-        if(errorMessage==null){
+        if (errorMessage == null) {
           errorMessage = "Internal error occurred while processing your application. Please try again later."
         }
-        this._snackBar.open(errorMessage, 'Close', {
-          duration: 6000,
+        const dialogRef = this.dialog.open(ApplicationSubmitDialogComponent, {
+          data: {
+            header: 'Great Failure!',
+            message: errorMessage,
+            imageUrl: '../../assets/images/monkey-developer.gif'
+
+          },
+          maxWidth: '600px',
+          // disableClose: false
+        });
+        dialogRef.afterClosed().subscribe(() => {
+          this.dialog.closeAll();
         });
       },
     });

@@ -39,6 +39,7 @@ import { AdminpageApplicationsComponent } from './adminpage-applications/adminpa
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import {MatSortModule} from "@angular/material/sort";
+import { ApplicationSubmitDialogComponent } from './application-submit-dialog/application-submit-dialog.component';
 
 
 @NgModule({
@@ -56,6 +57,7 @@ import {MatSortModule} from "@angular/material/sort";
     AdminpageComponent,
     AdminpageConstantsComponent,
     AdminpageApplicationsComponent,
+    ApplicationSubmitDialogComponent,
   ],
   imports: [
     BrowserModule,

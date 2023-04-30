@@ -1,0 +1,14 @@
+.dialog-image {
+  max-width: calc(100% - 60px);
+  max-height: calc(100% - 60px);
+  object-fit: contain;
+  margin: 30px;
+}
+.icon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 20px;
+}
