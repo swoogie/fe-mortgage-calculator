@@ -595,11 +595,8 @@ export class ApplicationDialogComponent implements OnInit {
             this.disablePersonalDetailsValidation('address')
             this.personalDetailsForm.get('address').setValue(address);
           }
-        });
-        this.apiService.getPersonalNumber(userEmail).subscribe(response => {
-          console.log(response)
-          if (response) {
-            const personalNumber = +response;
+          if (response.personalNumber) {
+            const personalNumber = response.personalNumber;
             this.personalInfo.personalNumber = personalNumber;
             this.disablePersonalDetailsValidation('personalNumber')
             this.personalDetailsForm.get('personalNumber').setValue(personalNumber);
