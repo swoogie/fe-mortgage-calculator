@@ -1,14 +1,26 @@
+<div class="filter">
+  <mat-form-field>
+  <mat-label>Application Status</mat-label>
+  <mat-select [(value)]="selectedStatus" (selectionChange)="applyFilter()">
+    <mat-option value="">ALL</mat-option>
+    <mat-option value="RECEIVED">RECEIVED</mat-option>
+    <mat-option value="APPROVED">APPROVED</mat-option>
+    <mat-option value="IN_PROGRESS">IN PROGRESS</mat-option>
+    <mat-option value="REJECTED">REJECTED</mat-option>
+  </mat-select>
+</mat-form-field></div>
 <table
   mat-table
   [dataSource]="dataSource"
   multiTemplateDataRows
   class="mat-elevation-z8"
+  matSort
 >
   <ng-container
     matColumnDef="{{ column }}"
     *ngFor="let column of columnsToDisplay"
   >
-    <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</th>
     <td mat-cell *matCellDef="let application">{{ application[column] }}</td>
   </ng-container>
 
@@ -52,10 +64,12 @@
         "
       >
         <mat-icon *ngIf="expandedApplication !== application"
-          >keyboard_arrow_down</mat-icon
+        >keyboard_arrow_down
+        </mat-icon
         >
         <mat-icon *ngIf="expandedApplication === application"
-          >keyboard_arrow_up</mat-icon
+        >keyboard_arrow_up
+        </mat-icon
         >
       </button>
     </td>
@@ -78,17 +92,75 @@
           <div *ngIf="application.description">
             {{ application.description }}
           </div>
-          <div>First name: {{ application.firstName }}</div>
-          <div>Last name: {{ application.lastName }}</div>
-          <div>Loan term: {{ application.loanTerm }}</div>
-          <div>Loan amount: {{ application.loanAmount }}</div>
-          <div>Real estate address: {{ application.realEstateAddress }}</div>
-          <div>Real estate price: {{ application.realEstatePrice }}</div>
-          <div>
-            Total household income: {{ application.totalHouseholdIncome }}
+          <div class="details">
+            <table class="details-info">
+              <tr>
+                <th>First Name</th>
+                <td>{{ application.firstName }}</td>
+              </tr>
+              <tr>
+                <th>Last Name</th>
+                <td>{{ application.lastName }}</td>
+              </tr>
+              <tr>
+                <th>Personal number:</th>
+                <td>{{ application.personalNumber }}</td>
+              </tr>
+              <tr>
+                <th>Email</th>
+                <td>{{ application.email }}</td>
+              </tr>
+              <tr *ngIf="application.coApplicantEmail">
+                <th>Co-applicant email</th>
+                <td>{{ application.coApplicantEmail }}</td>
+              </tr>
+              <tr>
+                <th>Phone</th>
+                <td>{{ application.phoneNumber }}</td>
+              </tr>
+              <tr>
+                <th>Total household income:</th>
+                <td>{{ application.totalHouseholdIncome | currency : 'EUR': 'symbol': '1.0-0'}}</td>
+              </tr>
+              <tr>
+                <th>Available monthly payment:</th>
+                <td>{{ application.monthlyPayment | currency : 'EUR': 'symbol': '1.0-0'}}</td>
+              </tr>
+              <tr>
+            </table>
+            <table class="details-info">
+              <tr>
+                <th>Real estate address:</th>
+                <td>{{ application.realEstateAddress }}</td>
+              </tr>
+              <tr>
+                <th>Real estate price:</th>
+                <td>{{ application.realEstatePrice | currency : 'EUR': 'symbol': '1.0-0' }}</td>
+              </tr>
+              <tr>
+                <th>Loan amount: </th>
+                <td>{{ application.loanAmount | currency : 'EUR': 'symbol': '1.0-0' }}</td>
+              </tr>
+              <tr>
+                <th>Loan term: </th>
+                <td>{{ application.loanTerm }} years</td>
+              </tr>
+              <tr>
+                <th>Interest rate: </th>
+                <td>{{ application.interestRate | percent: '1.1-4'}}</td>
+              </tr>
+              <tr>
+                <th>Euribor: </th>
+                <td>{{ application.euriborTerm }} months - {{application.euriborRate | percent: '1.1-4'}}</td>
+              </tr>
+              <tr>
+                <th>Payment schedule type: </th>
+                <td>{{ application.paymentScheduleType | titlecase }}</td>
+              </tr>
+              <tr>
+            </table>
           </div>
-          <div>Phone number: {{ application.phoneNumber }}</div>
-          <div>Personal number: {{ application.personalNumber }}</div>
+
         </div>
       </div>
     </td>
