@@ -2,7 +2,6 @@
     padding-top: 70px;
     place-items: center;
     font-size: 15px;
-    max-width: fit-content;
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -87,14 +86,15 @@
 
 .card-container {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    height: 700px;
 }
 
 .card-container mat-card {
-    flex-basis: calc(30% - 5px);
     margin: 10px;
+    width: 350px;
+    transition: all 0.4s ease-in-out;
+}
+.card-container mat-card:hover {
+    transform: scale(1.03);
 }
 
 .mat-step-label {
@@ -107,8 +107,4 @@
 .mat-expansion-panel {
     background-color: #d9eee9;
     margin-top: 17px;
-}
-
-::ng-deep .mat-step-header .mat-step-icon-selected {
-    background-color: #64a95e;
 }
