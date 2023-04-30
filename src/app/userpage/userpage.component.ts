@@ -14,6 +14,7 @@ import { MatCardModule } from '@angular/material/card';
   styleUrls: ['./userpage.component.scss'],
 })
 export class UserpageComponent implements OnInit {
+  panelOpenState = false;
   applications: ApplicationData[];
   email: string;
   applicationStatus: string = '';

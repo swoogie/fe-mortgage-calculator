@@ -37,6 +37,7 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
 import { AdminpageConstantsComponent } from './adminpage-constants/adminpage-constants.component';
 import { AdminpageApplicationsComponent } from './adminpage-applications/adminpage-applications.component';
 import { MatTableModule } from '@angular/material/table';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { MatTableModule } from '@angular/material/table';
     MatStepperModule,
     ChartModule,
     MatGridListModule,
+    MatExpansionModule,
   ],
   providers: [
     MatSnackBarModule,

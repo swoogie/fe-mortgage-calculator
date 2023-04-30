@@ -1,9 +1,7 @@
 .userpage {
-    padding-top: 100px;
-    columns: 1;
-    display: flex;
+    padding-top: 70px;
     place-items: center;
-    font-size: 16px;
+    font-size: 15px;
     max-width: fit-content;
     text-align: center;
     justify-content: center;
@@ -30,18 +28,6 @@
     padding: 1em;
     text-align: left;
     font-weight: lighter;
-    marg .rejected {
-        color: #e23636;
-    }
-    .in-progress {
-        color: #edb95e;
-    }
-    .approved {
-        color: #82dd55;
-    }
-    .received {
-        color: #4a90e2;
-    }
 }
 
 .container {
@@ -99,26 +85,30 @@
     background-color: #e6f4f1;
 }
 
-.cards {
+.card-container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    height: 700px;
 }
 
-.row {
-    display: flex;
+.card-container mat-card {
+    flex-basis: calc(30% - 5px);
+    margin: 10px;
 }
-.column {
-    flex: 50%;
+
+.mat-step-label {
+    font-size: 5px;
 }
-// ::ng-deep {
-//     // Hide inactive steps and their lines
-//     .mat-step-header[aria-selected="false"],
-//     .mat-step-header[aria-selected="false"] + .mat-stepper-horizontal-line {
-//         visibility: collapse;
-//     }
-// }
-// //     // Except for the next one
-//     .mat-step-header[aria-selected="true"] + .mat-stepper-horizontal-line + .mat-step-header {
-//         visibility: visible;
-//     }
-// }
+.mat-step-header.mat-step-header-active {
+    font-size: 5px;
+}
+
+.mat-expansion-panel {
+    background-color: #d9eee9;
+    margin-top: 17px;
+}
+
+::ng-deep .mat-step-header .mat-step-icon-selected {
+    background-color: #64a95e;
+}
