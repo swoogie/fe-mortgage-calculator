@@ -39,7 +39,6 @@ export class AdminpageApplicationsComponent implements OnInit {
     this.applicationService.getAllApplications().subscribe({
       next: (res: any) => {
         res.forEach((appl) => {
-          console.log(appl);
           this.applicationData.push({
             id: appl.applicationId,
             user: appl.email,

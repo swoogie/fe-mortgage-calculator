@@ -606,7 +606,6 @@ export class ApplicationDialogComponent implements OnInit {
     } else {
       this.personalDetailsForm.get('email').setAsyncValidators([this.emailAvailabilityValidator()]);
       this.personalDetailsForm.get('personalNumber').setValidators([Validators.required, this.personalNumberValidator()]);
-      console.log("async email validator set");
     }
   }
 
@@ -802,7 +801,6 @@ export class ApplicationDialogComponent implements OnInit {
     //form validation and post to backend
     this.updateDownPayment();
     this.saveLoanDetails();
-    console.log("Application sent to backend: ", this.applicationData);
     this.apiService.postApplication(this.applicationData).subscribe({
       next: () => {
         console.log('Application submitted successfully');
