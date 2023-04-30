@@ -10,6 +10,8 @@ import {EuriborValuesService} from '../services/euribor-values-service.service';
 import {debounceTime, merge} from 'rxjs';
 import {StepperSelectionEvent} from '@angular/cdk/stepper';
 import {catchError, map} from 'rxjs/operators';
+import {UserAuthService} from "../services/user-auth.service";
+import {PersonalInfo} from "../interfaces/personal-info";
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -44,6 +46,8 @@ export class ApplicationDialogComponent implements OnInit {
   isSufficientMonthlyPayment: boolean;
   totalMonthlyObligations: number = 0;
   availableMonthlyPayment: number = null;
+  isUserLoggedIn: boolean;
+  userEmail: string;
   phoneNumberHintMessage: string =
     'Valid phone number formats: +3706XXXXXXX, 86XXXXXXX +3705XXXXXXX or 85XXXXXXX';
   personalNumberHintMessage: string =
@@ -63,6 +67,15 @@ export class ApplicationDialogComponent implements OnInit {
   ageAtLoanTermEnd: number;
   isEmailAvailable: boolean;
   emailNotAvailableMessage: string;
+  personalInfo: PersonalInfo = {
+    firstName: null,
+    lastName: null,
+    phoneNumber: null,
+    address: null,
+    email:null,
+    personalNumber: null,
+  }
+
   incomeDetailsForm = formBuilder.group(
     {
       applicants: [
@@ -128,8 +141,10 @@ export class ApplicationDialogComponent implements OnInit {
         }
       ],
       loanTerm: [
-        this.applicationData.loanTerm as number,
-        [Validators.required, Validators.pattern('[0-9]*')],
+        this.applicationData.loanTerm as number,{
+        validators: [Validators.required, Validators.pattern('[0-9]*')],
+          updateOn: 'blur'
+        }
       ],
       euribor: [this.applicationData.euribor, [Validators.required]],
       paymentScheduleType: [
@@ -144,7 +159,7 @@ export class ApplicationDialogComponent implements OnInit {
       personalNumber: [
         this.applicationData.personalNumber,
         {
-          validators: [Validators.required, this.personalNumberValidator()],
+          validators: [Validators.required],
           updateOn: 'blur'
         }
       ],
@@ -156,7 +171,7 @@ export class ApplicationDialogComponent implements OnInit {
             Validators.email,
             Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
           ],
-          asyncValidators: [this.emailAvailabilityValidator()],
+          // asyncValidators: [this.emailAvailabilityValidator()],
           updateOn: 'blur'
         }
 
@@ -190,6 +205,13 @@ export class ApplicationDialogComponent implements OnInit {
       }
     ],
   });
+
+  disablePersonalDetailsValidation(controlName: string) {
+    const control: AbstractControl = this.personalDetailsForm.get(controlName);
+    control.clearValidators();
+    control.clearAsyncValidators();
+    control.updateValueAndValidity();
+  }
 
   emailAvailabilityValidator() {
     return (control: FormControl) => {
@@ -268,6 +290,7 @@ export class ApplicationDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public applicationData: ApplicationData,
     private _snackBar: MatSnackBar,
+    private userAuthService: UserAuthService
   ) {
     const sufficientIncomeFormControls = [
       this.applicants,
@@ -295,25 +318,6 @@ export class ApplicationDialogComponent implements OnInit {
       }
     });
 
-    this.personalEmail.valueChanges.subscribe((email) => {
-      this.apiService.checkEmail(email).subscribe(
-        (response: any) => {
-          // Handle successful response (JSON object)
-          this.isEmailAvailable = response.available;
-          this.emailNotAvailableMessage = response.message;
-        },
-        (error) => {
-          // Handle error response
-          if (error.status === 409) {
-            this.isEmailAvailable = false;
-            this.emailNotAvailableMessage = error.error.message;
-          } else {
-            console.error('An unexpected error occurred:', error);
-          }
-        }
-      );
-    });
-
     this.applicants.valueChanges.subscribe((value: number) => {
       this.updateCoApplicantsIncomeValidations(value);
     });
@@ -322,15 +326,15 @@ export class ApplicationDialogComponent implements OnInit {
       this.updateAvailableMonthlyPayment();
     });
 
-      this.monthlyIncome.valueChanges.subscribe(() => {
-        this.updateTotalHouseHoldIncome();
-        this.updateAvailableMonthlyPayment();
-      });
+    this.monthlyIncome.valueChanges.subscribe(() => {
+      this.updateTotalHouseHoldIncome();
+      this.updateAvailableMonthlyPayment();
+    });
 
-      this.coApplicantsIncome.valueChanges.subscribe(() => {
-        this.updateTotalHouseHoldIncome();
-        this.updateAvailableMonthlyPayment();
-      });
+    this.coApplicantsIncome.valueChanges.subscribe(() => {
+      this.updateTotalHouseHoldIncome();
+      this.updateAvailableMonthlyPayment();
+    });
 
     this.obligations.valueChanges.subscribe((value: boolean) => {
       this.updateObligationsValidations(value);
@@ -472,20 +476,15 @@ export class ApplicationDialogComponent implements OnInit {
     localStorage.setItem('incomeDetails', JSON.stringify(incomeDetails));
     localStorage.setItem('loanData', JSON.stringify(loanData));
     localStorage.setItem('coApplicantsData', JSON.stringify(coApplicantsData));
-    localStorage.setItem(
-      'personalDetailData',
-      JSON.stringify(personalDetailData)
-    );
+    localStorage.setItem('personalDetailData', JSON.stringify(personalDetailData));
+
   }
 
   clearData() {
-
-    localStorage.setItem('incomeDetails', null);
-    localStorage.setItem('loanData', null);
-    localStorage.setItem('coApplicantsData', null);
-    localStorage.setItem(
-      'personalDetailData', null
-    );
+    localStorage.removeItem('incomeDetails');
+    localStorage.removeItem('loanData');
+    localStorage.removeItem('coApplicantsData');
+    localStorage.removeItem('personalDetailData');
   }
 
   loadData() {
@@ -539,6 +538,7 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+
     if (this.applicants.value == 2) {
       this.applicants.setValue(2)
       this.coApplicantsIncome.markAsTouched();
@@ -560,6 +560,53 @@ export class ApplicationDialogComponent implements OnInit {
     this.getConstants();
     this.updateTotalHouseHoldIncome();
     this.updateAvailableMonthlyPayment();
+
+    this.isUserLoggedIn = this.userAuthService.isAuthenticated();
+    console.log("isUserLoggedIn: ", this.isUserLoggedIn);
+    if (this.isUserLoggedIn) {
+      const userEmail = JSON.parse(localStorage.getItem('userEmail'));
+      this.userEmail = userEmail;
+      this.personalDetailsForm.get('email').setValue(userEmail);
+      this.disablePersonalDetailsValidation('email')
+      if (this.isUserLoggedIn) {
+        this.apiService.getPersonalInfo(userEmail).subscribe(response => {
+          this.personalInfo = response;
+          if (response.firstName) {
+            const firstName = response.firstName;
+            this.personalInfo.firstName = firstName;
+            this.disablePersonalDetailsValidation('firstName')
+            this.personalDetailsForm.get('firstName').setValue(firstName);
+          }
+          if (response.lastName) {
+            const lastName = response.lastName;
+            this.personalInfo.lastName = lastName;
+            this.disablePersonalDetailsValidation('lastName')
+            this.personalDetailsForm.get('lastName').setValue(lastName);
+          }
+          if (response.phoneNumber) {
+            const phoneNumber = response.phoneNumber;
+            this.personalInfo.phoneNumber = phoneNumber;
+            this.disablePersonalDetailsValidation('phoneNumber')
+            this.personalDetailsForm.get('phoneNumber').setValue(phoneNumber);
+          }
+          if (response.address) {
+            const address = response.address;
+            this.personalInfo.address = address;
+            this.disablePersonalDetailsValidation('address')
+            this.personalDetailsForm.get('address').setValue(address);
+          }
+          if (response.personalNumber) {
+            const personalNumber = response.personalNumber;
+            this.personalInfo.personalNumber = personalNumber;
+            this.disablePersonalDetailsValidation('personalNumber')
+            this.personalDetailsForm.get('personalNumber').setValue(personalNumber);
+          }
+        });
+      }
+    } else {
+      this.personalDetailsForm.get('email').setAsyncValidators([this.emailAvailabilityValidator()]);
+      this.personalDetailsForm.get('personalNumber').setValidators([Validators.required, this.personalNumberValidator()]);
+    }
   }
 
   getConstants() {
@@ -754,17 +801,19 @@ export class ApplicationDialogComponent implements OnInit {
     //form validation and post to backend
     this.updateDownPayment();
     this.saveLoanDetails();
-    console.log("Application sent to backend: ", this.applicationData);
     this.apiService.postApplication(this.applicationData).subscribe({
       next: () => {
         console.log('Application submitted successfully');
         this._snackBar.open('Your application has been received and processed successfully. Please check your email for further instructions on the next steps.', 'Close', {
-          duration: 5000,
+          duration: 6000,
         });
         this.clearData();
       },
       error: (err) => {
         console.log(err);
+        this._snackBar.open('We apologize for the inconvenience, there was an issue processing your application. We will contact you soon to discuss further steps.', 'Close', {
+          duration: 6000,
+        });
       },
     });
   }

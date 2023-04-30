@@ -1,9 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap } from 'rxjs';
-import { Role } from '../interfaces/role';
-import jwtDecode from 'jwt-decode';
-import { Router } from '@angular/router';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {Role} from '../interfaces/role';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +14,8 @@ export class UserAuthService {
     this.checkIfUserLoggedIn()
   );
   private userEmail = new BehaviorSubject<string>('');
-  currentUserEmail = this.userEmail.asObservable();
+  // currentUserEmail = this.userEmail.asObservable();
+  currentUserEmail = this.userEmail;
   currentlyAdmin = this.adminLoggedIn.asObservable();
   currentlyUser = this.userLoggedIn.asObservable();
 
@@ -25,6 +24,7 @@ export class UserAuthService {
   public getAdminToken(): string {
     return localStorage.getItem('adminToken');
   }
+
   public getToken(): string {
     return localStorage.getItem('userToken');
   }
@@ -34,14 +34,17 @@ export class UserAuthService {
     return !!token;
   }
 
-  requestHeader = new HttpHeaders({ 'Content-Type': 'application/json' });
-  constructor(private httpClient: HttpClient) {}
+  requestHeader = new HttpHeaders({'Content-Type': 'application/json'});
+
+  constructor(private httpClient: HttpClient) {
+  }
 
   login(email: string, password: string): Observable<Role> {
+    localStorage.setItem('userEmail', JSON.stringify(email));
     return this.httpClient.post<Role>(
       `${this.userApiUrl}/auth/authenticate`,
-      { email, password },
-      { headers: this.requestHeader }
+      {email, password},
+      {headers: this.requestHeader}
     );
   }
 
@@ -53,11 +56,13 @@ export class UserAuthService {
   ) {
     return this.httpClient.post(
       `${this.userApiUrl}/auth/register`,
-      { firstName, lastName, email, password },
-      { headers: this.requestHeader }
+      {firstName, lastName, email, password},
+      {headers: this.requestHeader}
     );
   }
+
   userRole;
+
   getUserRole(email) {
     return this.httpClient.get(
       `${this.userApiUrl}/users/get-role?email=${email}`
@@ -65,6 +70,7 @@ export class UserAuthService {
   }
 
   logout(): void {
+    this.clearPersonalInfo();
     if (this.checkIfAdminLoggedIn) {
       localStorage.removeItem('adminToken');
       this.loginState();
@@ -90,5 +96,13 @@ export class UserAuthService {
 
   checkIfAdminLoggedIn() {
     return !!localStorage.getItem('adminToken');
+  }
+
+  clearPersonalInfo() {
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('incomeDetails');
+    localStorage.removeItem('loanData');
+    localStorage.removeItem('coApplicantsData');
+    localStorage.removeItem('personalDetailData');
   }
 }
