@@ -3,18 +3,54 @@
   <ng-container *ngFor="let application of applications">
     <mat-card>
       <mat-card-content>
-        <mat-horizontal-stepper linear>
-          <mat-step
-            [editable]="false"
-            [completed]="i < activeStepIndex + 1"
+        <mat-horizontal-stepper linear [selectedIndex]="currentStepIndex">
+          <ng-container
             *ngFor="
               let status of ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'];
               let i = index
             "
           >
-            <ng-template matStepLabel>{{ status }}</ng-template>
-          </mat-step>
+            <mat-step [editable]="false" *ngIf="i <= activeStepIndex + 2">
+              <ng-template matStepLabel>
+                {{
+                  status === "RECEIVED"
+                    ? "Received"
+                    : status === "IN_PROGRESS"
+                    ? "In progress"
+                    : status === "APPROVED"
+                    ? "Approved"
+                    : status === "REJECTED"
+                    ? "Rejected"
+                    : ""
+                }}
+              </ng-template>
+            </mat-step>
+          </ng-container>
         </mat-horizontal-stepper>
+        <!-- <mat-horizontal-stepper linear [selectedIndex]="currentStepIndex + 1">
+          <mat-step
+            [editable]="false"
+            [completed]="i < activeStepIndex"
+            *ngFor="
+              let status of ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'];
+              let i = index
+            "
+          >
+            <ng-template matStepLabel>
+              {{
+                status === "RECEIVED"
+                  ? "Received"
+                  : status === "IN_PROGRESS"
+                  ? "In progress"
+                  : status === "APPROVED"
+                  ? "Approved"
+                  : status === "REJECTED"
+                  ? "Rejected"
+                  : ""
+              }}
+            </ng-template>
+          </mat-step>
+        </mat-horizontal-stepper> -->
         <p>{{ application.applicationId }}</p>
         <p *ngIf="application.email">Your email: {{ application.email }}</p>
         <p *ngIf="application.address">

@@ -98,3 +98,15 @@
 .mat-stepper-horizontal {
     background-color: #e6f4f1;
 }
+// ::ng-deep {
+//     // Hide inactive steps and their lines
+//     .mat-step-header[aria-selected="false"],
+//     .mat-step-header[aria-selected="false"] + .mat-stepper-horizontal-line {
+//         visibility: collapse;
+//     }
+// }
+// //     // Except for the next one
+//     .mat-step-header[aria-selected="true"] + .mat-stepper-horizontal-line + .mat-step-header {
+//         visibility: visible;
+//     }
+// }

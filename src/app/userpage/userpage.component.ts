@@ -20,6 +20,7 @@ export class UserpageComponent implements OnInit {
   activeStepIndex = ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].indexOf(
     this.applicationStatus
   );
+  currentStepIndex = this.activeStepIndex;
 
   constructor(
     private user_authService: UserAuthService,
@@ -40,6 +41,13 @@ export class UserpageComponent implements OnInit {
     this.apiService.getApplicationForUser(this.email).subscribe((data) => {
       this.applications = data;
       this.applicationStatus = this.applications[0].applicationStatus;
+      this.currentStepIndex = [
+        'RECEIVED',
+        'IN_PROGRESS',
+        'APPROVED',
+        'REJECTED',
+      ].indexOf(this.applicationStatus);
+      this.currentStepIndex = this.activeStepIndex;
       this.cdRef.detectChanges();
       console.log(data);
       console.log(this.applicationStatus);
