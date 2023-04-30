@@ -15,6 +15,18 @@ export class ApiService {
   constructor(private http: HttpClient) {}
   requestHeader = new HttpHeaders({ 'Content-type': 'application/json' });
 
+  getApplicationForUser(userEmail: string): Observable<ApplicationData[]> {
+    return this.http.get<ApplicationData[]>(
+      `${this.apiUrl}/user/email/${userEmail}/applications`
+    );
+  }
+
+  // getApplicationForUser(userEmail: string): Observable<any[]> {
+  //   return this.http.get<any[]>(
+  //     `${this.apiUrl}/user/email/${userEmail}/applications`
+  //   );
+  // }
+
   getConstants(): Observable<Constants> {
     return this.http.get<Constants>(`${this.apiUrl}/constants`);
   }

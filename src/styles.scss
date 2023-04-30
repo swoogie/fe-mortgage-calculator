@@ -12,7 +12,6 @@ body {
     background: linear-gradient(217deg, #7297ad, #83a2b5 70.71%);
 }
 
-
 .material-icons {
     color: black;
 }
@@ -25,7 +24,6 @@ body {
     color: white;
 }
 
-
 .mat-mdc-radio-button .mdc-form-field {
     color: var(--mdc-theme-text-primary-on-background, rgba(255, 255, 255, 0.87) 0.87);
 }
@@ -35,13 +33,13 @@ body {
 }
 
 .mat-mdc-radio-button.mat-primary {
-    --mdc-radio-disabled-selected-icon-color: #FFF;
-    --mdc-radio-disabled-unselected-icon-color: #FFF;
-    --mdc-radio-unselected-focus-icon-color: #FFF;
-    --mdc-radio-unselected-hover-icon-color: #FFF;
+    --mdc-radio-disabled-selected-icon-color: #fff;
+    --mdc-radio-disabled-unselected-icon-color: #fff;
+    --mdc-radio-unselected-focus-icon-color: #fff;
+    --mdc-radio-unselected-hover-icon-color: #fff;
     --mdc-radio-unselected-icon-color: rgba(255, 255, 255, 0.54);
     --mdc-radio-unselected-pressed-icon-color: rgba(255, 255, 255, 0.54);
-    --mat-mdc-radio-ripple-color: #FFF;
+    --mat-mdc-radio-ripple-color: #fff;
 }
 
 .cdk-overlay-backdrop {

@@ -1,23 +1,114 @@
 .userpage {
-    padding-top: 100px;
-    columns: 1;
-    display: flex;
+    padding-top: 70px;
     place-items: center;
-    font-size: 16px;
+    font-size: 15px;
     max-width: fit-content;
     text-align: center;
     justify-content: center;
     align-items: center;
 }
-.userpage_title{
+.userpage_title {
     padding-top: 100px;
     text-align: center;
+    font-weight: lighter;
 
-.logout-button{
-    position: absolute; // position the button absolutely
-  left: 50%; // move the button to the center horizontally
-  bottom: 0; // position the button at the bottom of the page
-  transform: translateX(-50%); // center the button horizontally
+    .logout-button {
+        position: absolute; // position the button absolutely
+        left: 50%; // move the button to the center horizontally
+        bottom: 0; // position the button at the bottom of the page
+        transform: translateX(-50%); // center the button horizontally
+    }
 }
+.mat-mdc-card {
+    --mdc-elevated-card-container-color: #e6f4f1;
+    color: #002a3c;
+    border: #002a3c;
+    width: 20em;
+    margin-left: 3em;
+    padding: 1em;
+    text-align: left;
+    font-weight: lighter;
 }
 
+.container {
+    width: 100%;
+}
+
+.progressbar {
+    counter-reset: step;
+}
+.progressbar li {
+    list-style: none;
+    display: inline-block;
+    width: 30.33%;
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+}
+.progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px auto;
+    background-color: #fff;
+}
+.progressbar li:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: #ddd;
+    top: 15px;
+    left: -50%;
+    z-index: -1;
+}
+.progressbar li:first-child:after {
+    content: none;
+}
+.progressbar li.active {
+    color: green;
+}
+.progressbar li.active:before {
+    border-color: green;
+}
+.progressbar li.active + li:after {
+    background-color: green;
+}
+
+.mat-stepper-horizontal {
+    background-color: #e6f4f1;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    height: 700px;
+}
+
+.card-container mat-card {
+    flex-basis: calc(30% - 5px);
+    margin: 10px;
+}
+
+.mat-step-label {
+    font-size: 5px;
+}
+.mat-step-header.mat-step-header-active {
+    font-size: 5px;
+}
+
+.mat-expansion-panel {
+    background-color: #d9eee9;
+    margin-top: 17px;
+}
+
+::ng-deep .mat-step-header .mat-step-icon-selected {
+    background-color: #64a95e;
+}

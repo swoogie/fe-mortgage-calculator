@@ -1,2 +1,116 @@
-<h3 class="userpage_title">USER PAGE DETAILS</h3>
-<div class="userpage"></div>
+<h3 class="userpage_title">Welcome, {{ email }}</h3>
+<div class="userpage card-container">
+  <ng-container *ngFor="let application of applications">
+    <mat-card>
+      <mat-card-content>
+        <mat-horizontal-stepper linear [selectedIndex]="currentStepIndex">
+          <ng-container
+            *ngFor="
+              let status of ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'];
+              let i = index
+            "
+          >
+            <mat-step
+              [editable]="false"
+              *ngIf="
+                (status === 'RECEIVED' &&
+                  application.applicationStatus === 'RECEIVED') ||
+                (status === 'IN_PROGRESS' &&
+                  (application.applicationStatus === 'IN_PROGRESS' ||
+                    application.applicationStatus === 'APPROVED' ||
+                    application.applicationStatus === 'REJECTED')) ||
+                (status === 'APPROVED' &&
+                  (application.applicationStatus === 'APPROVED' ||
+                    application.applicationStatus === 'REJECTED')) ||
+                (status === 'REJECTED' &&
+                  application.applicationStatus === 'REJECTED')
+              "
+            >
+              <ng-template matStepLabel>
+                {{
+                  status === "RECEIVED"
+                    ? "Received"
+                    : status === "IN_PROGRESS"
+                    ? "In progress"
+                    : status === "APPROVED"
+                    ? "Approved"
+                    : status === "REJECTED"
+                    ? "Rejected"
+                    : ""
+                }}
+              </ng-template>
+            </mat-step>
+          </ng-container>
+        </mat-horizontal-stepper>
+        <p *ngIf="application.email">Your email: {{ application.email }}</p>
+
+        <p *ngIf="application.realEstateAddress">
+          Real estate address: {{ application.realEstateAddress }}
+        </p>
+        <p *ngIf="application.realEstatePrice">
+          Real estate price:
+          {{
+            application.realEstatePrice | currency : "EUR" : "symbol" : "1.2-2"
+          }}
+        </p>
+        <p *ngIf="application.loanAmount">
+          Loan amount:
+          {{ application.loanAmount | currency : "EUR" : "symbol" : "1.2-2" }}
+        </p>
+        <p *ngIf="application.loanTerm">
+          Loan term: {{ application.loanTerm }}
+          {{ application.loanTerm === 1 ? "year" : "years" }}
+        </p>
+
+        <p *ngIf="application.downPayment">
+          Down payment:
+          {{ application.downPayment | currency : "EUR" : "symbol" : "1.2-2" }}
+        </p>
+      </mat-card-content>
+      <mat-accordion class="more-info-wrap">
+        <mat-expansion-panel hideToggle> </mat-expansion-panel>
+        <mat-expansion-panel
+          (opened)="panelOpenState = true"
+          (closed)="panelOpenState = false"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-description>More information </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p *ngIf="application.address">
+            Your Home address: {{ application.address }}
+          </p>
+          <p *ngIf="application.creditCardLimit">
+            Credit Card limit:
+            {{
+              application.creditCardLimit
+                | currency : "EUR" : "symbol" : "1.2-2"
+            }}
+          </p>
+          <p *ngIf="application.paymentScheduleType">
+            Payment shedule type: {{ application.paymentScheduleType }}
+          </p>
+          <p *ngIf="application.coApplicantsIncome">
+            Coaplicants income:
+            {{
+              application.coApplicantsIncome
+                | currency : "EUR" : "symbol" : "1.2-2"
+            }}
+          </p>
+          <p *ngIf="application.amountOfKids">
+            Children: {{ application.amountOfKids }}
+          </p>
+          <p *ngIf="application.euriborTerm">
+            Euribor term: {{ application.euriborTerm }}
+          </p>
+          <p *ngIf="application.euribor">Euribor: {{ application.euribor }}</p>
+          <p *ngIf="application.applicants">
+            Applicants: {{ application.applicants }}
+          </p>
+          <p *ngIf="application.coApplicantEmail">
+            Coaplicants email: {{ application.coApplicantEmail }}
+          </p>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card>
+  </ng-container>
+</div>
