@@ -25,7 +25,7 @@
     --mdc-elevated-card-container-color: #e6f4f1;
     color: #002a3c;
     border: #002a3c;
-    width: 30em;
+    width: 20em;
     margin-left: 3em;
     padding: 1em;
     text-align: left;
@@ -97,6 +97,18 @@
 
 .mat-stepper-horizontal {
     background-color: #e6f4f1;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+}
+.column {
+    flex: 50%;
 }
 // ::ng-deep {
 //     // Hide inactive steps and their lines

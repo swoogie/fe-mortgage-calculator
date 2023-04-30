@@ -30,11 +30,17 @@ export class UserpageComponent implements OnInit {
     const decodedToken: any = jwtDecode(localStorage.getItem('userToken'));
     const email = decodedToken.sub;
     this.email = email;
-    console.log(this.applicationStatus);
   }
 
   ngOnInit() {
     this.handleApplicationDisplay();
+  }
+
+  getStepIndex(application: ApplicationData): number {
+    const index = ['RECEIVED', 'IN_PROGRESS', 'APPROVED', 'REJECTED'].indexOf(
+      application.applicationStatus
+    );
+    return index >= 0 ? index : 0;
   }
 
   handleApplicationDisplay() {
@@ -47,7 +53,6 @@ export class UserpageComponent implements OnInit {
         'APPROVED',
         'REJECTED',
       ].indexOf(this.applicationStatus);
-      this.currentStepIndex = this.activeStepIndex;
       this.cdRef.detectChanges();
       console.log(data);
       console.log(this.applicationStatus);
