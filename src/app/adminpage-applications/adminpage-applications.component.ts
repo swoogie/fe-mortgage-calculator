@@ -22,22 +22,24 @@ import {MatTableDataSource} from "@angular/material/table";
   ],
 })
 export class AdminpageApplicationsComponent implements OnInit {
+
   constructor(
     private applicationService: ApplicationService,
     private http: HttpClient
   ) {
   }
-
   // dataSource: Application[] = [];
-  dataSource = new MatTableDataSource<Application>();
 
-  applicationData: Application[] = [];
   @ViewChild(MatSort) sort: MatSort;
+  dataSource = new MatTableDataSource<Application>();
+  applicationData: Application[] = [];
+  selectedStatus = 'RECEIVED';
 
   ngOnInit(): void {
     this.applicationService.getAllApplications().subscribe({
       next: (res: any) => {
         res.forEach((appl) => {
+          console.log(appl);
           this.applicationData.push({
             id: appl.applicationId,
             user: appl.email,
@@ -51,6 +53,13 @@ export class AdminpageApplicationsComponent implements OnInit {
             totalHouseholdIncome: appl.totalHouseholdIncome,
             phoneNumber: appl.phoneNumber,
             personalNumber: appl.personalNumber,
+            email: appl.email,
+            monthlyPayment: appl.monthlyPayment,
+            euriborTerm: appl.euriborTerm,
+            euriborRate: appl.interestRateEuribor /100,
+            interestRate: appl.interestRateMargin,
+            coApplicantEmail: appl.coApplicantEmail,
+            paymentScheduleType: appl.paymentScheduleType
           });
         });
         this.dataSource.data = this.applicationData;
@@ -58,7 +67,19 @@ export class AdminpageApplicationsComponent implements OnInit {
       },
       error: (err) => (this.dataSource.data = FALLBACK_DATA),
     });
+
+    this.dataSource.filterPredicate = (data: Application, filter: string) => {
+      const searchString = filter.toLowerCase();
+      return (
+        data.id.toString().includes(searchString) ||
+        data.user.toLowerCase().includes(searchString) ||
+        data.status.toLowerCase().includes(searchString)
+      );
+    };
+    this.applyFilter();
   }
+
+
 
   columnsToDisplay = ['id', 'user', 'status'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'actions', 'expand'];
@@ -78,6 +99,18 @@ export class AdminpageApplicationsComponent implements OnInit {
     application.status = 'IN_PROGRESS';
     this.applicationService.setApplicationStatus(application.id, 'IN_PROGRESS');
   }
+
+  applyFilter() {
+    this.dataSource.filterPredicate = (data: Application, filter: string) => {
+      const filterValue = filter.toLowerCase();
+      return (
+        data.status.toLowerCase().includes(filterValue) ||
+        data.user.toLowerCase().includes(filterValue)
+      );
+    };
+    this.dataSource.filter = this.selectedStatus.toLowerCase();
+  }
+
 }
 
 export interface Application {
@@ -94,6 +127,13 @@ export interface Application {
   totalHouseholdIncome?: number;
   phoneNumber?: number;
   personalNumber?: number;
+  email?: string;
+  monthlyPayment?: number;
+  euriborTerm?: number;
+  euriborRate?: number;
+  interestRate?: number;
+  coApplicantEmail?: string;
+  paymentScheduleType?: string;
 }
 
 const FALLBACK_DATA: Application[] = [
