@@ -40,7 +40,6 @@ export class ApplicationDialogComponent implements OnInit {
   euriborValues: Euribor[];
   interestRateMargin: number;
   canProceedToIncomeDetails: boolean = false;
-  // monthlyPayment: number = 0;
   totalHouseHoldIncome: number = 0;
   minHouseholdIncome: number;
   isSufficientHouseholdIncome: boolean;
@@ -172,7 +171,6 @@ export class ApplicationDialogComponent implements OnInit {
             Validators.email,
             Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
           ],
-          // asyncValidators: [this.emailAvailabilityValidator()],
           updateOn: 'blur'
         }
 
@@ -220,7 +218,6 @@ export class ApplicationDialogComponent implements OnInit {
       return this.apiService.checkEmail(email).pipe(
         map((response: any) => {
           this.isEmailAvailable = true;
-          //  control.updateValueAndValidity();
           return response.available ? null : {emailNotAvailable: true};
         }),
         catchError((error) => {
@@ -800,34 +797,7 @@ export class ApplicationDialogComponent implements OnInit {
     }
   }
 
-  // onSubmitApplyClick(): void {
-  //   //form validation and post to backend
-  //   this.updateDownPayment();
-  //   this.saveLoanDetails();
-  //   this.apiService.postApplication(this.applicationData).subscribe({
-  //     next: () => {
-  //       console.log('Application submitted successfully');
-  //       this._snackBar.open('Your application has been received and processed successfully. Please check your email for further instructions on the next steps.', 'Close', {
-  //         duration: 6000,
-  //       });
-  //       this.clearData();
-  //     },
-  //     error: (err) => {
-  //       console.log(err);
-  //       let errorMessage = err.error?.message || err.error;
-  //     //  console.log("errorMessage: ", errorMessage);
-  //       if(errorMessage==null){
-  //         errorMessage = "Internal error occurred while processing your application. Please try again later."
-  //       }
-  //       this._snackBar.open(errorMessage, 'Close', {
-  //         duration: 6000,
-  //       });
-  //     },
-  //   });
-  // }
-
   onSubmitApplyClick(): void {
-    //form validation and post to backend
     this.updateDownPayment();
     this.saveLoanDetails();
     this.apiService.postApplication(this.applicationData).subscribe({
@@ -839,12 +809,7 @@ export class ApplicationDialogComponent implements OnInit {
             imageUrl: '../../assets/images/money-monkey.gif'
           },
           maxWidth: '600px',
-          // disableClose: false
         });
-        // setTimeout(() => {
-        //   //dialogRef.close();
-        //   this.dialog.closeAll();
-        // }, 5000);
         dialogRef.afterClosed().subscribe(() => {
           this.dialog.closeAll();
         });
@@ -863,7 +828,6 @@ export class ApplicationDialogComponent implements OnInit {
 
           },
           maxWidth: '600px',
-          // disableClose: false
         });
         dialogRef.afterClosed().subscribe(() => {
           this.dialog.closeAll();
