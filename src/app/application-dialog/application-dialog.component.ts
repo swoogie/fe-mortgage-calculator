@@ -23,6 +23,7 @@ const formBuilder = new FormBuilder().nonNullable;
 })
 export class ApplicationDialogComponent implements OnInit {
   constants: Constants;
+  numericMax:number = 4999999999;
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 1000;
@@ -88,32 +89,32 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       monthlyIncome: [
         this.applicationData.monthlyIncome as number, {
-          validators: [Validators.required, Validators.pattern('[0-9]*'), Validators.max(4999999999)],
+          validators: [Validators.required, Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
           updateOn: 'blur'
         },
       ],
       coApplicantsIncome: [null as number],
       obligations: [
         this.applicationData.obligations as boolean,
-        [Validators.required, Validators.max(4999999999)],
+        [Validators.required, Validators.max(this.numericMax)],
       ],
       mortgageLoans: [
         this.applicationData.mortgageLoans as number,
-        [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
 
       ],
       consumerLoans: [
         this.applicationData.consumerLoans as number,
-        [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
 
       ],
       leasingAmount: [
         this.applicationData.leasingAmount as number,
-        [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
       ],
       creditCardLimit: [
         this.applicationData.creditCardLimit as number,
-        [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
       ],
       canProceed: [true, Validators.requiredTrue],
     },
@@ -434,7 +435,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.coApplicantsIncome.setValidators([
         Validators.required,
         Validators.pattern('^[0-9]+(.[0-9]{1,2})?$'),
-        Validators.max(4999999999)
+        Validators.max(this.numericMax)
       ]);
     } else if (value === 1) {
       this.coApplicantsIncome.clearValidators();
@@ -542,7 +543,6 @@ export class ApplicationDialogComponent implements OnInit {
   ngOnInit() {
 
     if (this.applicants.value >= 2) {
-      this.applicants.setValue(this.applicants.value)
       this.coApplicantsIncome.markAsTouched();
     }
     this.euriborValues = this.euriborValuesService.getEuriborValues();
