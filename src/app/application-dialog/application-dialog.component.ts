@@ -539,7 +539,7 @@ export class ApplicationDialogComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.applicants.value == 2) {
+    if (this.applicants.value >= 2) {
       this.applicants.setValue(2)
       this.coApplicantsIncome.markAsTouched();
     }
@@ -715,7 +715,7 @@ export class ApplicationDialogComponent implements OnInit {
         return;
       }
       minHouseholdIncome = 600;
-    } else if (this.applicants.value == 2) {
+    } else if (this.applicants.value >= 2) {
       if (!this.monthlyIncome.value || !this.coApplicantsIncome.value) {
         return;
       }
