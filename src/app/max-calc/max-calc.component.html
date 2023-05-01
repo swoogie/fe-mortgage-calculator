@@ -137,7 +137,10 @@
 
   <mat-form-field class="input-field">
     <mat-label>Euribor</mat-label>
-    <mat-select formControlName="euribor">
+    <mat-select
+      formControlName="euribor"
+      [compareWith]="euriborCompareFunction"
+    >
       <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
         >{{ euribor.timeInMonths }} Months - {{ euribor.interestRate }}%
       </mat-option>

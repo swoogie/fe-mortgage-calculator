@@ -170,9 +170,29 @@ export class MaxCalcComponent {
         }
       });
   }
+  
+  euriborCompareFunction(option: Euribor, value: Euribor | null): boolean {
+    return option.timeInMonths === value?.timeInMonths;
+  }
+
+  saveData() {
+    const maxCalcData = this.maxCalcForm.value;
+    localStorage.setItem('maxCalcData', JSON.stringify(maxCalcData));
+    console.log(maxCalcData);
+  }
+
+  loadData() {
+    const maxCalcData = JSON.parse(localStorage.getItem('maxCalcData'));
+    if (maxCalcData) {
+      this.maxCalcForm.setValue(maxCalcData);
+    }
+  }
+
+  clearData() {
+    localStorage.removeItem('maxCalcData');
+  }
 
   ngOnInit() {
-    this.onWindowResize(null);
     this.api.getConstants().subscribe((constants) => {
       this.constants = constants;
       // console.log(constants.interestRateMargin);
@@ -184,6 +204,12 @@ export class MaxCalcComponent {
       this.baseInterest = constants.interestRateMargin * 100;
       this.loanTerm.setValue(this.minLoanTerm);
       this.loanTerm.addValidators(Validators.min(this.minLoanTerm));
+    });
+
+    this.onWindowResize(null);
+    this.loadData();
+    this.maxCalcForm.valueChanges.subscribe(() => {
+      this.saveData();
     });
   }
 
