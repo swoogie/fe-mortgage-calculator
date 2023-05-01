@@ -89,7 +89,7 @@ export class MaxCalcComponent {
   );
 
   maxLoanAmount: number =
-    this.realEstatePrice.value * this.loanAmountPercentage;
+    Math.round(this.realEstatePrice.value * this.loanAmountPercentage);
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -164,13 +164,13 @@ export class MaxCalcComponent {
     this.realEstatePrice.valueChanges
       .pipe(debounceTime(50))
       .subscribe((value) => {
-        this.maxLoanAmount = value * this.loanAmountPercentage;
+        this.maxLoanAmount = Math.round(value * this.loanAmountPercentage);
         if (this.loanAmount.value > this.maxLoanAmount) {
           this.loanAmount.setValue(this.maxLoanAmount as never, {});
         }
       });
   }
-  
+
   euriborCompareFunction(option: Euribor, value: Euribor | null): boolean {
     return option.timeInMonths === value?.timeInMonths;
   }
@@ -200,7 +200,7 @@ export class MaxCalcComponent {
       this.maxLoanTerm = constants.maxLoanTerm;
       this.loanAmountPercentage = constants.loanAmountPercentage;
       this.maxLoanAmount =
-        this.realEstatePrice.value * this.loanAmountPercentage;
+        Math.round(this.realEstatePrice.value * this.loanAmountPercentage);
       this.baseInterest = constants.interestRateMargin * 100;
       this.loanTerm.setValue(this.minLoanTerm);
       this.loanTerm.addValidators(Validators.min(this.minLoanTerm));

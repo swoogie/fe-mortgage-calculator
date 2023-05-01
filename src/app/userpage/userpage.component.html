@@ -68,9 +68,8 @@
             Children: {{ application.amountOfKids }}
           </p>
           <p *ngIf="application.euriborTerm">
-            Euribor term: {{ application.euriborTerm }}
+            Euribor: {{ application.euriborTerm }} monhts - {{ application.interestRateEuribor }}%
           </p>
-          <p *ngIf="application.euribor">Euribor: {{ application.euribor }}</p>
           <p *ngIf="application.applicants">
             Applicants: {{ application.applicants }}
           </p>
