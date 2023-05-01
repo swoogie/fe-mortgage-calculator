@@ -804,7 +804,7 @@ export class ApplicationDialogComponent implements OnInit {
       next: () => {
         const dialogRef = this.dialog.open(ApplicationSubmitDialogComponent, {
           data: {
-            header: 'Great Success!',
+            header: 'Application submitted successfully!',
             message: 'Your application has been received and processed successfully. Please check your email for further instructions on the next steps.',
             imageUrl: '../../assets/images/money-monkey.gif'
           },
@@ -818,11 +818,11 @@ export class ApplicationDialogComponent implements OnInit {
       error: (err) => {
         let errorMessage = err.error?.message || err.error;
         if (errorMessage == null) {
-          errorMessage = "Internal error occurred while processing your application. Please try again later."
+          errorMessage = "Internal error occurred while processing your application. We are working on resolving this issue. Please try again later."
         }
         const dialogRef = this.dialog.open(ApplicationSubmitDialogComponent, {
           data: {
-            header: 'Great Failure!',
+            header: 'Oops! Something went wrong...',
             message: errorMessage,
             imageUrl: '../../assets/images/monkey-developer.gif'
 
