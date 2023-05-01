@@ -2,7 +2,7 @@
   <div class="container">
     <h1 mat-dialog-title class="title">Application for a Mortgage Loan</h1>
     <img
-      src="https://cdn-icons-png.flaticon.com/512/57/57165.png"
+      src="../../assets/images/cross-23.png"
       alt="cross icon"
       class="icon"
       [mat-dialog-close]="true"
@@ -180,7 +180,7 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div *ngIf="applicants.value == 2" class="form-field-wrapper">
+          <div *ngIf="applicants.value >= 2" class="form-field-wrapper">
             <mat-form-field class="input-wrap">
               <mat-label>Co-applicant's income</mat-label>
               <input matInput formControlName="coApplicantsIncome"/>
@@ -201,7 +201,7 @@
             </mat-form-field>
           </div>
           <div
-            *ngIf="applicants.value == 2 && totalHouseHoldIncome > 0"
+            *ngIf="applicants.value >= 2 && totalHouseHoldIncome > 0"
             class="form-field-wrapper"
           >
             <div class="info-node">
@@ -214,7 +214,7 @@
             *ngIf="isSufficientHouseholdIncome == false"
           >
             In order to apply for a loan your
-            <span *ngIf="applicants.value == 2">total household</span> income
+            <span *ngIf="applicants.value >= 2">total household</span> income
             should be at least {{ minHouseholdIncome }}
           </div>
           <div class="form-field-wrapper">
@@ -247,7 +247,7 @@
               <div class="form-field-wrapper">
                 <mat-form-field class="input-wrap">
                   <mat-label>{{ field.label }}</mat-label>
-                  <input matInput formControlName="{{ field.controlName }}"/>
+                  <input matInput formControlName="{{ field.controlName }}" (blur)="onInputBlur()"/>
                   <mat-error
                     class="error-message"
                     *ngIf="
@@ -450,7 +450,7 @@
 
       <mat-step
         step
-        *ngIf="applicants.value == 2"
+        *ngIf="applicants.value >= 2"
         [stepControl]="coApplicantDetailsForm">
         <form [formGroup]="coApplicantDetailsForm">
           <ng-template matStepLabel>Co-applicant's Details</ng-template>
@@ -540,7 +540,7 @@
           </tbody>
         </table>
         <br/>
-        <table *ngIf="applicants.value == 2" class="form-submission-info">
+        <table *ngIf="applicants.value >= 2" class="form-submission-info">
           <tbody>
           <th [colSpan]="2">Co-applicant's contact details</th>
           <tr>
@@ -565,7 +565,6 @@
         <div>
           <button
             mat-raised-button
-            mat-dialog-close
             class="form-button"
             (click)="onSubmitApplyClick()"
           >

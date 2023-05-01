@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {ApiService} from '../services/api.service';
 import {Constants} from '../interfaces/constants';
 import {ApplicationData} from '../interfaces/application-data';
@@ -12,6 +12,7 @@ import {StepperSelectionEvent} from '@angular/cdk/stepper';
 import {catchError, map} from 'rxjs/operators';
 import {UserAuthService} from "../services/user-auth.service";
 import {PersonalInfo} from "../interfaces/personal-info";
+import {ApplicationSubmitDialogComponent} from "../application-submit-dialog/application-submit-dialog.component";
 
 const formBuilder = new FormBuilder().nonNullable;
 
@@ -22,6 +23,7 @@ const formBuilder = new FormBuilder().nonNullable;
 })
 export class ApplicationDialogComponent implements OnInit {
   constants: Constants;
+  numericMax:number = 4999999999;
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 1000;
@@ -39,7 +41,6 @@ export class ApplicationDialogComponent implements OnInit {
   euriborValues: Euribor[];
   interestRateMargin: number;
   canProceedToIncomeDetails: boolean = false;
-  // monthlyPayment: number = 0;
   totalHouseHoldIncome: number = 0;
   minHouseholdIncome: number;
   isSufficientHouseholdIncome: boolean;
@@ -72,7 +73,7 @@ export class ApplicationDialogComponent implements OnInit {
     lastName: null,
     phoneNumber: null,
     address: null,
-    email:null,
+    email: null,
     personalNumber: null,
   }
 
@@ -88,30 +89,32 @@ export class ApplicationDialogComponent implements OnInit {
       ],
       monthlyIncome: [
         this.applicationData.monthlyIncome as number, {
-          validators: [Validators.required, Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+          validators: [Validators.required, Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
           updateOn: 'blur'
         },
       ],
       coApplicantsIncome: [null as number],
       obligations: [
         this.applicationData.obligations as boolean,
-        [Validators.required,Validators.max(4999999999)],
+        [Validators.required, Validators.max(this.numericMax)],
       ],
       mortgageLoans: [
         this.applicationData.mortgageLoans as number,
-        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
+
       ],
       consumerLoans: [
         this.applicationData.consumerLoans as number,
-        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
+
       ],
       leasingAmount: [
         this.applicationData.leasingAmount as number,
-        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
       ],
       creditCardLimit: [
         this.applicationData.creditCardLimit as number,
-        [Validators.pattern('[0-9]*'),Validators.max(4999999999)],
+        [Validators.pattern('[0-9]*'), Validators.max(this.numericMax)],
       ],
       canProceed: [true, Validators.requiredTrue],
     },
@@ -141,8 +144,8 @@ export class ApplicationDialogComponent implements OnInit {
         }
       ],
       loanTerm: [
-        this.applicationData.loanTerm as number,{
-        validators: [Validators.required, Validators.pattern('[0-9]*')],
+        this.applicationData.loanTerm as number, {
+          validators: [Validators.required, Validators.pattern('[0-9]*')],
           updateOn: 'blur'
         }
       ],
@@ -171,7 +174,6 @@ export class ApplicationDialogComponent implements OnInit {
             Validators.email,
             Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
           ],
-          // asyncValidators: [this.emailAvailabilityValidator()],
           updateOn: 'blur'
         }
 
@@ -219,7 +221,6 @@ export class ApplicationDialogComponent implements OnInit {
       return this.apiService.checkEmail(email).pipe(
         map((response: any) => {
           this.isEmailAvailable = true;
-          //  control.updateValueAndValidity();
           return response.available ? null : {emailNotAvailable: true};
         }),
         catchError((error) => {
@@ -290,7 +291,8 @@ export class ApplicationDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public applicationData: ApplicationData,
     private _snackBar: MatSnackBar,
-    private userAuthService: UserAuthService
+    private userAuthService: UserAuthService,
+    private dialog: MatDialog,
   ) {
     const sufficientIncomeFormControls = [
       this.applicants,
@@ -416,7 +418,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.obligationFields.forEach((field) => {
         this.incomeDetailsForm
           .get(field.controlName)
-          .setValidators([Validators.required, Validators.pattern('[0-9]*'),Validators.max(9999999999)]);
+          .setValidators([Validators.required, Validators.pattern('[0-9]*'), Validators.max(9999999999)]);
         this.incomeDetailsForm.get(field.controlName).setValue(0);
       });
     } else if (obligationsValue === false) {
@@ -433,7 +435,7 @@ export class ApplicationDialogComponent implements OnInit {
       this.coApplicantsIncome.setValidators([
         Validators.required,
         Validators.pattern('^[0-9]+(.[0-9]{1,2})?$'),
-        Validators.max(4999999999)
+        Validators.max(this.numericMax)
       ]);
     } else if (value === 1) {
       this.coApplicantsIncome.clearValidators();
@@ -540,8 +542,7 @@ export class ApplicationDialogComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.applicants.value == 2) {
-      this.applicants.setValue(2)
+    if (this.applicants.value >= 2) {
       this.coApplicantsIncome.markAsTouched();
     }
     this.euriborValues = this.euriborValuesService.getEuriborValues();
@@ -563,7 +564,6 @@ export class ApplicationDialogComponent implements OnInit {
     this.updateAvailableMonthlyPayment();
 
     this.isUserLoggedIn = this.userAuthService.isAuthenticated();
-    console.log("isUserLoggedIn: ", this.isUserLoggedIn);
     if (this.isUserLoggedIn) {
       const userEmail = JSON.parse(localStorage.getItem('userEmail'));
       this.userEmail = userEmail;
@@ -716,7 +716,7 @@ export class ApplicationDialogComponent implements OnInit {
         return;
       }
       minHouseholdIncome = 600;
-    } else if (this.applicants.value == 2) {
+    } else if (this.applicants.value >= 2) {
       if (!this.monthlyIncome.value || !this.coApplicantsIncome.value) {
         return;
       }
@@ -799,26 +799,39 @@ export class ApplicationDialogComponent implements OnInit {
   }
 
   onSubmitApplyClick(): void {
-    //form validation and post to backend
     this.updateDownPayment();
     this.saveLoanDetails();
     this.apiService.postApplication(this.applicationData).subscribe({
       next: () => {
-        console.log('Application submitted successfully');
-        this._snackBar.open('Your application has been received and processed successfully. Please check your email for further instructions on the next steps.', 'Close', {
-          duration: 6000,
+        const dialogRef = this.dialog.open(ApplicationSubmitDialogComponent, {
+          data: {
+            header: 'Application submitted successfully!',
+            message: 'Your application has been received and processed successfully. Please check your email for further instructions on the next steps.',
+            imageUrl: '../../assets/images/money-monkey.gif'
+          },
+          maxWidth: '600px',
+        });
+        dialogRef.afterClosed().subscribe(() => {
+          this.dialog.closeAll();
         });
         this.clearData();
       },
       error: (err) => {
-        console.log(err);
         let errorMessage = err.error?.message || err.error;
-      //  console.log("errorMessage: ", errorMessage);
-        if(errorMessage==null){
-          errorMessage = "Internal error occurred while processing your application. Please try again later."
+        if (errorMessage == null) {
+          errorMessage = "Internal error occurred while processing your application. We are working on resolving this issue. Please try again later."
         }
-        this._snackBar.open(errorMessage, 'Close', {
-          duration: 6000,
+        const dialogRef = this.dialog.open(ApplicationSubmitDialogComponent, {
+          data: {
+            header: 'Oops! Something went wrong...',
+            message: errorMessage,
+            imageUrl: '../../assets/images/monkey-developer.gif'
+
+          },
+          maxWidth: '600px',
+        });
+        dialogRef.afterClosed().subscribe(() => {
+          this.dialog.closeAll();
         });
       },
     });
@@ -1089,5 +1102,14 @@ export class ApplicationDialogComponent implements OnInit {
   unclickMe(event: Event) {
     this._snackBar.dismiss();
     event.stopPropagation();
+  }
+
+  onInputBlur() {
+    this.obligationFields.forEach((field) => {
+      const control = this.incomeDetailsForm.get(field.controlName);
+      if (control.value == '' && this.obligations.value === true) {
+        control.setValue(0);
+      }
+    });
   }
 }
