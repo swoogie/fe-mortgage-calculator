@@ -1,15 +1,26 @@
 <form [formGroup]="maxCalcForm" (ngSubmit)="calculateMax()" class="container">
   <h3 class="page-title">
-    Maximum Payment Calculator<img class="clippy" src="../../assets/images/clippy.png" alt="clippy"/>
+    Maximum Payment Calculator<img
+      class="clippy"
+      src="../../assets/images/clippy.png"
+      alt="clippy"
+    />
   </h3>
   <mat-form-field class="input-field">
     <mat-label>Real Estate Price €</mat-label>
-    <input matInput formControlName="realEstatePrice" id="realEstatePrice" (blur)="overwriteIfLess()"/>
-    <mat-error *ngIf="
+    <input
+      matInput
+      formControlName="realEstatePrice"
+      id="realEstatePrice"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error
+      *ngIf="
         realEstatePrice &&
         (realEstatePrice.hasError('required') ||
           realEstatePrice.hasError('pattern'))
-      ">
+      "
+    >
       Please enter a number
     </mat-error>
     <mat-error *ngIf="realEstatePrice && realEstatePrice.hasError('max')">
@@ -25,53 +36,90 @@
       <p>Loan amount €</p>
       <p>{{ maxLoanAmount }}</p>
     </div>
-    <mat-slider class="slider" [max]="maxLoanAmount" [min]="minLoanAmount" [step]="500">
-      <input matSliderThumb formControlName="loanAmount" [value]="loanAmount.value"/>
+    <mat-slider
+      class="slider"
+      [max]="maxLoanAmount"
+      [min]="minLoanAmount"
+      [step]="500"
+    >
+      <input
+        matSliderThumb
+        formControlName="loanAmount"
+        [value]="loanAmount.value"
+      />
     </mat-slider>
   </div>
 
   <mat-form-field *ngIf="helloSlider" class="slider-input-field">
-    <input matInput formControlName="loanAmount" [value]="loanAmount.value" (blur)="overwriteIfLess()"/>
-    <mat-error *ngIf="
+    <input
+      matInput
+      formControlName="loanAmount"
+      [value]="loanAmount.value"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error
+      *ngIf="
         loanAmount &&
         (loanAmount.hasError('pattern') || loanAmount.hasError('required'))
-      ">
+      "
+    >
       Please enter a number
     </mat-error>
   </mat-form-field>
 
   <mat-form-field *ngIf="!helloSlider" class="input-field">
     <mat-label>Loan Amount €</mat-label>
-    <input matInput formControlName="loanAmount" [value]="loanAmount.value" (blur)="overwriteIfLess()"/>
-    <mat-error *ngIf="
+    <input
+      matInput
+      formControlName="loanAmount"
+      [value]="loanAmount.value"
+      (blur)="overwriteIfLess()"
+    />
+    <mat-error
+      *ngIf="
         loanAmount &&
         (loanAmount.hasError('pattern') || loanAmount.hasError('required'))
-      ">
+      "
+    >
       Please enter a number
     </mat-error>
   </mat-form-field>
 
   <div *ngIf="helloSlider" class="slider-container">
     <div class="slider-label">
-      <mat-label>{{minLoanTerm}}</mat-label>
+      <mat-label>{{ minLoanTerm }}</mat-label>
       <mat-label>Loan term years</mat-label>
-      <mat-label>{{maxLoanTerm}}</mat-label>
+      <mat-label>{{ maxLoanTerm }}</mat-label>
     </div>
 
     <mat-slider class="slider" [max]="maxLoanTerm" [min]="minLoanTerm">
-      <input matSliderThumb formControlName="loanTerm" [value]="loanTerm.value"/>
+      <input
+        matSliderThumb
+        formControlName="loanTerm"
+        [value]="loanTerm.value"
+      />
     </mat-slider>
   </div>
 
   <mat-form-field *ngIf="!helloSlider" class="input-field">
     <mat-label>Loan Term</mat-label>
-    <input matInput formControlName="loanTerm" [value]="loanTerm.value" (blur)="overwriteIfLess()"/>
+    <input
+      matInput
+      formControlName="loanTerm"
+      [value]="loanTerm.value"
+      (blur)="overwriteIfLess()"
+    />
     <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
       Please enter a number
     </mat-error>
   </mat-form-field>
   <mat-form-field *ngIf="helloSlider" class="slider-input-field">
-    <input matInput formControlName="loanTerm" [value]="loanTerm.value" (blur)="overwriteIfLess()"/>
+    <input
+      matInput
+      formControlName="loanTerm"
+      [value]="loanTerm.value"
+      (blur)="overwriteIfLess()"
+    />
     <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
       Please enter a number
     </mat-error>
@@ -79,9 +127,12 @@
 
   <mat-form-field class="input-field">
     <mat-label>Euribor</mat-label>
-    <mat-select formControlName="euribor">
-      <mat-option *ngFor="let euribor of euriborValues" [value]="euribor">{{ euribor.timeInMonths }} Months -
-        {{ euribor.interestRate }}%
+    <mat-select
+      formControlName="euribor"
+      [compareWith]="euriborCompareFunction"
+    >
+      <mat-option *ngFor="let euribor of euriborValues" [value]="euribor"
+        >{{ euribor.timeInMonths }} Months - {{ euribor.interestRate }}%
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -92,19 +143,35 @@
     <div class="obligationContainer">
       <mat-label class="block">Payment Schedule Type</mat-label>
     </div>
-    <mat-radio-group aria-label="Payment schedule options" formControlName="paymentScheduleType" color="primary"
-                     class="radio-group">
+    <mat-radio-group
+      aria-label="Payment schedule options"
+      formControlName="paymentScheduleType"
+      color="primary"
+      class="radio-group"
+    >
       <div class="group">
         <mat-radio-button value="annuity">Annuity</mat-radio-button>
-        <button matPrefix mat-icon-button (click)="clickMe($event)" matTooltipPosition="above"
-                (mouseenter)="clickMe($event)" (mouseleave)="unclickMe($event)">
+        <button
+          matPrefix
+          mat-icon-button
+          (click)="clickMe($event)"
+          matTooltipPosition="above"
+          (mouseenter)="clickMe($event)"
+          (mouseleave)="unclickMe($event)"
+        >
           <mat-icon class="info-btn">info</mat-icon>
         </button>
       </div>
       <div class="group">
         <mat-radio-button value="linear">Linear</mat-radio-button>
-        <button matPrefix mat-icon-button (click)="clickMe2($event)" (mouseenter)="clickMe2($event)"
-                (mouseleave)="unclickMe($event)" matTooltipPosition="above">
+        <button
+          matPrefix
+          mat-icon-button
+          (click)="clickMe2($event)"
+          (mouseenter)="clickMe2($event)"
+          (mouseleave)="unclickMe($event)"
+          matTooltipPosition="above"
+        >
           <mat-icon class="info-btn">info</mat-icon>
         </button>
       </div>
@@ -115,24 +182,28 @@
     <button mat-flat-button (click)="openDialog()">Apply</button>
   </div>
   <div class="right-container-card">
-    <app-donut [maxData]="chartData" [labels]="chartLabels" [middleLabel]="['Interest/Principal']">
+    <app-donut
+      [maxData]="chartData"
+      [labels]="chartLabels"
+      [middleLabel]="['Interest/Principal']"
+    >
     </app-donut>
     <p class="payment-result">
       <mat-label *ngIf="linearTotal">
-    <div class="LPI">Linear Payment Information</div>
-    <br/>
-    Total Payment over Mortgage Period : {{ linearTotal }} € <br/>
-    Total Interest : {{ interestFromTotal }}€ <br/>
-    Overall Principal {{ principalFromTotal }} €<br/>
-    First Month Payment: {{ monthlyPayment }} €
-    </mat-label>
-    <mat-label *ngIf="annuityTotal">
-      <div class="API">Annuity Payment Information</div>
-      <br/>Total payment over Mortgage Period : {{ annuityTotal }} € <br/>
-      Total Interest : {{ interestFromTotal }} € <br/>
-      Overall Principal : {{ principalFromTotal }} €<br/>
-      Monthly Payment: {{ monthlyPayment }} €
-    </mat-label>
+        <div class="LPI">Linear Payment Information</div>
+        <br />
+        Total Payment over Mortgage Period : {{ linearTotal }} € <br />
+        Total Interest : {{ interestFromTotal }}€ <br />
+        Overall Principal {{ principalFromTotal }} €<br />
+        First Month Payment: {{ monthlyPayment }} €
+      </mat-label>
+      <mat-label *ngIf="annuityTotal">
+        <div class="API">Annuity Payment Information</div>
+        <br />Total payment over Mortgage Period : {{ annuityTotal }} € <br />
+        Total Interest : {{ interestFromTotal }} € <br />
+        Overall Principal : {{ principalFromTotal }} €<br />
+        Monthly Payment: {{ monthlyPayment }} €
+      </mat-label>
     </p>
   </div>
 </form>
