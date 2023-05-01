@@ -1,16 +1,16 @@
-import {Component, HostListener} from '@angular/core';
-import {FormBuilder, Validators} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {debounceTime} from 'rxjs';
-import {Euribor} from '../interfaces/euribor';
-import {ApiService} from '../services/api.service';
-import {Constants} from '../interfaces/constants';
-import {MaxcalculationsService} from '../services/maxcalculations.service';
-import {ApplicationDialogComponent} from '../application-dialog/application-dialog.component';
-import {MatDialog} from '@angular/material/dialog';
-import {EuriborValuesService} from '../services/euribor-values-service.service';
-import {EuriborApiService} from '../services/euribor-api.service';
-import {PaymentCalculationResult} from "../interfaces/payment-calculation-result";
+import { Component, HostListener } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { debounceTime } from 'rxjs';
+import { Euribor } from '../interfaces/euribor';
+import { ApiService } from '../services/api.service';
+import { Constants } from '../interfaces/constants';
+import { MaxcalculationsService } from '../services/maxcalculations.service';
+import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { EuriborValuesService } from '../services/euribor-values-service.service';
+import { EuriborApiService } from '../services/euribor-api.service';
+import { PaymentCalculationResult } from '../interfaces/payment-calculation-result';
 
 const fb = new FormBuilder().nonNullable;
 
@@ -23,22 +23,22 @@ export class MaxCalcComponent {
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 1000;
-  minLoanTerm: number = 1;
-  maxLoanTerm: number = 30;
-  baseInterest: number = 2.5;
-  loanAmountPercentage: number = 0.85;
+  minLoanTerm: number = null;
+  maxLoanTerm: number = null;
+  baseInterest: number = 2.5; // fallback values
+  loanAmountPercentage: number = 0.85; // fallback values
   constants: Constants;
   euriborValues: Euribor[] = this.euriborValuesService.getEuriborValues();
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
   chartData: number[] = [];
 
   fields = [
-    {label: 'Principal', controlName: 'mortgageLoans'},
-    {label: 'Interest', controlName: 'consumerLoans'},
+    { label: 'Principal', controlName: 'mortgageLoans' },
+    { label: 'Interest', controlName: 'consumerLoans' },
   ];
   chartFields = [
-    {label: 'Principal', controlName: 'mortgageLoans'},
-    {label: 'Interest', controlName: 'consumerLoans'},
+    { label: 'Principal', controlName: 'mortgageLoans' },
+    { label: 'Interest', controlName: 'consumerLoans' },
   ];
   chartLabels: string[] = this.chartFields.map((field) => field.label);
 
@@ -85,10 +85,11 @@ export class MaxCalcComponent {
       ],
       euribor: [this.euriborValues[0] as Euribor, [Validators.required]],
     },
-    {updateOn: 'change'}
+    { updateOn: 'change' }
   );
 
-  maxLoanAmount: number = this.realEstatePrice.value * this.loanAmountPercentage;
+  maxLoanAmount: number =
+    this.realEstatePrice.value * this.loanAmountPercentage;
 
   constructor(
     private _snackBar: MatSnackBar,
@@ -119,9 +120,13 @@ export class MaxCalcComponent {
     this.loanAmount.valueChanges.pipe(debounceTime(10)).subscribe((value) => {
       if (this.realEstatePrice.value && value >= this.maxLoanAmount) {
         const percentage = this.loanAmountPercentage * 100;
-        this._snackBar.open(`Max loan is ${percentage}% of real estate price`, '', {
-          duration: 2000,
-        });
+        this._snackBar.open(
+          `Max loan is ${percentage}% of real estate price`,
+          '',
+          {
+            duration: 2000,
+          }
+        );
       }
       if (this.realEstatePrice.value && value > this.maxLoanAmount) {
         this.loanAmount.setValue(this.maxLoanAmount);
@@ -170,10 +175,15 @@ export class MaxCalcComponent {
     this.onWindowResize(null);
     this.api.getConstants().subscribe((constants) => {
       this.constants = constants;
+      // console.log(constants.interestRateMargin);
       this.minLoanTerm = constants.minLoanTerm;
       this.maxLoanTerm = constants.maxLoanTerm;
       this.loanAmountPercentage = constants.loanAmountPercentage;
+      this.maxLoanAmount =
+        this.realEstatePrice.value * this.loanAmountPercentage;
       this.baseInterest = constants.interestRateMargin * 100;
+      this.loanTerm.setValue(this.minLoanTerm);
+      this.loanTerm.addValidators(Validators.min(this.minLoanTerm));
     });
   }
 
@@ -213,7 +223,7 @@ export class MaxCalcComponent {
           this.chartData = [this.principalFromTotal, this.interestFromTotal];
         }
         if (this.maxCalcForm && this.paymentScheduleType.value == 'annuity') {
-         const result = this.calcService.calculateAnnuityTotal(
+          const result = this.calcService.calculateAnnuityTotal(
             this.maxCalcForm
           );
           this.annuityTotal = result.totalPayment;
@@ -244,7 +254,18 @@ export class MaxCalcComponent {
     if (this.loanAmount.value < this.minLoanAmount) {
       this.loanAmount.setValue(this.minLoanAmount);
       this._snackBar.open(
-        `Loan amount must be more than ${this.minLoanAmount}`,
+        `Loan amount must be more than ${this.minLoanAmount} €`,
+        '',
+        {
+          duration: 2000,
+        }
+      );
+    }
+
+    if (this.loanTerm.value < this.minLoanTerm) {
+      this.loanTerm.setValue(this.minLoanTerm);
+      this._snackBar.open(
+        `Loan term must be more than ${this.minLoanTerm} year(s)`,
         '',
         {
           duration: 2000,
@@ -307,13 +328,9 @@ export class MaxCalcComponent {
   }
 
   clickMe(event: Event) {
-    this._snackBar.open(
-      'Annuity - identical monthly installments',
-      null,
-      {
-        duration: 7000,
-      }
-    );
+    this._snackBar.open('Annuity - identical monthly installments', null, {
+      duration: 7000,
+    });
     event.stopPropagation();
   }
 
@@ -333,5 +350,3 @@ export class MaxCalcComponent {
     event.stopPropagation();
   }
 }
-
-
