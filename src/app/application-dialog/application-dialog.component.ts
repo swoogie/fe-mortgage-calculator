@@ -540,7 +540,7 @@ export class ApplicationDialogComponent implements OnInit {
   ngOnInit() {
 
     if (this.applicants.value >= 2) {
-      this.applicants.setValue(2)
+      this.applicants.setValue(this.applicants.value)
       this.coApplicantsIncome.markAsTouched();
     }
     this.euriborValues = this.euriborValuesService.getEuriborValues();
