@@ -247,7 +247,7 @@
               <div class="form-field-wrapper">
                 <mat-form-field class="input-wrap">
                   <mat-label>{{ field.label }}</mat-label>
-                  <input matInput formControlName="{{ field.controlName }}"/>
+                  <input matInput formControlName="{{ field.controlName }}" (blur)="onInputBlur()"/>
                   <mat-error
                     class="error-message"
                     *ngIf="

@@ -100,10 +100,12 @@ export class ApplicationDialogComponent implements OnInit {
       mortgageLoans: [
         this.applicationData.mortgageLoans as number,
         [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
+
       ],
       consumerLoans: [
         this.applicationData.consumerLoans as number,
         [Validators.pattern('[0-9]*'), Validators.max(4999999999)],
+
       ],
       leasingAmount: [
         this.applicationData.leasingAmount as number,
@@ -347,8 +349,10 @@ export class ApplicationDialogComponent implements OnInit {
 
     this.obligationFields.forEach((formControl) => {
       const control = this.incomeDetailsForm.get(formControl.controlName);
+      console.log('control', control.value);
       control.valueChanges.subscribe((value) => {
         const stringValue = String(value);
+        console.log('value', value);
         if (value > 0 && stringValue.startsWith('0')) {
           control.setValue(stringValue.substring(1));
         }
@@ -1101,5 +1105,14 @@ export class ApplicationDialogComponent implements OnInit {
   unclickMe(event: Event) {
     this._snackBar.dismiss();
     event.stopPropagation();
+  }
+
+  onInputBlur() {
+    this.obligationFields.forEach((field) => {
+      const control = this.incomeDetailsForm.get(field.controlName);
+      if (control.value == '' && this.obligations.value === true) {
+        control.setValue(0);
+      }
+    });
   }
 }
