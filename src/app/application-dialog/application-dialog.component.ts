@@ -349,10 +349,8 @@ export class ApplicationDialogComponent implements OnInit {
 
     this.obligationFields.forEach((formControl) => {
       const control = this.incomeDetailsForm.get(formControl.controlName);
-      console.log('control', control.value);
       control.valueChanges.subscribe((value) => {
         const stringValue = String(value);
-        console.log('value', value);
         if (value > 0 && stringValue.startsWith('0')) {
           control.setValue(stringValue.substring(1));
         }
@@ -566,7 +564,6 @@ export class ApplicationDialogComponent implements OnInit {
     this.updateAvailableMonthlyPayment();
 
     this.isUserLoggedIn = this.userAuthService.isAuthenticated();
-    console.log("isUserLoggedIn: ", this.isUserLoggedIn);
     if (this.isUserLoggedIn) {
       const userEmail = JSON.parse(localStorage.getItem('userEmail'));
       this.userEmail = userEmail;
