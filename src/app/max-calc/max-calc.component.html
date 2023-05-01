@@ -109,7 +109,12 @@
       [value]="loanTerm.value"
       (blur)="overwriteIfLess()"
     />
-    <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+    <mat-error
+      *ngIf="
+        (loanTerm && loanTerm.hasError('pattern')) ||
+        loanTerm.hasError('required')
+      "
+    >
       Please enter a number
     </mat-error>
   </mat-form-field>
@@ -120,7 +125,12 @@
       [value]="loanTerm.value"
       (blur)="overwriteIfLess()"
     />
-    <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
+    <mat-error
+      *ngIf="
+        (loanTerm && loanTerm.hasError('pattern')) ||
+        loanTerm.hasError('required')
+      "
+    >
       Please enter a number
     </mat-error>
   </mat-form-field>
@@ -136,9 +146,6 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-error *ngIf="loanTerm && loanTerm.hasError('pattern')">
-    Please enter a number
-  </mat-error>
   <div class="radio">
     <div class="obligationContainer">
       <mat-label class="block">Payment Schedule Type</mat-label>
@@ -153,6 +160,7 @@
         <mat-radio-button value="annuity">Annuity</mat-radio-button>
         <button
           matPrefix
+          type="button"
           mat-icon-button
           (click)="clickMe($event)"
           matTooltipPosition="above"
@@ -166,6 +174,7 @@
         <mat-radio-button value="linear">Linear</mat-radio-button>
         <button
           matPrefix
+          type="button"
           mat-icon-button
           (click)="clickMe2($event)"
           (mouseenter)="clickMe2($event)"

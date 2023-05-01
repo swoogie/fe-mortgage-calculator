@@ -23,10 +23,10 @@ export class MaxCalcComponent {
   maxRealEstatePrice: number = 3200000;
   minRealEstatePrice: number = 10000;
   minLoanAmount: number = 1000;
-  minLoanTerm: number = 1;
-  maxLoanTerm: number = 30;
-  baseInterest: number = 2.5;
-  loanAmountPercentage: number = 0.85;
+  minLoanTerm: number = null;
+  maxLoanTerm: number = null;
+  baseInterest: number = 2.5; // fallback values
+  loanAmountPercentage: number = 0.85; // fallback values
   constants: Constants;
   euriborValues: Euribor[] = this.euriborValuesService.getEuriborValues();
   paymentScheduleTypes: string[] = ['annuity', 'linear'];
@@ -195,10 +195,15 @@ export class MaxCalcComponent {
   ngOnInit() {
     this.api.getConstants().subscribe((constants) => {
       this.constants = constants;
+      // console.log(constants.interestRateMargin);
       this.minLoanTerm = constants.minLoanTerm;
       this.maxLoanTerm = constants.maxLoanTerm;
       this.loanAmountPercentage = constants.loanAmountPercentage;
+      this.maxLoanAmount =
+        this.realEstatePrice.value * this.loanAmountPercentage;
       this.baseInterest = constants.interestRateMargin * 100;
+      this.loanTerm.setValue(this.minLoanTerm);
+      this.loanTerm.addValidators(Validators.min(this.minLoanTerm));
     });
 
     this.onWindowResize(null);
@@ -275,7 +280,18 @@ export class MaxCalcComponent {
     if (this.loanAmount.value < this.minLoanAmount) {
       this.loanAmount.setValue(this.minLoanAmount);
       this._snackBar.open(
-        `Loan amount must be more than ${this.minLoanAmount}`,
+        `Loan amount must be more than ${this.minLoanAmount} €`,
+        '',
+        {
+          duration: 2000,
+        }
+      );
+    }
+
+    if (this.loanTerm.value < this.minLoanTerm) {
+      this.loanTerm.setValue(this.minLoanTerm);
+      this._snackBar.open(
+        `Loan term must be more than ${this.minLoanTerm} year(s)`,
         '',
         {
           duration: 2000,
