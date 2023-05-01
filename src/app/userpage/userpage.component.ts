@@ -2,8 +2,6 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import jwtDecode from 'jwt-decode';
 import { ApplicationData } from '../interfaces/application-data';
 import { ApiService } from '../services/api.service';
-import { UserAuthService } from '../services/user-auth.service';
-import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-userpage',
@@ -15,9 +13,9 @@ export class UserpageComponent implements OnInit {
   applications: ApplicationData[];
   email: string;
   applicationStatus: string = '';
+  userName: string = '';
 
   constructor(
-    private user_authService: UserAuthService,
     private apiService: ApiService,
     private cdRef: ChangeDetectorRef
   ) {
@@ -28,6 +26,7 @@ export class UserpageComponent implements OnInit {
 
   ngOnInit() {
     this.handleApplicationDisplay();
+    this.getUserName();
   }
 
   getStatusColor(status: string) {
@@ -43,6 +42,14 @@ export class UserpageComponent implements OnInit {
       default:
         return 'white';
     }
+  }
+
+  getUserName() {
+    this.apiService.getPersonalInfo(this.email).subscribe((data) => {
+      this.userName = data.firstName;
+      this.cdRef.detectChanges();
+      console.log(this.userName);
+    });
   }
 
   handleApplicationDisplay() {

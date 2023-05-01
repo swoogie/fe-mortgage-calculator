@@ -1,4 +1,4 @@
-<h3 class="userpage_title">Welcome, {{ email }}</h3>
+<h3 class="userpage_title">Welcome, {{ userName | titlecase }}</h3>
 <div class="userpage card-container">
   <ng-container *ngFor="let application of applications">
     <mat-card>
@@ -8,7 +8,7 @@
             color: getStatusColor(application.applicationStatus)
           }"
         >
-          {{ application.applicationStatus }}
+          {{ application.applicationStatus.replace("_", " ").toUpperCase() }}
         </p>
         <p *ngIf="application.email">Your email: {{ application.email }}</p>
 
