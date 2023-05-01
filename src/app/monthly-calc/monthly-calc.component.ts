@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { TooltipPosition } from '@angular/material/tooltip';
-import { ApplicationDialogComponent } from '../application-dialog/application-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, Validators} from '@angular/forms';
+import {ApplicationDialogComponent} from '../application-dialog/application-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {Constants} from "../interfaces/constants";
+import {ApiService} from "../services/api.service";
 
 const fb = new FormBuilder().nonNullable;
 
@@ -18,7 +19,10 @@ interface ChartData {
   styleUrls: ['./monthly-calc.component.scss'],
 })
 export class MonthlyCalcComponent implements OnInit {
-  optionValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  childrenOptions: number[] = [];
+  applicantsOptions: number[] = [];
+  maxMonthlyObligationsPercentage: number;
+  constants: Constants;
   fields = [
     {
       label: 'Mortgage Loans',
@@ -38,11 +42,11 @@ export class MonthlyCalcComponent implements OnInit {
     },
   ];
   chartFields = [
-    { label: 'Mortgage loans', controlName: 'mortgageLoans' },
-    { label: 'Consumer loans', controlName: 'consumerLoans' },
-    { label: 'Leasing amount', controlName: 'leasingAmount' },
-    { label: 'Credit card limit', controlName: 'creditCardLimit' },
-    { label: 'Monthly max payment', controlName: 'monthlyPaymentDisplay' },
+    {label: 'Mortgage loans', controlName: 'mortgageLoans'},
+    {label: 'Consumer loans', controlName: 'consumerLoans'},
+    {label: 'Leasing amount', controlName: 'leasingAmount'},
+    {label: 'Credit card limit', controlName: 'creditCardLimit'},
+    {label: 'Monthly max payment', controlName: 'monthlyPaymentDisplay'},
   ];
   chartLabels: string[] = this.chartFields.map((field) => field.label);
   monthlyPaymentResult: number = 0;
@@ -58,18 +62,18 @@ export class MonthlyCalcComponent implements OnInit {
       applicants: [1 as number, Validators.required],
       amountOfKids: ['', Validators.required],
       income: ['', [Validators.required, Validators.pattern('[0-9]*')]],
-      monthlyPaymentDisplay: [{ value: '', disabled: this.isDisabled }],
+      monthlyPaymentDisplay: [{value: '', disabled: this.isDisabled}],
       obligation: [false as boolean, Validators.required],
       mortgageLoans: ['', Validators.pattern('[0-9]*')],
       consumerLoans: ['', Validators.pattern('[0-9]*')],
       leasingAmount: ['', Validators.pattern('[0-9]*')],
       creditCardLimit: ['', Validators.pattern('[0-9]*')],
     },
-    { updateOn: 'change' }
+    {updateOn: 'change'}
   );
 
-  constructor(public dialog: MatDialog, private _snackBar: MatSnackBar) {
-    this.monthlyForm.valueChanges.subscribe((value) => {});
+  constructor(public dialog: MatDialog, private _snackBar: MatSnackBar, private apiService: ApiService) {
+
   }
 
   ngOnInit() {
@@ -80,6 +84,19 @@ export class MonthlyCalcComponent implements OnInit {
         this.monthlyForm.get('leasingAmount').reset();
         this.monthlyForm.get('creditCardLimit').reset();
         this.monthlyForm.get('monthlyPaymentDisplay').reset();
+      }
+    });
+    this.apiService.getConstants().subscribe((constants) => {
+      this.constants = constants;
+      this.maxMonthlyObligationsPercentage = constants.maxMonthlyObligationsPercentage;
+      const minKids = constants.minKids;
+      const maxKids = constants.maxKids;
+      const maxNumOfApplicants = constants.maxNumOfApplicants;
+      for (let i = minKids; i <= maxKids; i++) {
+        this.childrenOptions.push(i);
+      }
+      for (let i = 1; i <= maxNumOfApplicants; i++) {
+        this.applicantsOptions.push(i);
       }
     });
   }
@@ -96,8 +113,8 @@ export class MonthlyCalcComponent implements OnInit {
       const commaIndex = this.income.value.indexOf(',');
       this.income.setValue(
         this.income.value.substring(0, commaIndex) +
-          '.' +
-          this.income.value.substring(commaIndex + 1)
+        '.' +
+        this.income.value.substring(commaIndex + 1)
       );
     }
   }
@@ -117,6 +134,7 @@ export class MonthlyCalcComponent implements OnInit {
   get amountOfKids() {
     return this.monthlyForm.get('amountOfKids');
   }
+
   get income() {
     return this.monthlyForm.get('income');
   }
@@ -124,18 +142,23 @@ export class MonthlyCalcComponent implements OnInit {
   get monthlyPaymentDisplay() {
     return this.monthlyForm.get('monthlyPaymentDisplay');
   }
+
   get obligation() {
     return this.monthlyForm.get('obligation');
   }
+
   get mortgageLoans() {
     return this.monthlyForm.get('mortgageLoans');
   }
+
   get consumerLoans() {
     return this.monthlyForm.get('consumerLoans');
   }
+
   get leasingAmount() {
     return this.monthlyForm.get('leasingAmount');
   }
+
   get creditCardLimit() {
     return this.monthlyForm.get('creditCardLimit');
   }
@@ -143,6 +166,7 @@ export class MonthlyCalcComponent implements OnInit {
   monthlyPayment() {
     if (this.monthlyForm.valid) {
       this.formSubmitted = true;
+      const maxMonthlyObligationsPercentage = this.maxMonthlyObligationsPercentage;
       const income = Number(this.monthlyForm.get('income').value);
       const creditCardLimit = Number(
         this.monthlyForm.get('creditCardLimit').value || 0
@@ -169,7 +193,7 @@ export class MonthlyCalcComponent implements OnInit {
         ? creditCardMonthly + consumerMonthly + mortgageMonthly + leasingMonthly
         : 0;
       this.monthlyPaymentResult = Math.round(
-        totalObligations > 0 ? income * 0.4 - totalObligations : income * 0.4
+        totalObligations > 0 ? income * maxMonthlyObligationsPercentage - totalObligations : income * maxMonthlyObligationsPercentage
       );
 
       this.chartData = [
@@ -199,6 +223,7 @@ export class MonthlyCalcComponent implements OnInit {
       this.monthlyForm.get('income').value
     );
   }
+
   openDialog(): void {
     this.dialog.open(ApplicationDialogComponent, {
       data: {
@@ -214,6 +239,7 @@ export class MonthlyCalcComponent implements OnInit {
       minWidth: '400px',
     });
   }
+
   clickMe(event: Event) {
     this._snackBar.open(
       'Please provide outstanding loan amounts. Your monthly payment is being calculated taking in account such parameters - \
@@ -229,6 +255,7 @@ export class MonthlyCalcComponent implements OnInit {
     );
     event.stopPropagation();
   }
+
   unclickMe(event: Event) {
     this._snackBar.dismiss();
     event.stopPropagation();

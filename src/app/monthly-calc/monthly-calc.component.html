@@ -7,15 +7,18 @@
         </h3>
       </div>
       <mat-label class="block">Number of applicants</mat-label>
-      <mat-radio-group aria-label="Select an option" color="primary" formControlName="applicants"
+      <mat-radio-group aria-label="Number of applicants" color="primary" formControlName="applicants"
         class="applicantRadioGroup">
-        <mat-radio-button [value]="1" checked>1</mat-radio-button>
-        <mat-radio-button [value]="2">2</mat-radio-button>
+        <mat-radio-button
+        *ngFor="let applicantOption of applicantsOptions"
+        [value]="applicantOption">
+        {{ applicantOption }}
+      </mat-radio-button>
       </mat-radio-group>
       <mat-form-field appearance="fill" class="input-wrap">
         <mat-label>Number of children</mat-label>
         <mat-select formControlName="amountOfKids">
-          <mat-option *ngFor="let i of optionValues" [value]="i">{{
+          <mat-option *ngFor="let i of childrenOptions" [value]="i">{{
             i
             }}</mat-option>
         </mat-select>
@@ -25,7 +28,7 @@
       </mat-form-field>
 
       <mat-form-field class="input-wrap">
-        <mat-label>Income</mat-label>
+        <mat-label>Income after taxes</mat-label>
         <input matInput formControlName="income" (change)="onInputChanged(); transformToValid()" />
         <mat-error *ngIf="income && income.hasError('required')">
           Please insert the income
@@ -77,7 +80,10 @@
             <div *ngIf="!showInsufficientMessage">
               <p class="monthly-payment-text">
                 Max monthly payment based on your obligations:
-                {{ monthlyPaymentResult | currency : "EUR" }}
+                {{ monthlyPaymentResult | currency : "EUR" }}<sup>*</sup>
+              </p>
+              <p class="monthly-payment-text-sub">
+                <sup>*</sup> We recommend to limit monthly obligations to {{maxMonthlyObligationsPercentage | percent}} of income after taxes.
               </p>
             </div>
           </div>
