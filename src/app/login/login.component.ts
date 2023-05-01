@@ -113,7 +113,7 @@ export class LoginComponent implements OnInit {
               } else {
                 localStorage.setItem('userToken', res.access_token);
                 this.userAuthService.loginState();
-                this.router.navigate(['/user-page']);
+                this.router.navigate(['/']);
               }
             });
         },
