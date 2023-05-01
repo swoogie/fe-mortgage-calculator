@@ -3,24 +3,33 @@
     <div class="left-container">
       <div class="title-container">
         <h3 class="page-title">
-          Monthly Payment Calculator<img class="clippy" src="../../assets/images/clippy.png" alt="clippy" />
+          Monthly Payment Calculator<img
+            class="clippy"
+            src="../../assets/images/clippy.png"
+            alt="clippy"
+          />
         </h3>
       </div>
       <mat-label class="block">Number of applicants</mat-label>
-      <mat-radio-group aria-label="Number of applicants" color="primary" formControlName="applicants"
-        class="applicantRadioGroup">
+      <mat-radio-group
+        aria-label="Number of applicants"
+        color="primary"
+        formControlName="applicants"
+        class="applicantRadioGroup"
+      >
         <mat-radio-button
-        *ngFor="let applicantOption of applicantsOptions"
-        [value]="applicantOption">
-        {{ applicantOption }}
-      </mat-radio-button>
+          *ngFor="let applicantOption of applicantsOptions"
+          [value]="applicantOption"
+        >
+          {{ applicantOption }}
+        </mat-radio-button>
       </mat-radio-group>
       <mat-form-field appearance="fill" class="input-wrap">
         <mat-label>Number of children</mat-label>
         <mat-select formControlName="amountOfKids">
           <mat-option *ngFor="let i of childrenOptions" [value]="i">{{
             i
-            }}</mat-option>
+          }}</mat-option>
         </mat-select>
         <mat-error *ngIf="amountOfKids && amountOfKids.hasError('required')">
           Please choose an option
@@ -29,34 +38,62 @@
 
       <mat-form-field class="input-wrap">
         <mat-label>Income after taxes</mat-label>
-        <input matInput formControlName="income" (change)="onInputChanged(); transformToValid()" />
+        <input
+          matInput
+          formControlName="income"
+          (change)="onInputChanged(); transformToValid()"
+        />
         <mat-error *ngIf="income && income.hasError('required')">
           Please insert the income
         </mat-error>
-        <mat-error *ngIf="income && income.hasError('pattern')">Please enter a valid income</mat-error>
+        <mat-error *ngIf="income && income.hasError('pattern')"
+          >Please enter a valid income</mat-error
+        >
       </mat-form-field>
       <div class="obligationContainer">
         <mat-label class="block">Do you have any obligations?</mat-label>
-        <button matPrefix mat-icon-button (click)="clickMe($event)" matTooltipPosition="above"
-          (mouseenter)="clickMe($event)" (mouseleave)="unclickMe($event)">
+        <button
+          matPrefix
+          mat-icon-button
+          (click)="clickMe($event)"
+          matTooltipPosition="above"
+          (mouseenter)="clickMe($event)"
+          (mouseleave)="unclickMe($event)"
+        >
           <mat-icon class="info-btn">info</mat-icon>
         </button>
       </div>
-      <mat-radio-group aria-label="Select an option" color="primary" formControlName="obligation">
-        <mat-radio-button [value]="false" checked>No</mat-radio-button>
-        <mat-radio-button [value]="true">Yes</mat-radio-button>
+      <mat-radio-group
+        aria-label="Select an option"
+        color="primary"
+        formControlName="obligation"
+      >
+        <mat-radio-button
+          [value]="false"
+          [checked]="!monthlyCalcData.obligation"
+          >No</mat-radio-button
+        >
+        <mat-radio-button [value]="true" [checked]="monthlyCalcData.obligation"
+          >Yes</mat-radio-button
+        >
       </mat-radio-group>
       <div class="obligation-container" *ngIf="obligation.value == true">
         <ng-container *ngFor="let field of fields">
           <mat-form-field class="input-wrap">
             <mat-label>{{ field.label }}</mat-label>
 
-            <input matInput formControlName="{{ field.controlName }}" (change)="onInputChanged()" />
+            <input
+              matInput
+              formControlName="{{ field.controlName }}"
+              (change)="onInputChanged()"
+            />
           </mat-form-field>
-          <mat-error *ngIf="
+          <mat-error
+            *ngIf="
               monthlyForm.get(field.controlName) &&
               monthlyForm.get(field.controlName).hasError('pattern')
-            ">
+            "
+          >
             Please enter a number
           </mat-error>
         </ng-container>
@@ -71,7 +108,11 @@
 
     <div class="right-container-card">
       <div class="btn-wrap">
-        <app-donut [data]="chartData" [labels]="chartLabels" [middleLabel]="['Monthly payments']"></app-donut>
+        <app-donut
+          [data]="chartData"
+          [labels]="chartLabels"
+          [middleLabel]="['Monthly payments']"
+        ></app-donut>
         <div>
           <div class="result-display-warp">
             <mat-label>Monthly Payment</mat-label>
@@ -83,7 +124,9 @@
                 {{ monthlyPaymentResult | currency : "EUR" }}<sup>*</sup>
               </p>
               <p class="monthly-payment-text-sub">
-                <sup>*</sup> We recommend to limit monthly obligations to {{maxMonthlyObligationsPercentage | percent}} of income after taxes.
+                <sup>*</sup> We recommend to limit monthly obligations to
+                {{ maxMonthlyObligationsPercentage | percent }} of income after
+                taxes.
               </p>
             </div>
           </div>
